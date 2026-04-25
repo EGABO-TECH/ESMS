@@ -1,4 +1,6 @@
-# <p align="center"><img src="https://raw.githubusercontent.com/user-attachments/assets/6707833a-8664-4416-9ca8-2236a2873831" width="600"></p>
+<p align="center">
+  <img src="assets/logo.png" alt="ESMS Logo" width="600">
+</p>
 
 <p align="center">
   <strong>Scalable • Modular • Secure • Localized</strong><br>
@@ -81,7 +83,7 @@ npm run dev
 
 ---
 <p align="center">
-  <em>© 2026 EGABO-TECH. Built with precision for the future of education.</em>
+  <em>© 2026 THE RULE OF 10. Built with precision for the future of education.</em>
 </p>
 
 
