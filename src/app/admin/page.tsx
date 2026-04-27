@@ -23,8 +23,10 @@ export default async function AdminDashboard() {
   ]);
 
   // Finance calculations
-  const totalInvoiced = financeAgg?.reduce((s, r) => s + (r.amount_ugx ?? 0), 0) ?? 0;
-  const totalCollected = financeAgg?.reduce((s, r) => s + (r.paid_ugx ?? 0), 0) ?? 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalInvoiced = financeAgg?.reduce((s: number, r: any) => s + (r.amount_ugx ?? 0), 0) ?? 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalCollected = financeAgg?.reduce((s: number, r: any) => s + (r.paid_ugx ?? 0), 0) ?? 0;
   const collectionRate = totalInvoiced > 0 ? Math.round((totalCollected / totalInvoiced) * 100) : 0;
 
   const statusColors: Record<string, string> = {
@@ -187,7 +189,8 @@ export default async function AdminDashboard() {
             </thead>
             <tbody className="divide-y divide-border-subtle">
               {recentAdmissions && recentAdmissions.length > 0 ? (
-                recentAdmissions.map(adm => (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                recentAdmissions.map((adm: any) => (
                   <tr key={adm.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">

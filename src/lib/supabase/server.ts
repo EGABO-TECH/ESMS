@@ -8,6 +8,7 @@ export function createClient() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error("Missing Supabase Environment Variables. Check your Vercel Project Settings.");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {} as any;
   }
 
