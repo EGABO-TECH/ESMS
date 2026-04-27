@@ -1,33 +1,20 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { TrendingUp, Users, GraduationCap, BookOpen, DollarSign, AlertTriangle, MessageSquare, CheckCircle } from "lucide-react";
 
 export default async function AdminDashboard() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  // Mock Data
+  const totalStudents = 4892;
+  const totalStaff = 342;
+  const activeCourses = 156;
+  
+  const totalInvoiced = 4500000000;
+  const totalCollected = 3800000000;
+  const collectionRate = Math.round((totalCollected / totalInvoiced) * 100);
 
-  // Aggregate queries in parallel
-  const [
-    { count: totalStudents },
-    { count: totalStaff },
-    { count: activeCourses },
-    { data: financeAgg },
-    { data: recentAdmissions },
-  ] = await Promise.all([
-    supabase.from("students").select("*", { count: "exact", head: true }).eq("status", "active"),
-    supabase.from("staff").select("*", { count: "exact", head: true }),
-    supabase.from("courses").select("*", { count: "exact", head: true }),
-    supabase.from("finance_records").select("amount_ugx, paid_ugx"),
-    supabase.from("admissions").select("*").order("applied_at", { ascending: false }).limit(5),
-  ]);
-
-  // Finance calculations
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const totalInvoiced = financeAgg?.reduce((s: number, r: any) => s + (r.amount_ugx ?? 0), 0) ?? 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const totalCollected = financeAgg?.reduce((s: number, r: any) => s + (r.paid_ugx ?? 0), 0) ?? 0;
-  const collectionRate = totalInvoiced > 0 ? Math.round((totalCollected / totalInvoiced) * 100) : 0;
+  const recentAdmissions = [
+    { id: 1, applicant_name: "Ababiku Brenda", nationality: "Ugandan", programme: "AES Content", applied_at: "2023-10-24T10:00:00Z", status: "pending" },
+    { id: 2, applicant_name: "Alimpa Anne Hillary", nationality: "Kenyan", programme: "Conservation", applied_at: "2023-10-23T14:30:00Z", status: "enrolled" },
+    { id: 3, applicant_name: "Egabo Aaron", nationality: "Ugandan", programme: "AES Content", applied_at: "2023-10-23T09:15:00Z", status: "interview" },
+  ];
 
   const statusColors: Record<string, string> = {
     pending: "bg-exam-warning/10 text-exam-warning",

@@ -1,5 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { Zap, Wallet, Filter, Info } from "lucide-react";
 
 const statusBadge = (status: string) => {
@@ -9,32 +7,21 @@ const statusBadge = (status: string) => {
 };
 
 export default async function StudentFinance() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  // Mock Data
 
-  const { data: student } = await supabase
-    .from("students")
-    .select("id")
-    .eq("profile_id", user.id)
-    .single();
+  
+  const finance = {
+    academic_year: "2024/2025",
+    semester: 1,
+    balance_ugx: 1250000,
+    amount_ugx: 2500000,
+    due_date: "2024-05-15T00:00:00Z"
+  };
 
-  // Latest finance record
-  const { data: finance } = await supabase
-    .from("finance_records")
-    .select("*")
-    .eq("student_id", student?.id ?? "")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Transaction history
-  const { data: transactions } = await supabase
-    .from("transactions")
-    .select("*")
-    .eq("student_id", student?.id ?? "")
-    .order("transaction_date", { ascending: false })
-    .limit(10);
+  const transactions = [
+    { id: 1, transaction_date: "2024-02-10T00:00:00Z", reference: "MTN-8X9Y2", description: "Mobile Money Payment", amount_ugx: 1250000, status: "confirmed" },
+    { id: 2, transaction_date: "2024-01-20T00:00:00Z", reference: "BANK-INV1", description: "Initial Deposit", amount_ugx: 500000, status: "confirmed" }
+  ];
 
   const balance = finance?.balance_ugx ?? 0;
   const isArrears = balance > 0;

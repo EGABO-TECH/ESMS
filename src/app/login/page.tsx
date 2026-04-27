@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+
 import { useRouter } from "next/navigation";
 import { GraduationCap, Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 
@@ -19,7 +19,7 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,61 +28,35 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Email + Password Sign In
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (authError) {
-      setError(authError.message);
+    // Mock authentication logic
+    setTimeout(() => {
       setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      // Fetch profile for role-based redirect
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profile?.role === "admin") {
+      // Hardcode a user redirect based on email input for demo purposes
+      if (email.includes("admin")) {
         router.push("/admin");
       } else {
         router.push("/student/dashboard");
       }
       router.refresh();
-    }
+    }, 1000);
   };
 
-  // Google OAuth Sign In
+  // Google OAuth Sign In (Mock)
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setError(null);
 
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          // Prompt account selection every time
-          prompt: "select_account",
-        },
-      },
-    });
-
-    if (oauthError) {
-      setError(oauthError.message);
+    // Mock OAuth delay
+    setTimeout(() => {
       setGoogleLoading(false);
-    }
-    // On success, Supabase redirects the browser automatically
+      router.push("/student/dashboard");
+      router.refresh();
+    }, 1000);
   };
 
   return (

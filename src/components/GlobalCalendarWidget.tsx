@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Calendar as CalendarIcon, Clock, Link as LinkIcon, Plus, Save, Loader2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 import type { SchoolEvent } from '@/lib/types';
 
 interface GlobalCalendarWidgetProps {
@@ -12,55 +11,42 @@ interface GlobalCalendarWidgetProps {
 }
 
 export default function GlobalCalendarWidget({ isOpen, onClose, readOnly = false }: GlobalCalendarWidgetProps) {
-  const supabase = createClient();
   const [events, setEvents] = useState<SchoolEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newEvent, setNewEvent] = useState<Partial<SchoolEvent>>({});
 
-  // Fetch events from Supabase
+  // Mock events fetch
   useEffect(() => {
     if (!isOpen) return;
-    const fetchEvents = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('school_events')
-        .select('*')
-        .order('event_date', { ascending: true });
-      if (!error && data) setEvents(data);
+    setLoading(true);
+    setTimeout(() => {
+      setEvents([
+        { id: "1", title: "Mid-Semester Exams Begin", event_date: "2024-03-10T00:00:00Z", description: "All faculties", created_at: "" },
+        { id: "2", title: "Cultural Gala", event_date: "2024-03-25T00:00:00Z", description: "Main Campus", created_at: "" },
+        { id: "3", title: "Career Fair", event_date: "2024-04-05T00:00:00Z", description: "Open to all students", created_at: "" }
+      ] as SchoolEvent[]);
       setLoading(false);
-    };
-    fetchEvents();
-
-    // Real-time subscription
-    const channel = supabase
-      .channel('school_events_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'school_events' }, () => {
-        fetchEvents();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 500);
   }, [isOpen]);
 
   const handleAddEvent = async () => {
     if (!newEvent.title || !newEvent.event_date) return;
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    const { error } = await supabase.from('school_events').insert({
-      title: newEvent.title,
-      event_date: newEvent.event_date,
-      event_time: newEvent.event_time || null,
-      description: newEvent.description || null,
-      created_by: user?.id ?? null,
-    });
-    if (!error) {
+    setTimeout(() => {
+      setEvents([...events, {
+        id: Math.random().toString(),
+        title: newEvent.title!,
+        event_date: newEvent.event_date!,
+        event_time: newEvent.event_time || null,
+        description: newEvent.description || null,
+        created_at: new Date().toISOString()
+      } as SchoolEvent]);
       setIsAdding(false);
       setNewEvent({});
-    }
-    setSaving(false);
+      setSaving(false);
+    }, 500);
   };
 
   const generateGoogleCalendarLink = (event: SchoolEvent) => {

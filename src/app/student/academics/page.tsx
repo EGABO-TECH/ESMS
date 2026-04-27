@@ -1,5 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { FileText, BookOpen, Clock, History } from "lucide-react";
 
 const gradeColor = (grade: string | null) => {
@@ -11,30 +9,28 @@ const gradeColor = (grade: string | null) => {
 };
 
 export default async function StudentAcademics() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  // Mock Data
+  const student = {
+    id: 1,
+    cgpa: 4.25,
+    credits_earned: 86,
+    credits_remaining: 34,
+    programme: "BSc Software Engineering",
+    year_of_study: 3,
+  };
 
-  const { data: student } = await supabase
-    .from("students")
-    .select("id, cgpa, credits_earned, credits_remaining, programme, year_of_study")
-    .eq("profile_id", user.id)
-    .single();
-
-  // Fetch enrollments with course info
-  const { data: enrollments } = await supabase
-    .from("enrollments")
-    .select("*, courses(code, title, credits, semester)")
-    .eq("student_id", student?.id ?? "")
-    .order("semester", { ascending: false });
-
-  // Group by semester
-  const bySemester: Record<string, typeof enrollments> = {};
-  (enrollments ?? []).forEach(e => {
-    const key = `${e.academic_year} - Semester ${e.semester}`;
-    if (!bySemester[key]) bySemester[key] = [];
-    bySemester[key]!.push(e);
-  });
+  const bySemester: Record<string, any[]> = {
+    "2023/2024 - Semester 1": [
+      { id: 1, grade: "A", courses: { code: "SWE311", title: "Software Architecture", credits: 4 } },
+      { id: 2, grade: "B+", courses: { code: "SWE312", title: "Database Systems", credits: 3 } },
+      { id: 3, grade: "A-", courses: { code: "SWE313", title: "Web Engineering", credits: 4 } },
+    ],
+    "2022/2023 - Semester 2": [
+      { id: 4, grade: "A", courses: { code: "SWE221", title: "Object Oriented Programming", credits: 4 } },
+      { id: 5, grade: "B", courses: { code: "SWE222", title: "Data Structures", credits: 3 } },
+      { id: 6, grade: "C+", courses: { code: "SWE223", title: "Computer Networks", credits: 3 } },
+    ]
+  };
 
   const semesterKeys = Object.keys(bySemester).sort().reverse();
 

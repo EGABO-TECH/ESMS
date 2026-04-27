@@ -1,44 +1,26 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, Wallet, CalendarDays, TrendingUp, AlertCircle } from "lucide-react";
 
 export default async function StudentDashboard() {
-  const supabase = createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  // Fetch profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, campus")
-    .eq("id", user.id)
-    .single();
-
-  // Fetch student record
-  const { data: student } = await supabase
-    .from("students")
-    .select("id, cgpa, credits_earned, credits_remaining, programme, year_of_study, student_number")
-    .eq("profile_id", user.id)
-    .single();
-
-  // Fetch latest finance record
-  const { data: finance } = await supabase
-    .from("finance_records")
-    .select("balance_ugx, due_date, status")
-    .eq("student_id", student?.id ?? "")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Fetch upcoming events (next 3)
-  const { data: events } = await supabase
-    .from("school_events")
-    .select("id, title, event_date")
-    .gte("event_date", new Date().toISOString().split("T")[0])
-    .order("event_date", { ascending: true })
-    .limit(3);
+  // Mock Data
+  const profile = { full_name: "Egabo Aaron", campus: "Ggaba Campus" };
+  const student = {
+    id: 1,
+    cgpa: 4.25,
+    credits_earned: 86,
+    credits_remaining: 34,
+    programme: "BSc Software Engineering",
+    year_of_study: 3,
+    student_number: "258-154"
+  };
+  
+  const finance = { balance_ugx: 1250000, due_date: "2024-05-15T00:00:00Z", status: "pending" };
+  
+  const events = [
+    { id: 1, title: "Mid-Semester Exams Begin", event_date: "2024-03-10T00:00:00Z" },
+    { id: 2, title: "Cultural Gala", event_date: "2024-03-25T00:00:00Z" },
+    { id: 3, title: "Career Fair", event_date: "2024-04-05T00:00:00Z" }
+  ];
 
   const balanceUGX = finance?.balance_ugx ?? 0;
 
