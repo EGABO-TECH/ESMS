@@ -26,6 +26,8 @@ const student = {
   phone: "+256 701 234 567",
   emergency_contact: "+256 772 999 888",
   campus: "Ggaba Campus",
+  enrolled_date: "Jan 15, 2024",
+  expected_graduation: "Dec 15, 2027",
 };
 
 // Set this to true to simulate outstanding balance (financial gate)
@@ -369,29 +371,46 @@ export default function StudentProfile() {
               </div>
 
               <div>
-                <h4 className="text-xl font-black text-[#00174b]">{student.full_name}</h4>
-                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">{student.programme}</p>
+                <h4 className="text-xl font-black text-[#00174b] leading-tight">{student.full_name}</h4>
+                <p className="text-[10px] font-bold text-primary uppercase mt-1">{student.student_number}</p>
+              </div>
+
+              <div className="bg-surface-container-low p-3 rounded-xl space-y-1.5 text-left">
+                <div>
+                  <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Course</p>
+                  <p className="text-[11px] font-bold text-on-surface leading-tight">{student.programme}</p>
+                </div>
+                <div className="flex justify-between items-end gap-2">
+                  <div>
+                    <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Campus</p>
+                    <p className="text-[11px] font-bold text-on-surface">{student.campus}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Validity</p>
+                    <p className="text-[9px] font-black text-finance-success">{student.enrolled_date} — {student.expected_graduation}</p>
+                  </div>
+                </div>
               </div>
 
               {/* QR Code */}
-              <div className="flex justify-center py-2">
+              <div className="flex justify-center py-1">
                 <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${student.student_number}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`NAME: ${student.full_name}\nID: ${student.student_number}\nCOURSE: ${student.programme}\nCAMPUS: ${student.campus}\nVALID: ${student.enrolled_date} to ${student.expected_graduation}`)}`}
                     alt="Student QR Code"
-                    className="w-28 h-28"
+                    className="w-24 h-24"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-2">
-                <span className="w-3 h-3 bg-finance-success rounded-full animate-pulse" />
-                <span className="text-xs font-black text-on-surface">VALID 2026</span>
+              <div className="flex items-center justify-center gap-2 pt-1">
+                <span className="w-2 h-2 bg-finance-success rounded-full animate-pulse" />
+                <span className="text-[10px] font-black text-[#00174b] uppercase tracking-widest">Active Student</span>
               </div>
 
-              <p className="text-[9px] text-on-surface-variant font-medium leading-relaxed pt-2 border-t border-border-subtle">
-                Present this card at the University Gate, Library, and Examination Halls.
+              <p className="text-[8px] text-on-surface-variant font-medium leading-relaxed pt-2 border-t border-border-subtle">
+                Official Virtual ID card for University entry and academic verification.
               </p>
             </div>
 
