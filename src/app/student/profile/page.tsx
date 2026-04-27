@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import {
   GraduationCap, User, Phone, Globe, Mail, ShieldCheck,
   FileText, Ticket, Lock, IdCard, Download, X, QrCode,
-  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2
+  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map
 } from "lucide-react";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
@@ -348,6 +348,43 @@ export default function StudentProfile() {
                   ? <span className="text-[9px] bg-error/10 text-error px-1.5 py-0.5 rounded-full font-black uppercase">LOCKED</span>
                   : <Download size={14} className="text-on-surface-variant" />
                 }
+              </div>
+            </div>
+          </div>
+
+          {/* Official Support & Contact */}
+          <div className="bg-white rounded-2xl p-8 border border-border-subtle shadow-sm">
+            <h3 className="text-lg font-bold text-on-surface flex items-center gap-2 mb-6">
+              <Globe size={20} className="text-primary" /> University Contact
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Phone size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">General Inquiries &amp; Support</p>
+                  <p className="text-xs font-medium text-on-surface">+256 414 531 700 / +256 741 242 287</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">WhatsApp Helpdesk</p>
+                  <p className="text-xs font-medium text-on-surface">+256 706 695 369</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mail size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Official Email</p>
+                  <p className="text-xs font-medium text-on-surface"><a href="mailto:info@cavendish.ac.ug" className="hover:text-primary transition-colors">info@cavendish.ac.ug</a></p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Map size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Main Campus Address</p>
+                  <p className="text-xs font-medium text-on-surface leading-relaxed">Plot 1469, Nsambya Ggaba Road,<br/>P.O. Box 33145, Kampala, Uganda.</p>
+                </div>
               </div>
             </div>
           </div>
