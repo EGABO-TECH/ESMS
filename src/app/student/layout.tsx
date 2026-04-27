@@ -98,10 +98,14 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             />
             <div
               onClick={() => { toast.success("Logged out"); router.push("/login"); }}
-              className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary flex items-center justify-center text-white font-black text-sm shadow-sm cursor-pointer hover:opacity-80 transition-opacity"
+              className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity shadow-sm"
               title="Logout"
             >
-              EA
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+                alt="Student Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </header>

@@ -22,15 +22,31 @@ export default function StudentDashboard() {
   return (
     <main className="w-full pb-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-on-surface">Welcome back,</h1>
-        <p className="text-2xl font-bold text-primary">{profile.full_name}</p>
-        <p className="text-sm text-on-surface-variant mt-1">{student.programme} · {profile.campus}</p>
-        {student.student_number && (
-          <span className="inline-block mt-2 px-2 py-1 bg-surface-container text-xs font-bold text-outline rounded uppercase tracking-wider">
-            {student.student_number}
-          </span>
-        )}
+      <div className="mb-8 flex flex-col md:flex-row md:items-center gap-6">
+        {/* Profile Image Section */}
+        <div className="relative shrink-0">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center shadow-lg">
+            <img
+              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+              alt={profile.full_name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="absolute bottom-1 right-1 bg-finance-success text-white p-1 rounded-full border-2 border-white shadow-sm" title="Online Status">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+          </div>
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-black text-on-surface">Welcome back,</h1>
+          <p className="text-2xl font-bold text-primary">{profile.full_name}</p>
+          <p className="text-sm text-on-surface-variant mt-1">{student.programme} · {profile.campus}</p>
+          {student.student_number && (
+            <span className="inline-block mt-2 px-2 py-1 bg-surface-container text-xs font-bold text-outline rounded uppercase tracking-wider">
+              {student.student_number}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Outstanding Balance Alert */}
