@@ -46,7 +46,18 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      router.push("/");
+      // Fetch profile for role-based redirect
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profile?.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/student/dashboard");
+      }
       router.refresh();
     }
   };
