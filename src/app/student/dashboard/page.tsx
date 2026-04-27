@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { BookOpen, Wallet, CalendarDays, TrendingUp, AlertCircle, Award, Map, User, Lock } from "lucide-react";
 
-const profile = { full_name: "Egabo Aaron", campus: "Siyani Campus" };
+const profile = { full_name: "Egabo Aaron", campus: "Main Campus" };
 const student = {
   cgpa: 4.25, credits_earned: 86, credits_remaining: 34,
   programme: "BSc Software Engineering", year_of_study: 3, student_number: "258-154"

@@ -9,12 +9,10 @@ const HAS_BALANCE = true;
 const BALANCE_AMOUNT = "UGX 1,250,000";
 
 const results = [
-  { code: "SWE311", name: "Software Architecture", credits: 4, score: 81, grade: "A",  gp: 5.0 },
-  { code: "SWE312", name: "Database Systems",       credits: 3, score: 76, grade: "B+", gp: 4.5 },
-  { code: "SWE313", name: "Web Engineering",         credits: 4, score: 83, grade: "A",  gp: 5.0 },
-  { code: "SWE314", name: "Computer Networks",       credits: 3, score: 44, grade: "F",  gp: 0.0 },
-  { code: "SWE315", name: "Operating Systems",       credits: 3, score: 62, grade: "C",  gp: 3.0 },
-  { code: "SWE316", name: "Algorithms & Complexity", credits: 4, score: 71, grade: "B",  gp: 4.0 },
+  { code: "SWE311", name: "Software Lifecycle",      credits: 4, score: 81, grade: "A",  gp: 5.0 },
+  { code: "SWE312", name: "Mobile App Dev",          credits: 4, score: 76, grade: "B+", gp: 4.5 },
+  { code: "SWE313", name: "Cloud Computing",         credits: 3, score: 83, grade: "A",  gp: 5.0 },
+  { code: "SWE314", name: "System Architecture",     credits: 4, score: 44, grade: "F",  gp: 0.0 },
 ];
 
 const gradingScale = [

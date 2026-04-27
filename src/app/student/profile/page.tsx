@@ -25,7 +25,8 @@ const student = {
   nationality: "Ugandan",
   phone: "+256 701 234 567",
   emergency_contact: "+256 772 999 888",
-  campus: "Siyani Campus",
+  campus: "Main Campus",
+  delivery_mode: "Mode_A: Campus-Based",
   enrolled_date: "Jan 15, 2024",
   expected_graduation: "Dec 15, 2027",
 };
@@ -204,6 +205,13 @@ export default function StudentProfile() {
                 <div>
                   <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Programme</p>
                   <p className="text-sm font-medium text-on-surface">{student.programme}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Globe size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Delivery Mode</p>
+                  <p className="text-sm font-medium text-on-surface">{student.delivery_mode}</p>
                 </div>
               </div>
             </div>

@@ -181,7 +181,7 @@ export default function StudentFinance() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-on-surface">Financial Statement</h3>
-                  <p className="text-xs text-on-surface-variant">Cavendish University Uganda · Siyani Campus</p>
+                  <p className="text-xs text-on-surface-variant">Cavendish University Uganda · Main Campus, Ggaba Road</p>
                 </div>
               </div>
               <div className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 ${isCleared ? "bg-finance-success/10 text-finance-success" : "bg-error/10 text-error"}`}>

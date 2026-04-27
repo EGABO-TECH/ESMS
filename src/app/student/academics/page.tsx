@@ -16,22 +16,19 @@ const student = {
 };
 
 const allPrograms = [
-  "BSc. Software Engineering", "BSc. Computer Science", "Bachelor of Information Technology",
-  "BSc. Data Science & AI", "BBA. Accounting & Finance", "BBA. Procurement & Logistics",
-  "BBA. Human Resource Management", "BBA. Banking & Finance", "BBA. Entrepreneurship",
-  "Bachelor of Economics & Statistics", "Bachelor of Laws (LLB)", "BA. International Relations & Diplomacy",
-  "BA. Public Administration & Management", "Bachelor of Journalism & Mass Comm", "BSc. Public Health",
-  "BSc. Environmental Health Science", "Diploma in Computer Science & IT", "Diploma in Paralegal Studies",
-  "Master of Information Technology", "Master of Business Administration",
+  "B.Sc. Software Engineering", "B.Sc. Computer Science", "B.Sc. Data Science & AI", "B.Sc. Information Technology",
+  "Bachelor of Laws (LLB)", "Master of Laws (LLM)",
+  "BBA - Accounting & Finance", "BBA - Procurement & Logistics", "MBA (All Specializations)",
+  "B.Sc. Public Health", "B.Sc. Environmental Health",
+  "B.A. International Relations", "B.A. Mass Comm & Journalism",
+  "Higher Education Cert (HEC)"
 ];
 
 const myModules = [
-  { code: "SWE311", name: "Software Architecture",       credits: 4, status: "Active" },
-  { code: "SWE312", name: "Database Systems",            credits: 3, status: "Active" },
-  { code: "SWE313", name: "Web Engineering",             credits: 4, status: "Active" },
-  { code: "SWE314", name: "Computer Networks",           credits: 3, status: "Pending" },
-  { code: "SWE315", name: "Operating Systems",           credits: 3, status: "Active" },
-  { code: "SWE316", name: "Algorithms & Complexity",     credits: 4, status: "Active" },
+  { code: "SWE311", name: "Software Lifecycle",          credits: 4, status: "Active" },
+  { code: "SWE312", name: "Mobile App Dev",              credits: 4, status: "Active" },
+  { code: "SWE313", name: "Cloud Computing",             credits: 3, status: "Active" },
+  { code: "SWE314", name: "System Architecture",         credits: 4, status: "Pending" },
 ];
 
 const gradeColor = (grade: string | null) => {
@@ -264,9 +261,9 @@ export default function StudentAcademics() {
             {/* Specialisation Note */}
             <div className="bg-[#00174b] rounded-xl p-6 text-white shadow-xl relative overflow-hidden">
               <div className="relative z-10">
-                <h4 className="text-lg font-bold mb-2">Systems Analysis &amp; Database Focus</h4>
+                <h4 className="text-lg font-bold mb-2">Modern App Development Focus</h4>
                 <p className="text-blue-100 text-sm">
-                  Your current enrollment is optimized for the SDLC Design Phase. Modules like <strong>SWE311</strong> and <strong>SWE312</strong> directly support your work on Relational Schemas and Prototype Logic.
+                  Your current enrollment is optimized for full-stack engineering. Modules like <strong>SWE311</strong> and <strong>SWE313</strong> directly support your work on scalable applications and infrastructure.
                 </p>
               </div>
               <BookOpen className="absolute -right-4 -bottom-4 w-32 h-32 text-white/5" />

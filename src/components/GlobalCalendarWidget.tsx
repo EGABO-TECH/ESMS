@@ -25,8 +25,8 @@ export default function GlobalCalendarWidget({ isOpen, onClose, readOnly = false
     setTimeout(() => {
       setEvents([
         { id: "1", title: "Mid-Semester Exams Begin", event_date: "2026-04-15T00:00:00Z", description: "All faculties", created_at: "" },
-        { id: "2", title: "Cultural Gala", event_date: "2026-05-10T00:00:00Z", description: "Kingsgate Campus", created_at: "" },
-        { id: "3", title: "Career Fair", event_date: "2026-05-25T00:00:00Z", description: "Siyani Campus IT Exhibition", created_at: "" }
+        { id: "2", title: "Cultural Gala", event_date: "2026-05-10T00:00:00Z", description: "Main Campus, Ggaba", created_at: "" },
+        { id: "3", title: "Career Fair", event_date: "2026-05-25T00:00:00Z", description: "Acacia Campus (Law)", created_at: "" }
       ] as SchoolEvent[]);
       setLoading(false);
     }, 500);
