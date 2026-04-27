@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
+import { toast } from "sonner";
 import { 
   LayoutDashboard, 
   GraduationCap, 
@@ -24,6 +26,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="bg-surface-bg text-on-surface flex h-screen overflow-hidden">
@@ -113,11 +116,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="mt-auto px-2 space-y-1 pt-4">
-          <div className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+          <div onClick={() => toast.info('Opening support widget...')} className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
             <HelpCircle size={20} />
             <span className="font-public-sans text-sm font-medium">Support</span>
           </div>
-          <div className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+          <div onClick={() => { toast.success('Logged out successfully'); router.push('/login'); }} className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
             <LogOut size={20} />
             <span className="font-public-sans text-sm font-medium">Logout</span>
           </div>
@@ -159,15 +162,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               >
                 <CalendarDays size={20} />
               </button>
-              <button className="relative p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
+              <button onClick={() => toast.info('No new notifications')} className="relative p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
                 <Bell size={20} />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
               </button>
-              <button className="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
+              <button onClick={() => toast.info('Help documentation opened')} className="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
                 <HelpCircle size={20} />
               </button>
               <div className="hidden sm:block h-8 w-[1px] bg-slate-200"></div>
-              <div className="flex items-center gap-3 cursor-pointer p-1 hover:bg-slate-50 rounded-lg transition-colors">
+              <div onClick={() => toast.info('Profile settings opened')} className="flex items-center gap-3 cursor-pointer p-1 hover:bg-slate-50 rounded-lg transition-colors">
                 <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold">A</div>
                 <div className="hidden xl:block">
                   <p className="text-xs font-bold text-slate-900">Aaron M.</p>

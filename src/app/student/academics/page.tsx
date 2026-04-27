@@ -1,4 +1,7 @@
+"use client";
+
 import { FileText, BookOpen, Clock, History } from "lucide-react";
+import { toast } from "sonner";
 
 const gradeColor = (grade: string | null) => {
   if (!grade) return "text-slate-400";
@@ -8,7 +11,7 @@ const gradeColor = (grade: string | null) => {
   return "text-error";
 };
 
-export default async function StudentAcademics() {
+export default function StudentAcademics() {
   // Mock Data
   const student = {
     id: 1,
@@ -88,7 +91,7 @@ export default async function StudentAcademics() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-white text-primary font-bold text-sm rounded-lg hover:opacity-90 transition-opacity">
+          <button onClick={() => toast.success('Exam timetable PDF downloading...')} className="px-4 py-2 bg-white text-primary font-bold text-sm rounded-lg hover:opacity-90 transition-opacity">
             Download PDF
           </button>
           <div className="flex items-center gap-1">

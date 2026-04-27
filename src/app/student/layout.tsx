@@ -2,12 +2,14 @@
 
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Home, Wallet, BookOpen, User, Bell, CalendarDays } from "lucide-react";
+import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 
 export default function StudentLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   return (
@@ -83,8 +85,8 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             >
               <CalendarDays size={20} />
             </button>
-            <Bell className="text-white md:text-slate-600" size={20} />
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-border-subtle bg-white flex items-center justify-center text-primary font-bold shadow-sm">
+            <Bell onClick={() => toast.info('No new notifications')} className="text-white md:text-slate-600 cursor-pointer" size={20} />
+            <div onClick={() => { toast.success('Logged out'); router.push('/login'); }} className="w-8 h-8 rounded-full overflow-hidden border border-border-subtle bg-white flex items-center justify-center text-primary font-bold shadow-sm cursor-pointer hover:bg-slate-50 transition-colors" title="Logout">
               KA
             </div>
           </div>

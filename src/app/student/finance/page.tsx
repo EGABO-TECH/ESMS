@@ -1,4 +1,7 @@
+"use client";
+
 import { Zap, Wallet, Filter, Info } from "lucide-react";
+import { toast } from "sonner";
 
 const statusBadge = (status: string) => {
   if (status === "confirmed") return "bg-finance-success/10 text-finance-success";
@@ -6,7 +9,7 @@ const statusBadge = (status: string) => {
   return "bg-error/10 text-error";
 };
 
-export default async function StudentFinance() {
+export default function StudentFinance() {
   // Mock Data
 
   
@@ -62,11 +65,11 @@ export default async function StudentFinance() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:opacity-90">
+            <button onClick={() => toast.success('Redirecting to payment gateway...')} className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:opacity-90">
               <Zap size={18} />
               Quick-pay
             </button>
-            <button className="flex items-center justify-center gap-2 bg-white border border-border-subtle text-on-surface py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:bg-slate-50">
+            <button onClick={() => toast.info('Opening wallet manager...')} className="flex items-center justify-center gap-2 bg-white border border-border-subtle text-on-surface py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:bg-slate-50">
               <Wallet size={18} />
               Manage
             </button>
@@ -120,7 +123,7 @@ export default async function StudentFinance() {
               </table>
             </div>
             {transactions && transactions.length > 0 && (
-              <button className="w-full py-3 text-primary font-semibold text-sm bg-primary/5 hover:bg-primary/10 transition-colors">
+              <button onClick={() => toast.info('Loading full transaction history...')} className="w-full py-3 text-primary font-semibold text-sm bg-primary/5 hover:bg-primary/10 transition-colors">
                 View All Transactions
               </button>
             )}

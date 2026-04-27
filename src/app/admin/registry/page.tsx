@@ -1,4 +1,7 @@
+"use client";
+
 import { Download, Plus, Filter, ArrowUpDown, ChevronRight, Calendar, BookOpen, UserSearch, UserCheck, Clock, FileWarning } from "lucide-react";
+import { toast } from "sonner";
 
 export default function RegistryEnrollmentHub() {
   return (
@@ -17,11 +20,11 @@ export default function RegistryEnrollmentHub() {
           <p className="text-slate-500 mt-1">Manage course registrations and academic enrollment for Cavendish University Uganda.</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-button text-button flex items-center gap-2 hover:bg-slate-50 transition-all">
+          <button onClick={() => toast.success('Exporting registry report...')} className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-button text-button flex items-center gap-2 hover:bg-slate-50 transition-all">
             <Download size={18} />
             Export Report
           </button>
-          <button className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button flex items-center gap-2 shadow-sm hover:opacity-90 transition-all">
+          <button onClick={() => toast.info('Opening new registration form...')} className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button flex items-center gap-2 shadow-sm hover:opacity-90 transition-all">
             <Plus size={18} />
             New Registration
           </button>
@@ -68,10 +71,10 @@ export default function RegistryEnrollmentHub() {
             <div className="p-lg border-b border-border-subtle flex items-center justify-between">
               <h3 className="font-h3 text-h3 text-slate-900">Student Registration Status</h3>
               <div className="flex gap-2">
-                <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                <button onClick={() => toast.info('Filters applied')} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                   <Filter size={20} />
                 </button>
-                <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                <button onClick={() => toast.info('Sorting table...')} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                   <ArrowUpDown size={20} />
                 </button>
               </div>
@@ -143,8 +146,8 @@ export default function RegistryEnrollmentHub() {
             <div className="p-4 border-t border-slate-100 flex items-center justify-between">
               <span className="text-sm text-slate-500">Showing 5 of 10 students from Group A</span>
               <div className="flex gap-2">
-                <button className="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50 text-sm">Previous</button>
-                <button className="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50 text-sm">Next</button>
+                <button onClick={() => toast.error('Already on first page')} className="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50 text-sm">Previous</button>
+                <button onClick={() => toast.info('Loading next page...')} className="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50 text-sm">Next</button>
               </div>
             </div>
           </div>
@@ -158,21 +161,21 @@ export default function RegistryEnrollmentHub() {
               <h3 className="font-h3 text-h3 text-slate-900">Quick Actions</h3>
             </div>
             <div className="p-md space-y-3">
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
+              <button onClick={() => toast.success('Initializing bulk enrollment...')} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
                 <div className="flex items-center gap-3">
                   <BookOpen className="text-blue-600 group-hover:text-white" size={20} />
                   <span className="font-medium">Bulk Enroll</span>
                 </div>
                 <ChevronRight className="text-slate-400 group-hover:text-white" size={20} />
               </button>
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
+              <button onClick={() => toast.error('No conflicts to resolve at this time')} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
                 <div className="flex items-center gap-3">
                   <FileWarning className="text-blue-600 group-hover:text-white" size={20} />
                   <span className="font-medium">Resolve Conflicts</span>
                 </div>
                 <ChevronRight className="text-slate-400 group-hover:text-white" size={20} />
               </button>
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
+              <button onClick={() => toast.success('Auto-assigning schedules...')} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all group">
                 <div className="flex items-center gap-3">
                   <Calendar className="text-blue-600 group-hover:text-white" size={20} />
                   <span className="font-medium">Auto-Assign Sched</span>
@@ -218,7 +221,7 @@ export default function RegistryEnrollmentHub() {
                   <p className="text-xs text-slate-500 mt-1">Final reporting for statistics</p>
                 </div>
               </div>
-              <button className="w-full mt-2 py-2 text-blue-600 font-button text-button hover:underline text-center">
+              <button onClick={() => toast.info('Loading calendar...')} className="w-full mt-2 py-2 text-blue-600 font-button text-button hover:underline text-center">
                 View Academic Calendar
               </button>
             </div>
@@ -229,7 +232,7 @@ export default function RegistryEnrollmentHub() {
             <div className="relative z-10">
               <h4 className="font-semibold text-lg">Registry Guide</h4>
               <p className="text-slate-400 text-sm mt-2">Need help with student overrides or waitlist prioritization?</p>
-              <button className="mt-4 bg-white text-slate-900 px-4 py-2 rounded font-button text-button hover:bg-blue-50 transition-colors">
+              <button onClick={() => toast.info('Opening documentation...')} className="mt-4 bg-white text-slate-900 px-4 py-2 rounded font-button text-button hover:bg-blue-50 transition-colors">
                 Access Documentation
               </button>
             </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Calendar as CalendarIcon, Clock, Link as LinkIcon, Plus, Save, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { SchoolEvent } from '@/lib/types';
 
 interface GlobalCalendarWidgetProps {
@@ -46,6 +47,7 @@ export default function GlobalCalendarWidget({ isOpen, onClose, readOnly = false
       setIsAdding(false);
       setNewEvent({});
       setSaving(false);
+      toast.success('Event added successfully!');
     }, 500);
   };
 

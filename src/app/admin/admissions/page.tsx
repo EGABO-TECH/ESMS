@@ -1,4 +1,7 @@
+"use client";
+
 import { Download, Plus, FileText, UserCheck, FolderOpen, AlertCircle, FileDigit, FileSignature } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AdmissionsDashboard() {
   return (
@@ -10,10 +13,10 @@ export default function AdmissionsDashboard() {
           <p className="font-body-lg text-body-lg text-slate-500 mt-1">Cavendish University Uganda Central Portal</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-white border border-border-subtle px-4 py-2 rounded-lg font-button text-button text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+          <button onClick={() => toast.success('Exporting admissions report...')} className="bg-white border border-border-subtle px-4 py-2 rounded-lg font-button text-button text-slate-700 hover:bg-slate-50 flex items-center gap-2">
             <Download size={20} /> Export Report
           </button>
-          <button className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button hover:opacity-90 flex items-center gap-2">
+          <button onClick={() => toast.info('Opening application form...')} className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button hover:opacity-90 flex items-center gap-2">
             <Plus size={20} /> New Application
           </button>
         </div>
@@ -128,7 +131,7 @@ export default function AdmissionsDashboard() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
+                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
                 </td>
               </tr>
               {/* Row 2 */}
@@ -153,7 +156,7 @@ export default function AdmissionsDashboard() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
+                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
                 </td>
               </tr>
               {/* Row 3 */}
@@ -179,7 +182,7 @@ export default function AdmissionsDashboard() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
+                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
                 </td>
               </tr>
             </tbody>
@@ -188,11 +191,11 @@ export default function AdmissionsDashboard() {
         <div className="p-4 border-t border-slate-100 flex items-center justify-between">
           <p className="text-sm text-slate-500">Showing 1 to 3 of 403 entries</p>
           <div className="flex gap-1">
-            <button className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Prev</button>
+            <button onClick={() => toast.error('Already on first page')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Prev</button>
             <button className="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
-            <button className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">2</button>
-            <button className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">3</button>
-            <button className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Next</button>
+            <button onClick={() => toast.info('Loading page 2...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">2</button>
+            <button onClick={() => toast.info('Loading page 3...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">3</button>
+            <button onClick={() => toast.info('Loading next page...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Next</button>
           </div>
         </div>
       </div>

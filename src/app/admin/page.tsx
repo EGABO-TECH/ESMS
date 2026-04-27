@@ -1,6 +1,9 @@
-import { TrendingUp, Users, GraduationCap, BookOpen, DollarSign, AlertTriangle, MessageSquare, CheckCircle } from "lucide-react";
+"use client";
 
-export default async function AdminDashboard() {
+import { TrendingUp, Users, GraduationCap, BookOpen, DollarSign, AlertTriangle, MessageSquare, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
+
+export default function AdminDashboard() {
   // Mock Data
   const totalStudents = 4892;
   const totalStaff = 342;
@@ -136,7 +139,7 @@ export default async function AdminDashboard() {
                 <p className="font-bold text-slate-800 text-sm">MM Reconciliation Alert</p>
               </div>
               <p className="text-xs text-slate-500">Discrepancy found in MTN batch. Review needed.</p>
-              <button className="text-error text-xs font-bold mt-2 hover:underline">RE-EXAMINE TRANSACTION →</button>
+              <button onClick={() => toast.error('Transaction sent for review')} className="text-error text-xs font-bold mt-2 hover:underline">RE-EXAMINE TRANSACTION →</button>
             </div>
             <div className="p-4 bg-exam-warning/5 border border-exam-warning/20 rounded-xl">
               <div className="flex items-center gap-2 mb-1">
@@ -144,7 +147,7 @@ export default async function AdminDashboard() {
                 <p className="font-bold text-slate-800 text-sm">Moderation Pending</p>
               </div>
               <p className="text-xs text-slate-500">Semester II results awaiting final approval.</p>
-              <button className="text-exam-warning text-xs font-bold mt-2 hover:underline">GO TO MODERATION →</button>
+              <button onClick={() => toast.success('Opening moderation portal...')} className="text-exam-warning text-xs font-bold mt-2 hover:underline">GO TO MODERATION →</button>
             </div>
             <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
               <div className="flex items-center gap-2 mb-1">
@@ -152,7 +155,7 @@ export default async function AdminDashboard() {
                 <p className="font-bold text-slate-800 text-sm">Communication Broadcast</p>
               </div>
               <p className="text-xs text-slate-500">Graduation 2024 announcement draft ready.</p>
-              <button className="text-primary text-xs font-bold mt-2 hover:underline">VIEW DRAFT →</button>
+              <button onClick={() => toast.info('Loading draft viewer')} className="text-primary text-xs font-bold mt-2 hover:underline">VIEW DRAFT →</button>
             </div>
           </div>
         </div>
