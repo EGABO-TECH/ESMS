@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings, Shield, Bell, Globe, User, Lock, Database, Save, ChevronRight } from "lucide-react";
+import { Settings, Shield, Bell, Globe, Lock, Database, Save, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 

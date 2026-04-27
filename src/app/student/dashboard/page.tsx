@@ -39,6 +39,7 @@ export default function StudentDashboard() {
         {/* Profile Image Section */}
         <div className="relative shrink-0">
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center shadow-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
               alt={profile.full_name}

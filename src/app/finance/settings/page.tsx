@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings, Shield, Bell, DollarSign, Wallet, Save, ChevronRight, Lock } from "lucide-react";
+import { Settings, Bell, DollarSign, Wallet, Save, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -60,6 +60,7 @@ export default function FinanceSettingsPage() {
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MTN_Logo.svg" alt="MTN" className="w-full h-full object-contain" />
                     </div>
                     <div>

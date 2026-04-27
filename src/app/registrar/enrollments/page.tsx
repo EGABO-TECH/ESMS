@@ -1,7 +1,7 @@
 "use client";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
-import { UserPlus, Search, Filter, CheckCircle, Clock, XCircle, MoreVertical, ChevronRight, BookOpen } from "lucide-react";
+import { UserPlus, Search, Filter, CheckCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 export default function RegistrarEnrollmentsPage() {

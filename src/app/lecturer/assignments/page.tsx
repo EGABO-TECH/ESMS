@@ -1,8 +1,7 @@
 "use client";
 
-import { ClipboardList, Plus, Search, Filter, Clock, CheckCircle, AlertCircle, FileText, Download, MoreVertical, Users } from "lucide-react";
+import { ClipboardList, Plus, Search, CheckCircle, Users } from "lucide-react";
 import { toast } from "sonner";
-import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function LecturerAssignmentsPage() {
   const assignments = [

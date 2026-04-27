@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Mail, Megaphone, Search, Filter, Clock, ChevronRight, CheckCircle2, MessageSquare } from "lucide-react";
+import { Mail, Megaphone, Search, CheckCircle2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export default function StudentCommunicationPage() {

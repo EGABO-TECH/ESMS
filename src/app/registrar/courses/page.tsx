@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { BookOpen, Search, Filter, Plus, BookText, GraduationCap, Clock, CheckCircle, XCircle, ChevronRight, MoreVertical } from "lucide-react";
+import { BookOpen, Search, Filter, Plus, BookText, GraduationCap, Clock, CheckCircle, XCircle, MoreVertical } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarCoursesPage() {

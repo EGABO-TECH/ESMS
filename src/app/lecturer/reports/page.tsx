@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, FileText, Download, Filter, Search, Users, GraduationCap, ChevronRight, TrendingUp } from "lucide-react";
+import { BarChart, FileText, Download, Search, Users, GraduationCap, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LecturerReportsPage() {

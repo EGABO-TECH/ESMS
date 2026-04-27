@@ -104,6 +104,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
               className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity shadow-sm"
               title="Logout"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
                 alt="Student Profile"

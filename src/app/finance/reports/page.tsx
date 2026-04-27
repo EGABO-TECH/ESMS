@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, FileText, Download, Filter, Search, TrendingUp, TrendingDown, Banknote, CreditCard, ChevronRight, PieChart } from "lucide-react";
+import { BarChart, FileText, Download, Search, TrendingUp, Banknote, CreditCard, PieChart } from "lucide-react";
 import { toast } from "sonner";
 
 export default function FinanceReportsPage() {
