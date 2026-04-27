@@ -1,145 +1,272 @@
 "use client";
 
-import { Zap, Wallet, Filter, Info } from "lucide-react";
+import { useState } from "react";
+import { Zap, Wallet, Info, Printer, Building2, Smartphone, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const statusBadge = (status: string) => {
-  if (status === "confirmed") return "bg-finance-success/10 text-finance-success";
-  if (status === "pending") return "bg-exam-warning/10 text-exam-warning";
-  return "bg-error/10 text-error";
-};
+// ─── Mock Data ────────────────────────────────────────────────────────────────
+const HAS_BALANCE = true;
+
+const rawTransactions = [
+  { date: "01/02/2026", desc: "Tuition Fees — Semester 1",    debit: 1_800_000, credit: 0 },
+  { date: "01/02/2026", desc: "Functional Fees",               debit: 450_000,  credit: 0 },
+  { date: "05/02/2026", desc: "Bank Payment — Stanbic",        debit: 0,         credit: 1_000_000 },
+  { date: "15/03/2026", desc: "Mobile Money Payment",          debit: 0,         credit: 500_000 },
+];
+
+// Build running balance ledger
+let running = 0;
+const ledger = rawTransactions.map(t => {
+  running += t.debit - t.credit;
+  return { ...t, balance: running };
+});
+
+const totalBilled  = rawTransactions.reduce((s, t) => s + t.debit,  0);
+const totalPaid    = rawTransactions.reduce((s, t) => s + t.credit, 0);
+const outstanding  = running; // final running balance
+
+
 
 export default function StudentFinance() {
-  // Mock Data
+  const [balance, setBalance] = useState(outstanding);
+  const [isCleared, setIsCleared] = useState(!HAS_BALANCE || outstanding <= 0);
+  const [simulating, setSimulating] = useState(false);
+  const [payAmount, setPayAmount] = useState(String(outstanding));
+  const [showPayPanel, setShowPayPanel] = useState(false);
 
-  
-  const finance = {
-    academic_year: "2024/2025",
-    semester: 1,
-    balance_ugx: 1250000,
-    amount_ugx: 2500000,
-    due_date: "2024-05-15T00:00:00Z"
+  const handleSimulatePayment = () => {
+    const amount = Number(payAmount);
+    if (!amount || amount <= 0) { toast.error("Enter a valid amount."); return; }
+    if (amount > balance)       { toast.error("Payment exceeds outstanding balance."); return; }
+
+    setSimulating(true);
+    setTimeout(() => {
+      const newBal = balance - amount;
+      setBalance(newBal);
+      setIsCleared(newBal <= 0);
+      setSimulating(false);
+      setShowPayPanel(false);
+      toast.success(`UGX ${amount.toLocaleString()} processed via Mobile Money. ${newBal <= 0 ? "Account fully cleared! 🎉" : `Remaining: UGX ${newBal.toLocaleString()}`}`);
+    }, 1500);
   };
 
-  const transactions = [
-    { id: 1, transaction_date: "2024-02-10T00:00:00Z", reference: "MTN-8X9Y2", description: "Mobile Money Payment", amount_ugx: 1250000, status: "confirmed" },
-    { id: 2, transaction_date: "2024-01-20T00:00:00Z", reference: "BANK-INV1", description: "Initial Deposit", amount_ugx: 500000, status: "confirmed" }
-  ];
-
-  const balance = finance?.balance_ugx ?? 0;
-  const isArrears = balance > 0;
+  const finance = {
+    academic_year: "2025/2026",
+    semester: 1,
+    amount_ugx: 2_250_000,
+    due_date: "2026-05-18T00:00:00Z",
+  };
 
   return (
-    <main className="w-full">
+    <main className="w-full pb-12">
       <div className="mb-6">
         <h1 className="text-3xl font-black text-on-surface">Finance Ledger</h1>
-        <p className="text-sm text-on-surface-variant mt-1">Academic Year {finance?.academic_year ?? "2024/2025"} · Semester {finance?.semester ?? 1}</p>
+        <p className="text-sm text-on-surface-variant mt-1">Academic Year {finance.academic_year} · Semester {finance.semester}</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        {/* Left: Summary */}
+        {/* ── Left: Summary ── */}
         <div className="xl:col-span-4 space-y-4">
-          <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm overflow-hidden relative">
+          {/* Balance Card */}
+          <div className="bg-white p-6 rounded-2xl border border-border-subtle shadow-sm overflow-hidden relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
-            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 relative z-10">Overall Balance</p>
-            <h2 className={`text-4xl font-black mb-2 relative z-10 ${isArrears ? "text-error" : "text-finance-success"}`}>
-              UGX {balance.toLocaleString()}
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 relative z-10">Outstanding Balance</p>
+            <h2 className={`text-4xl font-black mb-2 relative z-10 ${balance > 0 ? "text-error" : "text-finance-success"}`}>
+              {balance > 0 ? `UGX ${balance.toLocaleString()}` : "CLEARED"}
             </h2>
-            <div className={`inline-flex items-center px-2 py-1 text-[10px] font-bold rounded uppercase tracking-wider mb-4 relative z-10 ${isArrears ? "bg-error/10 text-error" : "bg-finance-success/10 text-finance-success"}`}>
-              {isArrears ? "ARREARS" : "CLEARED"}
+
+            {/* Clearance Status Badge */}
+            <div className={`inline-flex items-center gap-2 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-wider mb-4 relative z-10 ${isCleared ? "bg-finance-success/10 text-finance-success" : "bg-error/10 text-error"}`}>
+              <div className={`w-2 h-2 rounded-full animate-pulse ${isCleared ? "bg-finance-success" : "bg-error"}`} />
+              {isCleared ? "FINANCIALLY CLEARED" : "PENDING CLEARANCE"}
             </div>
+
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border-subtle relative z-10">
               <div>
-                <p className="text-xs font-bold text-on-surface-variant uppercase">Term Fees</p>
-                <p className="text-xl font-black text-on-surface">UGX {(finance?.amount_ugx ?? 0).toLocaleString()}</p>
+                <p className="text-xs font-bold text-on-surface-variant uppercase">Total Fees</p>
+                <p className="text-xl font-black text-on-surface">UGX {finance.amount_ugx.toLocaleString()}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold text-on-surface-variant uppercase">Due Date</p>
                 <p className="text-sm font-semibold text-on-surface">
-                  {finance?.due_date
-                    ? new Date(finance.due_date).toLocaleDateString("en-UG", { day: "numeric", month: "short", year: "numeric" })
-                    : "—"}
+                  {new Date(finance.due_date).toLocaleDateString("en-UG", { day: "numeric", month: "short", year: "numeric" })}
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => toast.success('Redirecting to payment gateway...')} className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:opacity-90">
-              <Zap size={18} />
-              Quick-pay
+            <button
+              onClick={() => setShowPayPanel(v => !v)}
+              className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:opacity-90"
+            >
+              <Zap size={18} /> Quick-pay
             </button>
-            <button onClick={() => toast.info('Opening wallet manager...')} className="flex items-center justify-center gap-2 bg-white border border-border-subtle text-on-surface py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:bg-slate-50">
-              <Wallet size={18} />
-              Manage
+            <button
+              onClick={() => toast.info("Opening wallet manager...")}
+              className="flex items-center justify-center gap-2 bg-white border border-border-subtle text-on-surface py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:bg-slate-50"
+            >
+              <Wallet size={18} /> Manage
             </button>
           </div>
-        </div>
 
-        {/* Right: Transactions */}
-        <div className="xl:col-span-8 space-y-4">
-          <section className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border-subtle flex justify-between items-center bg-surface-container-low/30">
-              <h3 className="text-lg font-bold text-on-surface">Payment History</h3>
-              <Filter className="text-outline" size={20} />
+          {/* Exam Permit Info */}
+          <div className="p-4 bg-exam-warning/5 rounded-xl flex gap-3 items-start border border-exam-warning/20">
+            <AlertCircle className="text-exam-warning mt-0.5 shrink-0" size={18} />
+            <div>
+              <p className="font-semibold text-on-surface text-sm">Exam Permit Requirement</p>
+              <p className="text-xs text-on-surface-variant leading-relaxed mt-1">
+                A <strong>Zero Balance</strong> is required to generate your Exam Permit and view final results.
+              </p>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-surface-bg/50">
-                  <tr>
-                    <th className="px-6 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Description</th>
-                    <th className="px-6 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Amount (UGX)</th>
-                    <th className="px-6 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border-subtle">
-                  {transactions && transactions.length > 0 ? (
-                    transactions.map(tx => (
-                      <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-medium text-on-surface">
-                            {new Date(tx.transaction_date).toLocaleDateString("en-UG", { day: "numeric", month: "short", year: "numeric" })}
-                          </p>
-                          {tx.reference && <p className="text-xs text-slate-400">{tx.reference}</p>}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-600">{tx.description}</td>
-                        <td className="px-6 py-4 text-right font-bold text-on-surface">{tx.amount_ugx.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right">
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${statusBadge(tx.status)}`}>
-                            {tx.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                        No transactions recorded yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {transactions && transactions.length > 0 && (
-              <button onClick={() => toast.info('Loading full transaction history...')} className="w-full py-3 text-primary font-semibold text-sm bg-primary/5 hover:bg-primary/10 transition-colors">
-                View All Transactions
-              </button>
-            )}
-          </section>
+          </div>
 
-          {/* Help Banner */}
+          {/* Bursar Help */}
           <div className="p-4 bg-secondary-container/30 rounded-xl flex gap-3 items-start border border-secondary-container">
-            <Info className="text-on-secondary-container mt-0.5 shrink-0" size={20} />
+            <Info className="text-on-secondary-container mt-0.5 shrink-0" size={18} />
             <div>
               <p className="font-semibold text-on-secondary-container text-sm">Need help with your balance?</p>
               <p className="text-xs text-on-secondary-container opacity-80 leading-relaxed mt-1">
-                Financial aid and scholarship deductions are updated every 24 hours. Contact the Bursar&apos;s office at{" "}
+                Contact the Bursar&apos;s office at{" "}
                 <a href="mailto:bursar@cavendish.ac.ug" className="underline">bursar@cavendish.ac.ug</a> for immediate queries.
               </p>
             </div>
           </div>
+        </div>
+
+        {/* ── Right: Ledger & Payment ── */}
+        <div className="xl:col-span-8 space-y-6">
+
+          {/* Simulate Payment Panel */}
+          {showPayPanel && (
+            <div className="bg-primary rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+              <div className="relative z-10">
+                <h4 className="text-xl font-bold mb-1">Simulate Mobile Money Payment</h4>
+                <p className="text-blue-100 text-sm mb-6">Test the Financial Gate by paying your outstanding balance.</p>
+                <div className="flex gap-3">
+                  <div className="flex-1 relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold text-sm">UGX</span>
+                    <input
+                      type="number"
+                      value={payAmount}
+                      onChange={e => setPayAmount(e.target.value)}
+                      className="w-full bg-white text-on-surface font-bold pl-14 pr-4 py-3 rounded-xl outline-none text-sm"
+                      placeholder="Amount"
+                    />
+                  </div>
+                  <button
+                    onClick={handleSimulatePayment}
+                    disabled={simulating}
+                    className="bg-white text-primary px-6 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg active:scale-95 disabled:opacity-60 flex items-center gap-2"
+                  >
+                    {simulating
+                      ? <><span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> Processing...</>
+                      : <><Smartphone size={18} /> Pay Now</>
+                    }
+                  </button>
+                  <button onClick={() => setShowPayPanel(false)} className="text-blue-200 hover:text-white text-sm font-medium px-2">Cancel</button>
+                </div>
+              </div>
+              <Smartphone className="absolute -right-4 -bottom-4 w-32 h-32 text-white/10" />
+            </div>
+          )}
+
+          {/* Financial Statement Header */}
+          <div className="bg-white rounded-2xl border border-border-subtle shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border-subtle flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-low/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#00174b] rounded-xl flex items-center justify-center text-white">
+                  <Building2 size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-on-surface">Financial Statement</h3>
+                  <p className="text-xs text-on-surface-variant">Cavendish University Uganda · Ggaba Road, Kampala</p>
+                </div>
+              </div>
+              <div className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 ${isCleared ? "bg-finance-success/10 text-finance-success" : "bg-error/10 text-error"}`}>
+                <div className={`w-2 h-2 rounded-full animate-pulse ${isCleared ? "bg-finance-success" : "bg-error"}`} />
+                {isCleared ? "FINANCIALLY CLEARED" : "PENDING CLEARANCE"}
+              </div>
+            </div>
+
+            {/* Running Balance Ledger Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-[#00174b] text-white text-[10px] uppercase tracking-widest">
+                  <tr>
+                    <th className="px-6 py-4">Date</th>
+                    <th className="px-6 py-4">Description</th>
+                    <th className="px-6 py-4 text-right">Debit (Charges)</th>
+                    <th className="px-6 py-4 text-right">Credit (Payments)</th>
+                    <th className="px-6 py-4 text-right">Balance (UGX)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle text-sm">
+                  {ledger.map((t, i) => (
+                    <tr key={i} className={`${i % 2 === 0 ? "bg-white" : "bg-surface-container-low/20"} hover:bg-slate-50 transition-colors`}>
+                      <td className="px-6 py-4 text-on-surface-variant font-medium whitespace-nowrap">{t.date}</td>
+                      <td className="px-6 py-4 font-semibold text-on-surface">{t.desc}</td>
+                      <td className="px-6 py-4 text-right text-error font-medium">
+                        {t.debit > 0 ? t.debit.toLocaleString() : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-right text-finance-success font-medium">
+                        {t.credit > 0 ? t.credit.toLocaleString() : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-right font-bold text-on-surface">
+                        {t.balance.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Totals Footer */}
+            <div className="p-6 bg-surface-container-low/30 flex flex-col md:flex-row justify-end gap-8 border-t border-border-subtle">
+              <div className="text-right">
+                <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Total Billed</p>
+                <p className="text-xl font-black text-on-surface">UGX {totalBilled.toLocaleString()}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Total Paid</p>
+                <p className="text-xl font-black text-finance-success">UGX {totalPaid.toLocaleString()}</p>
+              </div>
+              <div className="text-right bg-white px-6 py-3 rounded-xl shadow-sm border border-border-subtle">
+                <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Outstanding Balance</p>
+                <p className={`text-2xl font-black ${balance > 0 ? "text-error" : "text-finance-success"}`}>
+                  {balance > 0 ? `UGX ${balance.toLocaleString()}` : "CLEARED"}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="p-4 border-t border-border-subtle flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+                {isCleared
+                  ? <><CheckCircle size={14} className="text-finance-success" /> Account is financially cleared</>
+                  : <><AlertCircle size={14} className="text-error" /> Balance must be cleared before exam permits are issued</>
+                }
+              </div>
+              <button
+                onClick={() => toast.info("Printing full statement...")}
+                className="flex items-center gap-2 text-primary text-xs font-bold hover:underline"
+              >
+                <Printer size={14} /> Print Full Statement
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Money CTA (if balance) */}
+          {balance > 0 && !showPayPanel && (
+            <button
+              onClick={() => setShowPayPanel(true)}
+              className="w-full py-4 bg-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-lg"
+            >
+              <Smartphone size={20} />
+              Simulate Mobile Money Payment
+            </button>
+          )}
         </div>
       </div>
     </main>

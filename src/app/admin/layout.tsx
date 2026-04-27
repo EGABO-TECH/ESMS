@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { 
@@ -26,7 +27,19 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const router = useRouter();
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   return (
     <div className="bg-surface-bg text-on-surface flex h-screen overflow-hidden">
@@ -162,10 +175,71 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               >
                 <CalendarDays size={20} />
               </button>
-              <button onClick={() => toast.info('No new notifications')} className="relative p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
-                <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-              </button>
+              {/* Notifications Dropdown */}
+              <div className="relative hidden sm:block" ref={notifRef}>
+                <button
+                  onClick={() => setIsNotifOpen(v => !v)}
+                  className="relative p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors"
+                >
+                  <Bell size={20} />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-white" />
+                </button>
+
+                {isNotifOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-border-subtle overflow-hidden z-50">
+                    <div className="p-4 bg-[#00174b] text-white flex justify-between items-center">
+                      <h4 className="font-bold text-sm">System Alerts</h4>
+                      <span className="text-[10px] bg-blue-500 px-2 py-0.5 rounded-full font-bold uppercase">3 New</span>
+                    </div>
+                    <div className="divide-y divide-border-subtle max-h-80 overflow-y-auto">
+                      <div className="p-4 hover:bg-slate-50 transition-all flex gap-3">
+                        <div className="p-2 bg-error/10 text-error rounded-lg h-fit shrink-0">
+                          <Bell size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">Financial Alert</p>
+                          <p className="text-[11px] text-slate-500 mt-1">14 students have outstanding balances due by May 18. Exam permits blocked.</p>
+                        </div>
+                      </div>
+                      <div className="p-4 hover:bg-slate-50 transition-all flex gap-3">
+                        <div className="p-2 bg-finance-success/10 text-finance-success rounded-lg h-fit shrink-0">
+                          <Bell size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">New Academic Results</p>
+                          <p className="text-[11px] text-slate-500 mt-1">Semester 1 provisional results uploaded for SWE311 &amp; SWE312.</p>
+                        </div>
+                      </div>
+                      <div className="p-4 hover:bg-slate-50 transition-all flex gap-3">
+                        <div className="p-2 bg-primary/10 text-primary rounded-lg h-fit shrink-0">
+                          <Bell size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">Submission Portal Active</p>
+                          <p className="text-[11px] text-slate-500 mt-1">Assignment portal for COM211 is now open. 47 submissions received.</p>
+                        </div>
+                      </div>
+                      <div className="p-4 hover:bg-slate-50 transition-all flex gap-3">
+                        <div className="p-2 bg-exam-warning/10 text-exam-warning rounded-lg h-fit shrink-0">
+                          <Bell size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">3 New Admissions</p>
+                          <p className="text-[11px] text-slate-500 mt-1">3 new applications pending review in the Admissions portal.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 border-t border-border-subtle text-center">
+                      <button
+                        onClick={() => { setIsNotifOpen(false); toast.info("Loading all notifications..."); }}
+                        className="text-xs text-primary font-bold hover:underline"
+                      >
+                        View all notifications
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
               <button onClick={() => toast.info('Help documentation opened')} className="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden sm:block">
                 <HelpCircle size={20} />
               </button>
