@@ -25,7 +25,7 @@ const student = {
   nationality: "Ugandan",
   phone: "+256 701 234 567",
   emergency_contact: "+256 772 999 888",
-  campus: "Ggaba Campus",
+  campus: "Siyani Campus",
   enrolled_date: "Jan 15, 2024",
   expected_graduation: "Dec 15, 2027",
 };
