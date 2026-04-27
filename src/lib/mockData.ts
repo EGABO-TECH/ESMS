@@ -73,12 +73,13 @@ export const MOCK_STATS = {
 };
 
 export const MOCK_COURSES = [
-  { code: "SWE311", name: "Software Lifecycle Management", faculty: "Science & Technology", credits: 4, lecturer: "Dr. Sarah Johnson", status: "Active", students: 64, schedule: "Mon/Wed 10:00 AM", room: "LT-4" },
-  { code: "SWE313", name: "Cloud Computing Architecture", faculty: "Science & Technology", credits: 3, lecturer: "Mr. Egabo Aaron", status: "Active", students: 58, schedule: "Tue/Thu 02:00 PM", room: "Lab-2" },
-  { code: "BBA101", name: "Introduction to Business", faculty: "Business & Management", credits: 4, lecturer: "Prof. Alice M.", status: "Active", students: 120, schedule: "Wed 09:00 AM", room: "LT-1" },
-  { code: "LLB211", name: "Constitutional Law", faculty: "Law", credits: 4, lecturer: "Justice Brenda A.", status: "Inactive", students: 45, schedule: "Thu 11:00 AM", room: "LT-2" },
-  { code: "DSI101", name: "Data Science Fundamentals", faculty: "Science & Technology", credits: 4, lecturer: "Dr. Nancy Faida", status: "Active", students: 52, schedule: "Fri 10:00 AM", room: "Lab-3" },
+  { code: "SWE311", name: "Software Lifecycle Management", faculty: "Science & Technology", credits: 4, lecturer: "Dr. Sarah Johnson", status: "Active", students: 64, schedule: "Mon/Wed 10:00 AM", room: "LT-4", progress: 85, nextClass: "Tomorrow, 10:00 AM" },
+  { code: "SWE313", name: "Cloud Computing Architecture", faculty: "Science & Technology", credits: 3, lecturer: "Mr. Egabo Aaron", status: "Active", students: 58, schedule: "Tue/Thu 02:00 PM", room: "Lab-2", progress: 70, nextClass: "Today, 02:00 PM" },
+  { code: "BBA101", name: "Introduction to Business", faculty: "Business & Management", credits: 4, lecturer: "Prof. Alice M.", status: "Active", students: 120, schedule: "Wed 09:00 AM", room: "LT-1", progress: 45, nextClass: "Wed, 09:00 AM" },
+  { code: "LLB211", name: "Constitutional Law", faculty: "Law", credits: 4, lecturer: "Justice Brenda A.", status: "Inactive", students: 45, schedule: "Thu 11:00 AM", room: "LT-2", progress: 90, nextClass: "Thu, 11:00 AM" },
+  { code: "DSI101", name: "Data Science Fundamentals", faculty: "Science & Technology", credits: 4, lecturer: "Dr. Nancy Faida", status: "Active", students: 52, schedule: "Fri 10:00 AM", room: "Lab-3", progress: 30, nextClass: "Friday, 10:00 AM" },
 ];
+
 
 export const MOCK_TRANSACTIONS = [
   { id: "TXN-8821", student: "Egabo Aaron", amount: "UGX 1,250,000", method: "MTN MoMo", date: "Oct 24, 2025", status: "Verified", reference: "MTN-9921-X" },
