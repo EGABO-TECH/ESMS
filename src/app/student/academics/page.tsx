@@ -82,19 +82,19 @@ export default function StudentAcademics() {
               <span className="text-xs font-bold text-on-surface-variant block mb-1 uppercase tracking-wider">Cumulative GPA</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl font-black text-primary">{student.cgpa.toFixed(2)}</span>
-                <span className="text-2xl font-bold text-on-surface-variant">/ 4.0</span>
+                <span className="text-2xl font-bold text-on-surface-variant">/ 5.0</span>
               </div>
             </div>
-            <div className="bg-finance-success/10 text-finance-success px-3 py-1 rounded-full text-xs font-bold">
-              {student.cgpa >= 3.6 ? "FIRST CLASS" : student.cgpa >= 3.0 ? "UPPER 2ND" : "PASS"}
+            <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              {student.cgpa >= 4.5 ? "FIRST CLASS" : student.cgpa >= 3.5 ? "SECOND UPPER" : student.cgpa >= 2.4 ? "SECOND LOWER" : "PASS"}
             </div>
           </div>
           <div className="w-full bg-surface-container rounded-full h-3 overflow-hidden">
-            <div className="bg-primary h-full rounded-full transition-all duration-700" style={{ width: `${(student.cgpa / 4.0) * 100}%` }} />
+            <div className="bg-primary h-full rounded-full transition-all duration-700" style={{ width: `${(student.cgpa / 5.0) * 100}%` }} />
           </div>
           <div className="flex justify-between text-xs font-medium text-on-surface-variant mt-2">
-            <span>PROGRESS TO GRADUATION</span>
-            <span>{Math.round((student.cgpa / 4.0) * 100)}%</span>
+            <span>OVERALL PERFORMANCE</span>
+            <span>{Math.round((student.cgpa / 5.0) * 100)}%</span>
           </div>
         </section>
 

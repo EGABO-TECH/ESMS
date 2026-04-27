@@ -36,7 +36,15 @@ export default function StudentProfile() {
   const [showID, setShowID] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  const gradeClass = student.cgpa >= 4.6 ? "First Class" : student.cgpa >= 4.0 ? "Upper Second" : "Lower Second";
+  const getGradeClass = (cgpa: number) => {
+    if (cgpa >= 4.5) return "First Class";
+    if (cgpa >= 3.5) return "Second Class Upper";
+    if (cgpa >= 2.4) return "Second Class Lower";
+    if (cgpa >= 1.5) return "Third Class";
+    if (cgpa >= 1.1) return "Pass";
+    return "Fail";
+  };
+  const gradeClass = getGradeClass(student.cgpa);
 
   return (
     <main className="w-full pb-12">
