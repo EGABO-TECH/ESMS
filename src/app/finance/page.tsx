@@ -69,7 +69,7 @@ export default function FinanceDashboard() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                 <input className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 w-48" placeholder="Search Txn ID..." />
               </div>
-              <button className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
+              <button onClick={() => alert('Feature in development...')}  className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
                 <Filter size={14} />
               </button>
             </div>
@@ -151,7 +151,7 @@ export default function FinanceDashboard() {
           <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
             <h3 className="font-bold mb-2">System Reconciler</h3>
             <p className="text-slate-400 text-xs mb-4">Automatically match bank statements with student ledgers.</p>
-            <button className="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-sm hover:bg-emerald-600 transition-all shadow-lg">
+            <button onClick={() => alert('Feature in development...')}  className="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-sm hover:bg-emerald-600 transition-all shadow-lg">
               Start Auto-Reconcile
             </button>
           </div>

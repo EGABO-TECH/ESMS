@@ -81,7 +81,7 @@ export default function RegistrarStudentsPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-100 transition-all">
+          <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-100 transition-all">
             <Filter size={18} /> Filter by Intake
           </button>
         </div>
@@ -120,7 +120,7 @@ export default function RegistrarStudentsPage() {
                       <button onClick={() => toast.info(`Viewing academic file for ${s.id}`)} className="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-lg text-[11px] font-black uppercase transition-all">
                         Full File
                       </button>
-                      <button className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                      <button onClick={() => alert('Feature in development...')}  className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
                         <History size={16} />
                       </button>
                     </div>

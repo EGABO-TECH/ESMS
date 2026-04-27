@@ -192,7 +192,7 @@ export default function AdmissionsDashboard() {
           <p className="text-sm text-slate-500">Showing 1 to 3 of 403 entries</p>
           <div className="flex gap-1">
             <button onClick={() => toast.error('Already on first page')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Prev</button>
-            <button className="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
+            <button onClick={() => alert('Feature in development...')}  className="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
             <button onClick={() => toast.info('Loading page 2...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">2</button>
             <button onClick={() => toast.info('Loading page 3...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">3</button>
             <button onClick={() => toast.info('Loading next page...')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Next</button>

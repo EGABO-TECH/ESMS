@@ -31,7 +31,7 @@ export default function LecturerDashboard() {
             Teaching Materials
           </button>
           <Link href="/lecturer/grades">
-            <button className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+            <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
               Open Grading Center <ArrowRight size={16} />
             </button>
           </Link>

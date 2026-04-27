@@ -74,7 +74,7 @@ export default function AdminStudentsPage() {
             <option>Business Admin</option>
             <option>Laws (LLB)</option>
           </select>
-          <button className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all">
+          <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all">
             <Filter size={18} />
           </button>
         </div>
@@ -141,7 +141,7 @@ export default function AdminStudentsPage() {
                       <button onClick={() => toast.error('Confirm deletion...')} className="p-2 text-slate-400 hover:text-error hover:bg-error/5 rounded-lg transition-all" title="Delete Student">
                         <Trash2 size={16} />
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-slate-600 rounded-lg transition-all">
+                      <button onClick={() => alert('Feature in development...')}  className="p-2 text-slate-400 hover:text-slate-600 rounded-lg transition-all">
                         <MoreHorizontal size={16} />
                       </button>
                     </div>
@@ -155,7 +155,7 @@ export default function AdminStudentsPage() {
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Showing 5 of 4,892 Students</p>
           <div className="flex gap-2">
             <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-50 transition-all disabled:opacity-50" disabled>Previous</button>
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">Next Page</button>
+            <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">Next Page</button>
           </div>
         </div>
       </div>

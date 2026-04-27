@@ -166,7 +166,7 @@ export default function AdminGradesPage() {
                       <button onClick={() => toast.info('Opening class marksheet...')} className="text-primary hover:bg-primary/5 p-2 rounded-lg transition-all" title="View Grades">
                         <Award size={16} />
                       </button>
-                      <button className="text-slate-400 hover:text-slate-600 p-2 rounded-lg transition-all">
+                      <button onClick={() => alert('Feature in development...')}  className="text-slate-400 hover:text-slate-600 p-2 rounded-lg transition-all">
                         <MoreVertical size={16} />
                       </button>
                     </div>

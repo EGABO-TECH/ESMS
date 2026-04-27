@@ -108,7 +108,7 @@ export default function RegistryEnrollmentHub() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
+                        <button onClick={() => alert('Feature in development...')}  className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
                       </td>
                     </tr>
                   ))}

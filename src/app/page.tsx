@@ -119,7 +119,7 @@ export default function Home() {
                 />
                 <span className="text-slate-600 text-sm font-medium group-hover:text-slate-900">Remember me</span>
               </label>
-              <button type="button" className="text-[#001a40] text-sm font-bold hover:underline">
+              <button onClick={() => alert('Feature in development...')}  type="button" className="text-[#001a40] text-sm font-bold hover:underline">
                 Forgot password?
               </button>
             </div>

@@ -88,7 +88,7 @@ export default function AdminUsersPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
+        <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
           <Filter size={18} /> Filter Roles
         </button>
       </div>

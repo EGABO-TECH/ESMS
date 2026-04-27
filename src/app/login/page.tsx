@@ -112,7 +112,7 @@ export default function LoginPage() {
                 />
                 <span className="text-slate-600 text-sm font-medium group-hover:text-slate-900">Remember me</span>
               </label>
-              <button type="button" className="text-[#001a40] text-sm font-bold hover:underline">
+              <button onClick={() => alert('Feature in development...')}  type="button" className="text-[#001a40] text-sm font-bold hover:underline">
                 Forgot password?
               </button>
             </div>
@@ -139,7 +139,7 @@ export default function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-slate-600 text-sm">
               New to the portal?{" "}
-              <button className="text-[#001a40] font-bold hover:underline">
+              <button onClick={() => alert('Feature in development...')}  className="text-[#001a40] font-bold hover:underline">
                 Apply for Account
               </button>
             </p>

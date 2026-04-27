@@ -123,7 +123,7 @@ export default function AdminEnrollmentsPage() {
                     <button onClick={() => toast.error('Application rejected')} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Reject">
                       <XCircle size={18} />
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
+                    <button onClick={() => alert('Feature in development...')}  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
                       <MoreHorizontal size={18} />
                     </button>
                   </div>
@@ -132,7 +132,7 @@ export default function AdminEnrollmentsPage() {
             ))}
           </div>
           
-          <button className="w-full py-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 transition-all">
+          <button onClick={() => alert('Feature in development...')}  className="w-full py-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 transition-all">
             Load Older Applications
           </button>
         </div>
@@ -171,7 +171,7 @@ export default function AdminEnrollmentsPage() {
               </div>
             </div>
             
-            <button className="w-full mt-8 py-3 bg-[#00174b] text-white font-bold rounded-xl text-xs hover:opacity-90 transition-all flex items-center justify-center gap-2">
+            <button onClick={() => alert('Feature in development...')}  className="w-full mt-8 py-3 bg-[#00174b] text-white font-bold rounded-xl text-xs hover:opacity-90 transition-all flex items-center justify-center gap-2">
               Run Eligibility Check <ArrowRight size={14} />
             </button>
           </div>
@@ -180,7 +180,7 @@ export default function AdminEnrollmentsPage() {
             <div className="relative z-10">
               <h4 className="font-bold text-lg mb-2">Policy Manager</h4>
               <p className="text-slate-400 text-xs mb-6">Configure automated enrollment rules and capacity limits per program.</p>
-              <button className="w-full py-3 bg-white text-slate-900 font-black rounded-xl text-sm hover:bg-blue-50 transition-all">
+              <button onClick={() => alert('Feature in development...')}  className="w-full py-3 bg-white text-slate-900 font-black rounded-xl text-sm hover:bg-blue-50 transition-all">
                 Configure Rules
               </button>
             </div>

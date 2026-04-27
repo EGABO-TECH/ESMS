@@ -62,7 +62,7 @@ export default function LecturerCoursesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
+        <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
           <Filter size={18} /> All Semesters
         </button>
       </div>
@@ -105,7 +105,7 @@ export default function LecturerCoursesPage() {
               <button onClick={() => toast.info(`Accessing materials for ${c.code}`)} className="flex-1 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold text-[10px] uppercase rounded-xl hover:bg-white transition-all shadow-sm flex items-center justify-center gap-2">
                 <FileText size={14} /> Course Material
               </button>
-              <button className="px-3 py-2.5 bg-white border border-slate-200 text-slate-400 hover:text-slate-600 rounded-xl transition-all shadow-sm">
+              <button onClick={() => alert('Feature in development...')}  className="px-3 py-2.5 bg-white border border-slate-200 text-slate-400 hover:text-slate-600 rounded-xl transition-all shadow-sm">
                 <MoreVertical size={16} />
               </button>
             </div>
@@ -118,15 +118,15 @@ export default function LecturerCoursesPage() {
           <h2 className="text-2xl font-black mb-2">Teaching Resources</h2>
           <p className="text-indigo-200 text-sm mb-8 max-w-md">Access institutional teaching guidelines, assessment rubrics, and the academic calendar.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
+            <button onClick={() => alert('Feature in development...')}  className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
               <p className="text-[10px] font-black uppercase text-indigo-300 mb-1">Guidelines</p>
               <p className="font-bold text-sm flex items-center justify-between">Assessment Policy <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></p>
             </button>
-            <button className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
+            <button onClick={() => alert('Feature in development...')}  className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
               <p className="text-[10px] font-black uppercase text-indigo-300 mb-1">Calendar</p>
               <p className="font-bold text-sm flex items-center justify-between">Academic Dates <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></p>
             </button>
-            <button className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
+            <button onClick={() => alert('Feature in development...')}  className="bg-white/10 hover:bg-white/20 border border-white/10 p-4 rounded-2xl transition-all text-left group/btn">
               <p className="text-[10px] font-black uppercase text-indigo-300 mb-1">Faculty</p>
               <p className="font-bold text-sm flex items-center justify-between">Member Directory <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></p>
             </button>

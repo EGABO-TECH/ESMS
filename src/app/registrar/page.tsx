@@ -36,7 +36,7 @@ export default function RegistrarDashboard() {
             Generate Report
           </button>
           <Link href="/registrar/students">
-            <button className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+            <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
               Add New Student <ArrowRight size={16} />
             </button>
           </Link>
@@ -125,7 +125,7 @@ export default function RegistrarDashboard() {
                     <p className="text-sm font-bold">October 15, 2025</p>
                   </div>
                 </div>
-                <button className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
+                <button onClick={() => alert('Feature in development...')}  className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
                   Update Registry Policy
                 </button>
               </div>
