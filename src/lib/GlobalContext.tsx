@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { 
   MOCK_STUDENTS, 
   MOCK_COURSES, 
@@ -28,6 +28,10 @@ type GlobalContextType = {
   enrollStudent: (studentId: string) => void;
   verifyTransaction: (transactionId: string) => void;
   updateCourseProgress: (courseCode: string, newProgress: number) => void;
+
+  // Dark Mode
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -39,6 +43,29 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
   const [grading, setGrading] = useState(MOCK_GRADING);
   const [studentResults, setStudentResults] = useState(MOCK_STUDENT_RESULTS);
+
+  // Initialise from localStorage or system preference
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("esms-dark-mode");
+      if (saved !== null) return saved === "true";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  // Apply / remove the `dark` class on <html> whenever darkMode changes
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("esms-dark-mode", String(darkMode));
+  }, [darkMode]);
+
+  const toggleDarkMode = () => setDarkMode(prev => !prev);
 
   const enrollStudent = (studentId: string) => {
     setStudents(prev => prev.map(s => s.id === studentId ? { ...s, status: "Enrolled" } : s));
@@ -62,7 +89,9 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       studentResults, setStudentResults,
       enrollStudent,
       verifyTransaction,
-      updateCourseProgress
+      updateCourseProgress,
+      darkMode,
+      toggleDarkMode,
     }}>
       {children}
     </GlobalContext.Provider>

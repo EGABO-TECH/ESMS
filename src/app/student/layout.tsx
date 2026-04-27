@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 const navItems = [
   { href: "/student/dashboard",  icon: Home,         label: "Dashboard" },
@@ -84,6 +85,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
 
           {/* Right Actions */}
           <div className="flex items-center gap-4">
+            <DarkModeToggle />
             <button
               onClick={() => setIsCalendarOpen(true)}
               className="text-white md:text-primary md:bg-primary/10 md:hover:bg-primary/20 p-2 rounded-full transition-colors"

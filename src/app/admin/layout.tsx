@@ -23,6 +23,7 @@ import {
   CalendarDays
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -168,6 +169,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </div>
             
             <div className="flex items-center gap-2 md:gap-4">
+              <DarkModeToggle />
               <button 
                 onClick={() => setIsCalendarOpen(true)}
                 className="p-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full transition-colors relative"

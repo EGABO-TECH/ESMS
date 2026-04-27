@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function LecturerLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -154,6 +155,7 @@ export default function LecturerLayout({ children }: { children: ReactNode }) {
             </div>
             
             <div className="flex items-center gap-2 md:gap-4">
+              <DarkModeToggle />
               <button 
                 onClick={() => setIsCalendarOpen(true)}
                 className="p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full transition-colors relative"
