@@ -250,21 +250,21 @@ export default function StudentProfile() {
               <li className="flex justify-between items-center">
                 <div>
                   <span className="text-[10px] text-blue-300 uppercase font-bold tracking-tight block">Mid-Sem Exams</span>
-                  <span className="font-medium">April 10, 2026</span>
+                  <span className="font-medium">April 15, 2026</span>
                 </div>
                 <CheckCircle2 size={18} className="text-finance-success opacity-70" />
               </li>
               <li className="flex justify-between items-center border-l-2 border-blue-400/30 pl-4">
                 <div>
                   <span className="text-[10px] text-blue-300 uppercase font-bold tracking-tight block">Coursework Upload</span>
-                  <span className="font-medium">May 18, 2026</span>
+                  <span className="font-medium">May 20, 2026</span>
                 </div>
                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" />
               </li>
               <li className="flex justify-between items-center">
                 <div>
                   <span className={`text-[10px] ${HAS_BALANCE ? "text-error" : "text-blue-300"} uppercase font-bold tracking-tight block`}>Final Examinations</span>
-                  <span className={`font-medium ${HAS_BALANCE ? "text-red-300" : ""}`}>June 01, 2026</span>
+                  <span className={`font-medium ${HAS_BALANCE ? "text-red-300" : ""}`}>June 10, 2026</span>
                 </div>
                 {HAS_BALANCE
                   ? <Lock size={18} className="text-error" />
@@ -274,7 +274,7 @@ export default function StudentProfile() {
               <li className="flex justify-between items-center">
                 <div>
                   <span className="text-[10px] text-blue-300 uppercase font-bold tracking-tight block">End of Semester</span>
-                  <span className="font-medium">June 15, 2026</span>
+                  <span className="font-medium">June 25, 2026</span>
                 </div>
                 <span className="text-blue-300 text-lg">→</span>
               </li>

@@ -10,8 +10,8 @@ const HAS_BALANCE = true;
 const rawTransactions = [
   { date: "01/02/2026", desc: "Tuition Fees — Semester 1",    debit: 1_800_000, credit: 0 },
   { date: "01/02/2026", desc: "Functional Fees",               debit: 450_000,  credit: 0 },
-  { date: "05/02/2026", desc: "Bank Payment — Stanbic",        debit: 0,         credit: 1_000_000 },
-  { date: "15/03/2026", desc: "Mobile Money Payment",          debit: 0,         credit: 500_000 },
+  { date: "10/02/2026", desc: "Bank Payment — Stanbic",        debit: 0,         credit: 1_000_000 },
+  { date: "20/04/2026", desc: "Mobile Money Payment",          debit: 0,         credit: 500_000 },
 ];
 
 // Build running balance ledger
@@ -54,7 +54,7 @@ export default function StudentFinance() {
     academic_year: "2025/2026",
     semester: 1,
     amount_ugx: 2_250_000,
-    due_date: "2026-05-18T00:00:00Z",
+    due_date: "2026-05-27T00:00:00Z",
   };
 
   return (

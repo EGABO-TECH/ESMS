@@ -24,9 +24,9 @@ export default function GlobalCalendarWidget({ isOpen, onClose, readOnly = false
     setLoading(true);
     setTimeout(() => {
       setEvents([
-        { id: "1", title: "Mid-Semester Exams Begin", event_date: "2024-03-10T00:00:00Z", description: "All faculties", created_at: "" },
-        { id: "2", title: "Cultural Gala", event_date: "2024-03-25T00:00:00Z", description: "Main Campus", created_at: "" },
-        { id: "3", title: "Career Fair", event_date: "2024-04-05T00:00:00Z", description: "Open to all students", created_at: "" }
+        { id: "1", title: "Mid-Semester Exams Begin", event_date: "2026-04-15T00:00:00Z", description: "All faculties", created_at: "" },
+        { id: "2", title: "Cultural Gala", event_date: "2026-05-10T00:00:00Z", description: "Main Campus", created_at: "" },
+        { id: "3", title: "Career Fair", event_date: "2026-05-25T00:00:00Z", description: "Open to all students", created_at: "" }
       ] as SchoolEvent[]);
       setLoading(false);
     }, 500);

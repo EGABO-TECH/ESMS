@@ -4,10 +4,10 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, CalendarDays, FileText, BookOpen, GraduationCap, Flag } from "lucide-react";
 
 const milestones = [
-  { date: "April 10, 2026",  title: "Mid-Semester Examinations Begin",    type: "exam",     color: "bg-primary" },
-  { date: "May 18, 2026",    title: "Coursework & Assignment Deadline",    type: "deadline", color: "bg-purple-600" },
-  { date: "June 01, 2026",   title: "Final Examinations Commencement",     type: "exam",     color: "bg-error" },
-  { date: "June 15, 2026",   title: "Official End of Semester 1 2025/2026", type: "closing", color: "bg-finance-success" },
+  { date: "April 15, 2026",  title: "Mid-Semester Examinations Begin",    type: "exam",     color: "bg-primary" },
+  { date: "May 20, 2026",    title: "Coursework & Assignment Deadline",    type: "deadline", color: "bg-purple-600" },
+  { date: "June 10, 2026",   title: "Final Examinations Commencement",     type: "exam",     color: "bg-error" },
+  { date: "June 25, 2026",   title: "Official End of Semester 1 2025/2026", type: "closing", color: "bg-finance-success" },
 ];
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -18,7 +18,7 @@ const CALENDAR = {
   year: 2026,
   startDay: 3, // Wednesday
   days: 30,
-  events: [10], // April 10 highlighted
+  events: [15], // April 15 highlighted
 };
 
 export default function StudentRoadmap() {
@@ -28,11 +28,11 @@ export default function StudentRoadmap() {
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const startDay = new Date(currentYear, currentMonth, 1).getDay();
   const isHighlighted = (d: number) => {
-    // April 10, June 1
-    if (currentMonth === 3 && d === 10) return "bg-primary text-white font-bold rounded-xl shadow-md";
-    if (currentMonth === 5 && d === 1)  return "bg-error text-white font-bold rounded-xl shadow-md";
-    if (currentMonth === 4 && d === 18) return "bg-purple-600 text-white font-bold rounded-xl shadow-md";
-    if (currentMonth === 5 && d === 15) return "bg-finance-success text-white font-bold rounded-xl shadow-md";
+    // April 15, June 10
+    if (currentMonth === 3 && d === 15) return "bg-primary text-white font-bold rounded-xl shadow-md";
+    if (currentMonth === 5 && d === 10) return "bg-error text-white font-bold rounded-xl shadow-md";
+    if (currentMonth === 4 && d === 20) return "bg-purple-600 text-white font-bold rounded-xl shadow-md";
+    if (currentMonth === 5 && d === 25) return "bg-finance-success text-white font-bold rounded-xl shadow-md";
     return "hover:bg-surface-container rounded-lg";
   };
 
@@ -102,19 +102,19 @@ export default function StudentRoadmap() {
             <div className="mt-6 pt-5 border-t border-border-subtle space-y-2">
               <div className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 bg-primary rounded-full shrink-0" />
-                <span className="text-on-surface-variant">Mid-Semester Exams Start (Apr 10)</span>
+                <span className="text-on-surface-variant">Mid-Semester Exams Start (Apr 15)</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 bg-purple-600 rounded-full shrink-0" />
-                <span className="text-on-surface-variant">Coursework Deadline (May 18)</span>
+                <span className="text-on-surface-variant">Coursework Deadline (May 20)</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 bg-error rounded-full shrink-0" />
-                <span className="text-on-surface-variant">Final Examinations Start (Jun 1)</span>
+                <span className="text-on-surface-variant">Final Examinations Start (Jun 10)</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 bg-finance-success rounded-full shrink-0" />
-                <span className="text-on-surface-variant">End of Semester (Jun 15)</span>
+                <span className="text-on-surface-variant">End of Semester (Jun 25)</span>
               </div>
             </div>
           </div>

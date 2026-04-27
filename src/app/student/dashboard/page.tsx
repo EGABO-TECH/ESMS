@@ -8,11 +8,11 @@ const student = {
   cgpa: 4.25, credits_earned: 86, credits_remaining: 34,
   programme: "BSc Software Engineering", year_of_study: 3, student_number: "258-154"
 };
-const finance = { balance_ugx: 1_250_000, due_date: "2026-05-18T00:00:00Z", status: "pending" };
+const finance = { balance_ugx: 1_250_000, due_date: "2026-05-27T00:00:00Z", status: "pending" };
 const events = [
-  { id: 1, title: "Mid-Semester Exams Begin", event_date: "2026-04-10T00:00:00Z" },
-  { id: 2, title: "Coursework Upload Deadline", event_date: "2026-05-18T00:00:00Z" },
-  { id: 3, title: "Final Examinations", event_date: "2026-06-01T00:00:00Z" },
+  { id: 1, title: "Mid-Semester Exams Begin", event_date: "2026-04-15T00:00:00Z" },
+  { id: 2, title: "Coursework Upload Deadline", event_date: "2026-05-20T00:00:00Z" },
+  { id: 3, title: "Final Examinations", event_date: "2026-06-10T00:00:00Z" },
 ];
 const HAS_BALANCE = finance.balance_ugx > 0;
 
@@ -159,7 +159,7 @@ export default function StudentDashboard() {
           <p className="text-sm text-slate-500">Track key academic dates, deadlines and milestones.</p>
           <div className="mt-3 flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping" />
-            <span className="text-xs font-bold text-blue-600">Coursework due May 18</span>
+            <span className="text-xs font-bold text-blue-600">Coursework due May 20</span>
           </div>
         </Link>
 
