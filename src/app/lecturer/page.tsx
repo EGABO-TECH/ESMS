@@ -11,10 +11,10 @@ export default function LecturerDashboard() {
 
   const stats = [
 
-    { title: "My Courses", value: "4", icon: BookOpen, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Assigned this sem" },
-    { title: "Total Students", value: "248", icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "Across 4 modules" },
-    { title: "Pending Grading", value: "32", icon: ClipboardList, color: "text-amber-600", bg: "bg-amber-50", trend: "Assignments due" },
-    { title: "Average Score", value: "72%", icon: GraduationCap, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+5% vs last sem" },
+    { title: "Current Modules", value: "4", icon: BookOpen, color: "text-indigo-600", bg: "bg-indigo-50", trend: "42 contact hours" },
+    { title: "Avg. Attendance", value: "88%", icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "High engagement" },
+    { title: "Grading Tasks", value: "14", icon: ClipboardList, color: "text-amber-600", bg: "bg-amber-50", trend: "Internal deadlines" },
+    { title: "Class Performance", value: "+4.2%", icon: GraduationCap, color: "text-emerald-600", bg: "bg-emerald-50", trend: "vs Previous Semester" },
   ];
 
   const myCourses = courses.slice(0, 4);
@@ -120,6 +120,33 @@ export default function LecturerDashboard() {
             <div className="absolute -right-4 -bottom-4 opacity-10">
               <ClipboardList size={140} />
             </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <Clock size={18} className="text-indigo-600" /> Today&apos;s Sessions
+            </h3>
+            <div className="space-y-4">
+              {[
+                { time: "09:00 AM", course: "SWE312", room: "Block C, L3", type: "Lecture" },
+                { time: "11:30 AM", course: "DS401", room: "Computer Lab 2", type: "Practical" },
+                { time: "02:00 PM", course: "Office Hours", room: "Faculty Wing B", type: "Consultation" },
+              ].map((session, i) => (
+                <div key={i} className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                  <div className="min-w-[70px] text-[10px] font-black text-indigo-600 uppercase pt-1">
+                    {session.time}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900">{session.course}</p>
+                    <p className="text-[11px] text-slate-500">{session.room} · {session.type}</p>
+                  </div>
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 mt-2 animate-pulse" />
+                </div>
+              ))}
+            </div>
+            <button onClick={() => toast.info('Loading full timetable...')} className="w-full mt-6 py-2 text-xs font-bold text-indigo-600 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors">
+              View Weekly Timetable
+            </button>
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, AlertCircle, ArrowRight } from "lucide-react";
+import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -8,16 +8,16 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
   const { stats, students } = useGlobalContext();
-  const { totalStudents, activeCourses, totalStaff } = stats;
+  const { totalStudents } = stats;
 
   const registrarStats = [
-    { title: "Total Students", value: totalStudents.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "+12% this year" },
-    { title: "Active Courses", value: activeCourses.toString(), icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50", trend: "Current Semester" },
-    { title: "Total Staff", value: totalStaff.toString(), icon: GraduationCap, color: "text-amber-600", bg: "bg-amber-50", trend: "Lecturers & Support" },
-    { title: "Registration Rate", value: "92%", icon: TrendingUp, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Target: 95%" },
+    { title: "Student Population", value: totalStudents.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "Active Enrollments" },
+    { title: "Transcript Requests", value: "48", icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50", trend: "12 Pending Review" },
+    { title: "Graduation Apps", value: "156", icon: GraduationCap, color: "text-amber-600", bg: "bg-amber-50", trend: "Class of 2025" },
+    { title: "Record Integrity", value: "99.8%", icon: TrendingUp, color: "text-indigo-600", bg: "bg-indigo-50", trend: "System Audit: Clean" },
   ];
 
-  const recentStudents = students.slice(0, 4).map(s => ({
+  const recentStudents = students.slice(0, 5).map(s => ({
     id: s.id.split('-').slice(1).join('-'),
     name: s.name,
     program: s.program.split(' (')[0],
@@ -139,16 +139,18 @@ export default function RegistrarDashboard() {
 
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <AlertCircle size={18} className="text-amber-500" /> System Alerts
+              <CheckCircle size={18} className="text-emerald-500" /> Pending Approvals
             </h3>
             <div className="space-y-4">
-              <div className="p-4 bg-red-50 border border-red-100 rounded-xl">
-                <p className="text-xs font-bold text-red-800">Prerequisite Conflict</p>
-                <p className="text-[11px] text-red-600 mt-1">12 students in BSIT Year 2 have missing prerequisites for CS302.</p>
+              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl cursor-pointer hover:bg-blue-100 transition-colors">
+                <p className="text-xs font-black text-blue-800 uppercase tracking-widest">Transcript Request</p>
+                <p className="text-sm font-bold text-slate-900 mt-1">Sande Sula (BSIT)</p>
+                <p className="text-[11px] text-slate-500 mt-1">Payment verified. Ready for seal.</p>
               </div>
-              <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
-                <p className="text-xs font-bold text-amber-800">Grade Moderation</p>
-                <p className="text-[11px] text-amber-600 mt-1">Law Faculty results pending Dean approval for 3 days.</p>
+              <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl cursor-pointer hover:bg-amber-100 transition-colors">
+                <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Result Modification</p>
+                <p className="text-sm font-bold text-slate-900 mt-1">Dr. Sarah Johnson (SWE312)</p>
+                <p className="text-[11px] text-slate-500 mt-1">Correction of exam marks for 3 students.</p>
               </div>
             </div>
           </div>
