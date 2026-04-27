@@ -15,17 +15,20 @@ import {
   History
 } from "lucide-react";
 
-
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { students: rawStudents } = useGlobalContext();
 
-  const students = [
-    { id: "273-318", name: "Ababiku Brenda", program: "BBA", year: "3", status: "Active", intake: "Aug 2023" },
-    { id: "269-896", name: "Alimpa Anne Hillary", program: "BSIT", year: "2", status: "Active", intake: "Jan 2024" },
-    { id: "258-154", name: "Egabo Aaron", program: "Software Engineering", year: "4", status: "Active", intake: "Aug 2022" },
-    { id: "230-500", name: "Faida Nancy", program: "Data Science", year: "1", status: "Pending", intake: "Aug 2025" },
-  ];
+  const students = rawStudents.map(s => ({
+    id: s.id.replace("CUU-", ""),
+    name: s.name,
+    program: s.program.split(" (")[0],
+    year: s.year,
+    status: s.status === "Enrolled" ? "Active" : s.status,
+    intake: s.intake
+  }));
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

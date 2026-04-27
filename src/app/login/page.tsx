@@ -21,11 +21,19 @@ export default function LoginPage() {
     // Mock authentication logic
     setTimeout(() => {
       setLoading(false);
-      // Hardcode a user redirect based on email input for demo purposes
-      if (identifier.toLowerCase().includes("admin")) {
+      const idLower = identifier.toLowerCase();
+      if (idLower.includes("admin")) {
         router.push("/admin");
-      } else {
+      } else if (idLower.includes("registrar")) {
+        router.push("/registrar");
+      } else if (idLower.includes("finance")) {
+        router.push("/finance");
+      } else if (idLower.includes("lecturer")) {
+        router.push("/lecturer");
+      } else if (idLower.includes("student")) {
         router.push("/student/dashboard");
+      } else {
+        router.push("/student/dashboard"); // Default fallback
       }
       router.refresh();
     }, 1500);

@@ -13,10 +13,12 @@ import {
   Download
 } from "lucide-react";
 
-import { MOCK_GRADING } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminGradesPage() {
   const [activeFaculty, setActiveFaculty] = useState("All");
+
+  const { grading: classResults } = useGlobalContext();
 
   const gradeStats = [
     { label: "Overall Avg GPA", val: "3.42", icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-50" },
@@ -24,8 +26,6 @@ export default function AdminGradesPage() {
     { label: "Dean's List (A+)", val: "142", icon: Award, color: "text-emerald-600", bg: "bg-emerald-50" },
     { label: "Retake Alerts", val: "48", icon: FileCheck, color: "text-red-600", bg: "bg-red-50" },
   ];
-
-  const classResults = MOCK_GRADING;
 
 
   return (

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import { Toaster } from "sonner";
+import { GlobalProvider } from "@/lib/GlobalContext";
 import "./globals.css";
 
 const publicSans = Public_Sans({
@@ -21,8 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${publicSans.variable} font-sans antialiased`}>
-        {children}
-        <Toaster richColors position="top-right" />
+        <GlobalProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+        </GlobalProvider>
       </body>
     </html>
   );

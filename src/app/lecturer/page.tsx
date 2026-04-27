@@ -4,10 +4,11 @@ import { BookOpen, Users, ClipboardList, GraduationCap, ArrowRight, Clock, Check
 import { toast } from "sonner";
 import Link from "next/link";
 
-import { MOCK_COURSES } from "@/lib/mockData";
-
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function LecturerDashboard() {
+  const { courses } = useGlobalContext();
+
   const stats = [
 
     { title: "My Courses", value: "4", icon: BookOpen, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Assigned this sem" },
@@ -16,7 +17,7 @@ export default function LecturerDashboard() {
     { title: "Average Score", value: "72%", icon: GraduationCap, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+5% vs last sem" },
   ];
 
-  const myCourses = MOCK_COURSES.slice(0, 4);
+  const myCourses = courses.slice(0, 4);
 
 
   return (

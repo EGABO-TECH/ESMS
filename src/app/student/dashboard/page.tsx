@@ -2,21 +2,26 @@
 
 import Link from "next/link";
 import { BookOpen, Wallet, CalendarDays, TrendingUp, AlertCircle, Award, Map, User, Lock } from "lucide-react";
-
-const profile = { full_name: "Egabo Aaron", campus: "Main Campus" };
-const student = {
-  cgpa: 4.25, credits_earned: 86, credits_remaining: 34,
-  programme: "BSc Software Engineering", year_of_study: 3, student_number: "258-154"
-};
-const finance = { balance_ugx: 1_250_000, due_date: "2026-05-27T00:00:00Z", status: "pending" };
-const events = [
-  { id: 1, title: "Mid-Semester Exams Begin", event_date: "2026-04-15T00:00:00Z" },
-  { id: 2, title: "Coursework Upload Deadline", event_date: "2026-05-20T00:00:00Z" },
-  { id: 3, title: "Final Examinations", event_date: "2026-06-10T00:00:00Z" },
-];
-const HAS_BALANCE = finance.balance_ugx > 0;
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function StudentDashboard() {
+  const { students } = useGlobalContext();
+  // The logged-in student is always the first in the list (Egabo Aaron)
+  const rawStudent = students[0];
+
+  const profile = { full_name: rawStudent.name, campus: "Main Campus" };
+  const student = {
+    cgpa: 4.25, credits_earned: 86, credits_remaining: 34,
+    programme: rawStudent.program, year_of_study: Number(rawStudent.year), student_number: rawStudent.id.replace("CUU-", "")
+  };
+  const finance = { balance_ugx: 1_250_000, due_date: "2026-05-27T00:00:00Z", status: "pending" };
+  const events = [
+    { id: 1, title: "Mid-Semester Exams Begin", event_date: "2026-04-15T00:00:00Z" },
+    { id: 2, title: "Coursework Upload Deadline", event_date: "2026-05-20T00:00:00Z" },
+    { id: 3, title: "Final Examinations", event_date: "2026-06-10T00:00:00Z" },
+  ];
+  const HAS_BALANCE = finance.balance_ugx > 0;
+
   const getGradeClass = (cgpa: number) => {
     if (cgpa >= 4.5) return "First Class";
     if (cgpa >= 3.5) return "Second Class Upper";

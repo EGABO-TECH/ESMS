@@ -17,12 +17,12 @@ import {
   XCircle
 } from "lucide-react";
 
-import { MOCK_COURSES } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminCoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const courses = MOCK_COURSES;
+  const { courses } = useGlobalContext();
 
 
   return (

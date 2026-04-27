@@ -13,18 +13,34 @@ import {
   TrendingUp,
   Download
 } from "lucide-react";
-
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function LecturerGradesPage() {
   const [activeCourse, setActiveCourse] = useState("SWE311");
+  const { students: rawStudents, courses } = useGlobalContext();
 
-  const students = [
-    { id: "258-154", name: "Egabo Aaron", cw: 34, exam: 47, total: 81, grade: "A" },
-    { id: "269-896", name: "Alimpa Anne", cw: 28, exam: 48, total: 76, grade: "B+" },
-    { id: "230-500", name: "Faida Nancy", cw: 30, exam: 35, total: 65, grade: "C+" },
-    { id: "273-318", name: "Ababiku Brenda", cw: 32, exam: 44, total: 76, grade: "B+" },
-    { id: "274-961", name: "Kirabo Alice", cw: 35, exam: 46, total: 81, grade: "A" },
-  ];
+  // Build grading rows from real student data + mock scores
+  const mockScores: Record<string, { cw: number; exam: number }> = {
+    "CUU-258-154": { cw: 34, exam: 47 },
+    "CUU-230-500": { cw: 30, exam: 35 },
+    "CUU-273-318": { cw: 32, exam: 44 },
+    "CUU-269-896": { cw: 28, exam: 48 },
+    "CUU-274-500": { cw: 35, exam: 46 },
+  };
+  const getGrade = (total: number) => {
+    if (total >= 80) return "A";
+    if (total >= 75) return "B+";
+    if (total >= 70) return "B";
+    if (total >= 65) return "C+";
+    if (total >= 60) return "C";
+    if (total >= 50) return "D";
+    return "F";
+  };
+  const students = rawStudents.map(s => {
+    const scores = mockScores[s.id] ?? { cw: 28, exam: 40 };
+    const total = scores.cw + scores.exam;
+    return { id: s.id.replace("CUU-",""), name: s.name, cw: scores.cw, exam: scores.exam, total, grade: getGrade(total) };
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -50,15 +66,15 @@ export default function LecturerGradesPage() {
 
       {/* Course Selection */}
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {["SWE311", "SWE313", "SWE412", "COM211"].map(c => (
+        {courses.map(c => (
           <button 
-            key={c}
-            onClick={() => setActiveCourse(c)}
+            key={c.code}
+            onClick={() => setActiveCourse(c.code)}
             className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${
-              activeCourse === c ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50"
+              activeCourse === c.code ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-50"
             }`}
           >
-            {c}
+            {c.code}
           </button>
         ))}
       </div>
@@ -67,7 +83,14 @@ export default function LecturerGradesPage() {
         {/* Grading Table */}
         <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h2 className="text-xl font-bold text-slate-900">Student Marksheet — {activeCourse}</h2>
+            <h2 className="text-xl font-bold text-slate-900">
+              Student Marksheet — {activeCourse}
+              {courses.find(c => c.code === activeCourse) && (
+                <span className="text-sm font-medium text-slate-400 ml-2">
+                  {courses.find(c => c.code === activeCourse)?.name}
+                </span>
+              )}
+            </h2>
             <div className="flex gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />

@@ -14,12 +14,14 @@ import {
   MoreHorizontal
 } from "lucide-react";
 
-import { MOCK_STUDENTS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminEnrollmentsPage() {
   const [activeTab, setActiveTab] = useState("Pending");
 
-  const enrollments = MOCK_STUDENTS.map((s, i) => ({
+  const { students, enrollStudent } = useGlobalContext();
+
+  const enrollments = students.map((s, i) => ({
     id: `APP-990${i+1}`,
     name: s.name,
     program: s.program,
@@ -117,7 +119,14 @@ export default function AdminEnrollmentsPage() {
                   <div className="h-8 w-[1px] bg-slate-100 hidden md:block" />
                   
                   <div className="flex items-center gap-2">
-                    <button onClick={() => toast.success('Application approved')} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Approve">
+                    <button 
+                      onClick={() => {
+                        // We use the original student ID by reversing the map format or looking up
+                        const originalId = students[i].id;
+                        enrollStudent(originalId);
+                        toast.success('Application approved and student enrolled');
+                      }} 
+                      className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Approve">
                       <CheckCircle size={18} />
                     </button>
                     <button onClick={() => toast.error('Application rejected')} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Reject">

@@ -4,14 +4,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Award, Info, Lock, Download, X, AlertTriangle, CheckCircle } from "lucide-react";
 
-import { MOCK_STUDENT_RESULTS, GRADING_SCALE } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
 const BALANCE_AMOUNT = "UGX 1,250,000";
-
-const results = MOCK_STUDENT_RESULTS;
-const gradingScale = GRADING_SCALE;
 
 
 const gradeColor = (grade: string) => {
@@ -23,6 +20,17 @@ const gradeColor = (grade: string) => {
 };
 
 export default function StudentResults() {
+  const { studentResults: results } = useGlobalContext();
+  const gradingScale = [
+    { grade: "A",  range: "80–100", gp: "5.0", color: "text-finance-success" },
+    { grade: "B+", range: "75–79",  gp: "4.5", color: "text-primary" },
+    { grade: "B",  range: "70–74",  gp: "4.0", color: "text-primary" },
+    { grade: "C+", range: "65–69",  gp: "3.5", color: "text-exam-warning" },
+    { grade: "C",  range: "60–64",  gp: "3.0", color: "text-exam-warning" },
+    { grade: "D",  range: "50–59",  gp: "2.0", color: "text-orange-500" },
+    { grade: "F",  range: "0–49",   gp: "0.0", color: "text-error" },
+  ];
+
   const [showGrading, setShowGrading] = useState(false);
   const [retakeModule, setRetakeModule] = useState<{ code: string; name: string } | null>(null);
   const [retakeReason, setRetakeReason] = useState("Failed Exam (Score < 50)");

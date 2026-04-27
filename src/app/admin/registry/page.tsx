@@ -3,10 +3,10 @@
 import { Download, Plus, Filter, ArrowUpDown, ChevronRight, Calendar, BookOpen, UserSearch, UserCheck, Clock, FileWarning } from "lucide-react";
 import { toast } from "sonner";
 
-import { MOCK_STUDENTS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistryEnrollmentHub() {
-  const students = MOCK_STUDENTS;
+  const { students } = useGlobalContext();
 
   return (
     <div className="p-lg max-w-[1600px] mx-auto">

@@ -4,16 +4,10 @@ import { useState } from "react";
 import { FileText, BookOpen, Clock, History, Search, PlusCircle, Download, AlertTriangle, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
+import { useGlobalContext } from "@/lib/GlobalContext";
+
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
-
-const student = {
-  cgpa: 4.25,
-  credits_earned: 86,
-  credits_remaining: 34,
-  programme: "BSc Software Engineering",
-  year_of_study: 3,
-};
 
 const allPrograms = [
   "B.Sc. Software Engineering", "B.Sc. Computer Science", "B.Sc. Data Science & AI", "B.Sc. Information Technology",
@@ -22,13 +16,6 @@ const allPrograms = [
   "B.Sc. Public Health", "B.Sc. Environmental Health",
   "B.A. International Relations", "B.A. Mass Comm & Journalism",
   "Higher Education Cert (HEC)"
-];
-
-const myModules = [
-  { code: "SWE311", name: "Software Lifecycle",          credits: 4, status: "Active" },
-  { code: "SWE312", name: "Mobile App Dev",              credits: 4, status: "Active" },
-  { code: "SWE313", name: "Cloud Computing",             credits: 3, status: "Active" },
-  { code: "SWE314", name: "System Architecture",         credits: 4, status: "Pending" },
 ];
 
 const gradeColor = (grade: string | null) => {
@@ -57,6 +44,25 @@ const semesterKeys = Object.keys(historicalEnrollments).sort().reverse();
 type TabId = "enrollment" | "history";
 
 export default function StudentAcademics() {
+  const { students, courses } = useGlobalContext();
+  const rawStudent = students[0];
+
+  const student = {
+    cgpa: 4.25,
+    credits_earned: 86,
+    credits_remaining: 34,
+    programme: rawStudent.program,
+    year_of_study: Number(rawStudent.year),
+  };
+
+  // Use live courses from context as registered modules
+  const myModules = courses.slice(0, 4).map(c => ({
+    code: c.code,
+    name: c.name,
+    credits: c.credits,
+    status: c.status === "Active" ? "Active" : "Pending",
+  }));
+
   const [activeTab, setActiveTab] = useState<TabId>("enrollment");
   const [search, setSearch] = useState("");
 

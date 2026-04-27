@@ -4,18 +4,20 @@ import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, AlertCi
 import { toast } from "sonner";
 import Link from "next/link";
 
-import { MOCK_STATS, MOCK_STUDENTS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
-  const { totalStudents, activeCourses, totalStaff } = MOCK_STATS;
-  const stats = [
+  const { stats, students } = useGlobalContext();
+  const { totalStudents, activeCourses, totalStaff } = stats;
+
+  const registrarStats = [
     { title: "Total Students", value: totalStudents.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "+12% this year" },
     { title: "Active Courses", value: activeCourses.toString(), icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50", trend: "Current Semester" },
     { title: "Total Staff", value: totalStaff.toString(), icon: GraduationCap, color: "text-amber-600", bg: "bg-amber-50", trend: "Lecturers & Support" },
     { title: "Registration Rate", value: "92%", icon: TrendingUp, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Target: 95%" },
   ];
 
-  const recentStudents = MOCK_STUDENTS.slice(0, 4).map(s => ({
+  const recentStudents = students.slice(0, 4).map(s => ({
     id: s.id.split('-').slice(1).join('-'),
     name: s.name,
     program: s.program.split(' (')[0],
@@ -45,7 +47,7 @@ export default function RegistrarDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
+        {registrarStats.map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className={`${stat.bg} p-3 rounded-2xl ${stat.color}`}>

@@ -14,18 +14,12 @@ import {
   FileText
 } from "lucide-react";
 
-
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function FinancePaymentsPage() {
   const [filterStatus, setFilterStatus] = useState("All");
 
-  const payments = [
-    { id: "TXN-8821", student: "Egabo Aaron", amount: "UGX 1,250,000", method: "MTN MoMo", date: "Oct 24, 2025", status: "Verified", reference: "MTN-9921-X" },
-    { id: "TXN-8820", student: "Faida Nancy", amount: "UGX 850,000", method: "Stanbic Bank", date: "Oct 24, 2025", status: "Verified", reference: "SB-0021-A" },
-    { id: "TXN-8819", student: "Alimpa Anne", amount: "UGX 1,100,000", method: "Airtel Money", date: "Oct 23, 2025", status: "Pending", reference: "ART-1122-B" },
-    { id: "TXN-8818", student: "Kirabo Alice", amount: "UGX 1,250,000", method: "Centenary Bank", date: "Oct 23, 2025", status: "Verified", reference: "CB-4455-Q" },
-    { id: "TXN-8817", student: "Ababiku Brenda", amount: "UGX 500,000", method: "Cash Deposit", date: "Oct 22, 2025", status: "Review", reference: "CASH-101" },
-  ];
+  const { transactions: payments, verifyTransaction } = useGlobalContext();
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -145,9 +139,18 @@ export default function FinancePaymentsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button onClick={() => toast.success('Transaction receipt sent to student email')} className="text-emerald-600 hover:bg-emerald-50 px-3 py-1 rounded-lg text-[10px] font-black uppercase transition-all">
-                      Confirm
-                    </button>
+                    {p.status !== 'Verified' ? (
+                      <button 
+                        onClick={() => {
+                          verifyTransaction(p.id);
+                          toast.success('Transaction receipt sent to student email');
+                        }} 
+                        className="text-emerald-600 hover:bg-emerald-50 px-3 py-1 rounded-lg text-[10px] font-black uppercase transition-all">
+                        Confirm
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-black text-slate-300 uppercase">Verified</span>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -19,13 +19,13 @@ import {
   Phone
 } from "lucide-react";
 
-import { MOCK_STUDENTS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("All");
 
-  const students = MOCK_STUDENTS;
+  const { students } = useGlobalContext();
 
 
   return (

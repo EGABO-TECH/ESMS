@@ -2,14 +2,13 @@
 
 import { TrendingUp, Users, GraduationCap, BookOpen, DollarSign, AlertTriangle, MessageSquare, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { MOCK_STATS, MOCK_STUDENTS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminDashboard() {
-  // Mock Data from centralized source
-  const { totalStudents, totalStaff, activeCourses, totalInvoiced, totalCollected, collectionRate } = MOCK_STATS;
-
+  const { stats, students } = useGlobalContext();
+  const { totalStudents, totalStaff, activeCourses, totalInvoiced, totalCollected, collectionRate } = stats;
   
-  const recentAdmissions = MOCK_STUDENTS.slice(0, 3).map((s, i) => ({
+  const recentAdmissions = students.slice(0, 3).map((s, i) => ({
     id: i + 1,
     applicant_name: s.name,
     nationality: s.nationality,

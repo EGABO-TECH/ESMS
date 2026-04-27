@@ -16,17 +16,22 @@ import {
   Upload,
   ArrowRight
 } from "lucide-react";
-
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function LecturerCoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { courses: allCourses } = useGlobalContext();
 
-  const courses = [
-    { code: "SWE311", name: "Software Lifecycle", students: 64, schedule: "Mon/Wed 10:00 AM", room: "LT-4", status: "Active" },
-    { code: "SWE313", name: "Cloud Computing", students: 58, schedule: "Tue/Thu 02:00 PM", room: "Lab-2", status: "Active" },
-    { code: "SWE412", name: "System Architecture", students: 62, schedule: "Wed 09:00 AM", room: "LT-1", status: "Active" },
-    { code: "COM211", name: "Network Security", students: 64, schedule: "Thu 11:00 AM", room: "Lab-1", status: "Upcoming" },
-  ];
+  const courses = allCourses
+    .filter(c => searchTerm === "" || c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.code.toLowerCase().includes(searchTerm.toLowerCase()))
+    .map(c => ({
+      code: c.code,
+      name: c.name,
+      students: c.students,
+      schedule: c.schedule,
+      room: c.room,
+      status: c.status,
+    }));
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

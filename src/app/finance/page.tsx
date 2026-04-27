@@ -3,19 +3,20 @@
 import { Banknote, TrendingUp, DollarSign, Wallet, ArrowUpRight, ArrowDownRight, Search, Filter, Download } from "lucide-react";
 import { toast } from "sonner";
 
-import { MOCK_STATS, MOCK_TRANSACTIONS } from "@/lib/mockData";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function FinanceDashboard() {
-  const { totalCollected, collectionRate, availableFunds, outstandingFees } = MOCK_STATS;
+  const { stats, transactions } = useGlobalContext();
+  const { totalCollected, collectionRate, availableFunds, outstandingFees } = stats;
 
-  const stats = [
+  const summaryStats = [
     { title: "Total Revenue", value: `UGX ${(totalCollected / 1_000_000_000).toFixed(1)}B`, icon: Banknote, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+15% vs last sem" },
     { title: "Outstanding Fees", value: `UGX ${(outstandingFees / 1_000_000).toFixed(0)}M`, icon: DollarSign, color: "text-red-600", bg: "bg-red-50", trend: "14% of Total Invoiced" },
     { title: "Fee Collection Rate", value: `${collectionRate}%`, icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-50", trend: "Target: 95%" },
     { title: "Available Funds", value: `UGX ${(availableFunds / 1_000_000_000).toFixed(1)}B`, icon: Wallet, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Operating Capital" },
   ];
 
-  const recentTransactions = MOCK_TRANSACTIONS.slice(0, 4);
+  const recentTransactions = transactions.slice(0, 4);
 
 
   return (
@@ -37,7 +38,7 @@ export default function FinanceDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
+        {summaryStats.map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <div className="flex justify-between items-start mb-4">
               <div className={`${stat.bg} p-3 rounded-2xl ${stat.color}`}>
