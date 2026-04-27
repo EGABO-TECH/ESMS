@@ -96,7 +96,8 @@ export default function RegistryEnrollmentHub() {
                 <tbody className="divide-y divide-slate-100">
                   {students.map((s, i) => (
                     <tr key={i} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 font-semibold text-slate-900">{s.name.toUpperCase()} {i === 0 ? "(Group Leader)" : ""}</td>
+                      <td className="px-6 py-4 font-semibold text-slate-900">{s.name.toUpperCase()}</td>
+
                       <td className="px-6 py-4 text-slate-600">{s.id.split('-').slice(1).join('-')}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-medium rounded ${
