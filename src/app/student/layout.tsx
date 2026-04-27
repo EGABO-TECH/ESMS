@@ -3,7 +3,7 @@
 import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut } from "lucide-react";
+import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut, Megaphone } from "lucide-react";
 import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -14,6 +14,7 @@ const navItems = [
   { href: "/student/academics",  icon: BookOpen,     label: "Academics" },
   { href: "/student/results",    icon: Award,        label: "My Results" },
   { href: "/student/finance",    icon: Wallet,       label: "Finance" },
+  { href: "/student/communication", icon: Megaphone, label: "Communication" },
   { href: "/student/roadmap",    icon: Map,          label: "Semester Roadmap" },
 ];
 

@@ -42,9 +42,9 @@ export default function LecturerDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group cursor-pointer">
             <div className="flex justify-between items-start mb-4">
-              <div className={`${stat.bg} p-3 rounded-2xl ${stat.color}`}>
+              <div className={`${stat.bg} p-3 rounded-2xl ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon size={24} />
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Faculty Insight</span>

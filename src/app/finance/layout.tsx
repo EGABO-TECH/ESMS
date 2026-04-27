@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useRef, useEffect, ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { 
@@ -23,6 +23,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function FinanceLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -77,37 +78,37 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 space-y-1 overflow-y-auto">
           <Link href="/finance">
-            <div className="text-white hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <LayoutDashboard size={20} />
               <span className="font-medium">Dashboard</span>
             </div>
           </Link>
           <Link href="/finance/payments">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/payments' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <Banknote size={20} />
               <span className="font-medium">Payments</span>
             </div>
           </Link>
           <Link href="/finance/billing">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/billing' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <FileText size={20} />
               <span className="font-medium">Billing</span>
             </div>
           </Link>
           <Link href="/finance/ledgers">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/ledgers' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <CreditCard size={20} />
               <span className="font-medium">Ledgers</span>
             </div>
           </Link>
           <Link href="/finance/reports">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/reports' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <BarChart size={20} />
               <span className="font-medium">Reports</span>
             </div>
           </Link>
           <Link href="/finance/settings">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/settings' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <Settings size={20} />
               <span className="font-medium">Settings</span>
             </div>

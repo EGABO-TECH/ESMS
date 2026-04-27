@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useRef, useEffect, ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { 
@@ -24,6 +24,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function LecturerLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -78,37 +79,37 @@ export default function LecturerLayout({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 space-y-1 overflow-y-auto">
           <Link href="/lecturer">
-            <div className="text-white hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <LayoutDashboard size={20} />
               <span className="font-medium">Dashboard</span>
             </div>
           </Link>
           <Link href="/lecturer/courses">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer/courses' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <BookOpen size={20} />
               <span className="font-medium">My Courses</span>
             </div>
           </Link>
           <Link href="/lecturer/grades">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer/grades' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <GraduationCap size={20} />
               <span className="font-medium">Grading Center</span>
             </div>
           </Link>
           <Link href="/lecturer/assignments">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer/assignments' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <ClipboardList size={20} />
               <span className="font-medium">Assignments</span>
             </div>
           </Link>
           <Link href="/lecturer/reports">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer/reports' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <BarChart size={20} />
               <span className="font-medium">Class Reports</span>
             </div>
           </Link>
           <Link href="/lecturer/settings">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/lecturer/settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <Settings size={20} />
               <span className="font-medium">Settings</span>
             </div>

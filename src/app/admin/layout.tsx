@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useRef, useEffect } from "react";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -80,49 +81,73 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 space-y-1 overflow-y-auto">
           <Link href="/admin">
-            <div className="bg-blue-600 text-white rounded-md mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <LayoutDashboard size={20} />
               <span className="font-public-sans text-sm font-medium">Dashboard</span>
             </div>
           </Link>
-          <Link href="/admin/academics">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
-              <GraduationCap size={20} />
+          <Link href="/admin/students">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/students' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+              <Users size={20} />
+              <span className="font-public-sans text-sm font-medium">Students</span>
+            </div>
+          </Link>
+          <Link href="/admin/courses">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/courses' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+              <BookOpen size={20} />
               <span className="font-public-sans text-sm font-medium">Academics</span>
             </div>
           </Link>
           <Link href="/admin/admissions">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/admissions' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <UserPlus size={20} />
               <span className="font-public-sans text-sm font-medium">Admissions</span>
             </div>
           </Link>
+          <Link href="/admin/enrollments">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/enrollments' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+              <GraduationCap size={20} />
+              <span className="font-public-sans text-sm font-medium">Enrollments</span>
+            </div>
+          </Link>
+          <Link href="/admin/grades">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/grades' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+              <BarChart size={20} />
+              <span className="font-public-sans text-sm font-medium">Grades Center</span>
+            </div>
+          </Link>
           <Link href="/admin/finance">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/finance' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <Banknote size={20} />
               <span className="font-public-sans text-sm font-medium">Finance (UGX)</span>
             </div>
           </Link>
           <Link href="/admin/registry">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/registry' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <Users size={20} />
               <span className="font-public-sans text-sm font-medium">Registry</span>
             </div>
           </Link>
+          <Link href="/admin/users">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/users' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+              <Users size={20} />
+              <span className="font-public-sans text-sm font-medium">Staff & Users</span>
+            </div>
+          </Link>
           <Link href="/admin/communication">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/communication' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <MessageSquare size={20} />
               <span className="font-public-sans text-sm font-medium">Communication</span>
             </div>
           </Link>
           <Link href="/admin/reports">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/reports' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <BarChart size={20} />
               <span className="font-public-sans text-sm font-medium">Reports</span>
             </div>
           </Link>
           <Link href="/admin/settings">
-            <div className="text-slate-400 hover:text-white mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-md transition-all duration-200 ${pathname === '/admin/settings' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
               <Settings size={20} />
               <span className="font-public-sans text-sm font-medium">Settings</span>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useRef, useEffect, ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { 
@@ -23,6 +23,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function RegistrarLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -77,37 +78,37 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 space-y-1 overflow-y-auto">
           <Link href="/registrar">
-            <div className="text-white hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <LayoutDashboard size={20} />
               <span className="font-medium">Dashboard</span>
             </div>
           </Link>
           <Link href="/registrar/students">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/students' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <Users size={20} />
               <span className="font-medium">Students</span>
             </div>
           </Link>
           <Link href="/registrar/courses">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/courses' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <BookOpen size={20} />
               <span className="font-medium">Courses</span>
             </div>
           </Link>
           <Link href="/registrar/enrollments">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/enrollments' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <UserPlus size={20} />
               <span className="font-medium">Enrollments</span>
             </div>
           </Link>
           <Link href="/registrar/reports">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/reports' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <BarChart size={20} />
               <span className="font-medium">Reports</span>
             </div>
           </Link>
           <Link href="/registrar/settings">
-            <div className="text-blue-100 hover:bg-white/10 mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/settings' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <Settings size={20} />
               <span className="font-medium">Settings</span>
             </div>

@@ -30,13 +30,13 @@ export default function AdminDashboard() {
     <div className="p-6 space-y-8">
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm hover:shadow-lg transition-all group cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Total Enrolled</p>
               <p className="text-4xl font-black text-on-surface">{(totalStudents ?? 0).toLocaleString()}</p>
             </div>
-            <div className="bg-primary/10 p-2 rounded-lg"><Users className="text-primary" size={24} /></div>
+            <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors"><Users className="text-primary" size={24} /></div>
           </div>
           <div className="flex items-center gap-1 text-finance-success text-sm font-semibold">
             <TrendingUp size={16} />
@@ -44,13 +44,13 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm hover:shadow-lg transition-all group cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Total Lecturers</p>
               <p className="text-4xl font-black text-on-surface">{totalStaff ?? 0}</p>
             </div>
-            <div className="bg-sis-accent/10 p-2 rounded-lg"><GraduationCap className="text-sis-accent" size={24} /></div>
+            <div className="bg-sis-accent/10 p-2 rounded-lg group-hover:bg-sis-accent/20 transition-colors"><GraduationCap className="text-sis-accent" size={24} /></div>
           </div>
           <div className="flex items-center gap-1 text-slate-500 text-sm font-semibold">
             <CheckCircle size={16} />
@@ -58,13 +58,13 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm hover:shadow-lg transition-all group cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Active Courses</p>
               <p className="text-4xl font-black text-on-surface">{activeCourses ?? 0}</p>
             </div>
-            <div className="bg-finance-success/10 p-2 rounded-lg"><BookOpen className="text-finance-success" size={24} /></div>
+            <div className="bg-finance-success/10 p-2 rounded-lg group-hover:bg-finance-success/20 transition-colors"><BookOpen className="text-finance-success" size={24} /></div>
           </div>
           <div className="flex items-center gap-1 text-slate-500 text-sm font-semibold">
             <TrendingUp size={16} />
@@ -72,13 +72,13 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-border-subtle shadow-sm hover:shadow-lg transition-all group cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Fee Collection Rate</p>
               <p className="text-4xl font-black text-on-surface">{collectionRate}%</p>
             </div>
-            <div className="bg-exam-warning/10 p-2 rounded-lg"><DollarSign className="text-exam-warning" size={24} /></div>
+            <div className="bg-exam-warning/10 p-2 rounded-lg group-hover:bg-exam-warning/20 transition-colors"><DollarSign className="text-exam-warning" size={24} /></div>
           </div>
           <div className="w-full bg-surface-container rounded-full h-2 mt-1">
             <div className="bg-finance-success h-full rounded-full" style={{ width: `${collectionRate}%` }} />
