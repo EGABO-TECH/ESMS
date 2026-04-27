@@ -3,7 +3,11 @@
 import { Download, Plus, Filter, ArrowUpDown, ChevronRight, Calendar, BookOpen, UserSearch, UserCheck, Clock, FileWarning } from "lucide-react";
 import { toast } from "sonner";
 
+import { MOCK_STUDENTS } from "@/lib/mockData";
+
 export default function RegistryEnrollmentHub() {
+  const students = MOCK_STUDENTS;
+
   return (
     <div className="p-lg max-w-[1600px] mx-auto">
       {/* Page Header */}
@@ -90,57 +94,25 @@ export default function RegistryEnrollmentHub() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-900">ABABIKU BRENDA (Group Leader)</td>
-                    <td className="px-6 py-4 text-slate-600">273-318</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded">Fully Registered</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-900">ALIMPA ANNE HILLARY</td>
-                    <td className="px-6 py-4 text-slate-600">269-896</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">Provisionally Enrolled</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-900">EGABO AARON</td>
-                    <td className="px-6 py-4 text-slate-600">258-154</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded">Fully Registered</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-900">FAIDA NANCY</td>
-                    <td className="px-6 py-4 text-slate-600">230-500</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded">Pending Approval</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-900">KIRABO ALICE</td>
-                    <td className="px-6 py-4 text-slate-600">274-961</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded">Fully Registered</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
-                    </td>
-                  </tr>
+                  {students.map((s, i) => (
+                    <tr key={i} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 font-semibold text-slate-900">{s.name.toUpperCase()} {i === 0 ? "(Group Leader)" : ""}</td>
+                      <td className="px-6 py-4 text-slate-600">{s.id.split('-').slice(1).join('-')}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-medium rounded ${
+                          s.status === 'Enrolled' ? 'bg-emerald-100 text-emerald-700' :
+                          s.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {s.status === 'Enrolled' ? 'Fully Registered' : (s.status === 'Pending' ? 'Pending Approval' : 'Provisionally Enrolled')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-blue-600 hover:underline text-sm font-medium">View Profile</button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
+
               </table>
             </div>
             <div className="p-4 border-t border-slate-100 flex items-center justify-between">

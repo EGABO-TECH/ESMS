@@ -2,22 +2,21 @@
 
 import { TrendingUp, Users, GraduationCap, BookOpen, DollarSign, AlertTriangle, MessageSquare, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { MOCK_STATS, MOCK_STUDENTS } from "@/lib/mockData";
 
 export default function AdminDashboard() {
-  // Mock Data
-  const totalStudents = 4892;
-  const totalStaff = 342;
-  const activeCourses = 156;
-  
-  const totalInvoiced = 4500000000;
-  const totalCollected = 3800000000;
-  const collectionRate = Math.round((totalCollected / totalInvoiced) * 100);
+  // Mock Data from centralized source
+  const { totalStudents, totalStaff, activeCourses, totalInvoiced, totalCollected, collectionRate } = MOCK_STATS;
 
-  const recentAdmissions = [
-    { id: 1, applicant_name: "Ababiku Brenda", nationality: "Ugandan", programme: "AES Content", applied_at: "2023-10-24T10:00:00Z", status: "pending" },
-    { id: 2, applicant_name: "Alimpa Anne Hillary", nationality: "Kenyan", programme: "Conservation", applied_at: "2023-10-23T14:30:00Z", status: "enrolled" },
-    { id: 3, applicant_name: "Egabo Aaron", nationality: "Ugandan", programme: "AES Content", applied_at: "2023-10-23T09:15:00Z", status: "interview" },
-  ];
+  
+  const recentAdmissions = MOCK_STUDENTS.slice(0, 3).map((s, i) => ({
+    id: i + 1,
+    applicant_name: s.name,
+    nationality: s.nationality,
+    programme: s.program,
+    applied_at: s.applied_at,
+    status: s.status.toLowerCase() === 'enrolled' ? 'enrolled' : (s.status.toLowerCase() === 'pending' ? 'pending' : 'interview')
+  }));
 
   const statusColors: Record<string, string> = {
     pending: "bg-exam-warning/10 text-exam-warning",
@@ -26,6 +25,7 @@ export default function AdminDashboard() {
     enrolled: "bg-finance-success/10 text-finance-success",
     rejected: "bg-error/10 text-error",
   };
+
 
   return (
     <div className="p-6 space-y-8">

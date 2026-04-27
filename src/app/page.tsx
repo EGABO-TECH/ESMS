@@ -1,98 +1,159 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, User, GraduationCap, Wallet, BookOpen } from "lucide-react";
+import { User, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-surface-bg text-on-surface flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full mix-blend-multiply"></div>
-        <div className="absolute top-[60%] -right-[10%] w-[40%] h-[40%] bg-sis-accent/10 blur-[100px] rounded-full mix-blend-multiply"></div>
-      </div>
+  const router = useRouter();
 
-      <div className="max-w-4xl w-full z-10 relative">
-        <div className="text-center mb-12">
-          <div className="w-24 h-24 mx-auto bg-white rounded-2xl shadow-lg p-4 mb-6 flex items-center justify-center">
-            <img src="/cuu-logo.png" alt="CUU Logo" className="w-full h-full object-contain" />
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Mock authentication logic
+    setTimeout(() => {
+      setLoading(false);
+      // Hardcode a user redirect based on email input for demo purposes
+      if (identifier.toLowerCase().includes("admin")) {
+        router.push("/admin");
+      } else if (identifier.toLowerCase().includes("registrar")) {
+        router.push("/admin/registry");
+      } else if (identifier.toLowerCase().includes("finance")) {
+        router.push("/admin/finance");
+      } else if (identifier.toLowerCase().includes("lecturer")) {
+        router.push("/lecturer");
+      } else {
+        router.push("/student/dashboard");
+      }
+      router.refresh();
+    }, 1500);
+  };
+
+  return (
+    <main className="min-h-screen bg-[#f1f5f9] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-[#001a40] p-8 text-center">
+          <div className="bg-white w-24 h-24 mx-auto rounded-lg p-2 mb-4 flex items-center justify-center">
+            <Image 
+              src="/cuu-logo.png" 
+              alt="Cavendish University Logo" 
+              width={80} 
+              height={80}
+              className="object-contain"
+            />
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">Enterprise School Management System</h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Welcome to the Cavendish University Uganda central portal. Select your role below to access your dashboard.
-          </p>
+          <h1 className="text-white text-2xl font-bold tracking-wide">Cavendish University Uganda</h1>
+          <p className="text-blue-100/80 text-sm mt-1 font-medium">Student Records Management System</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Link href="/admin" className="group bg-white p-8 rounded-2xl shadow-sm border border-border-subtle hover:shadow-xl hover:border-primary/30 transition-all duration-300">
-            <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <ShieldCheck className="text-primary" size={28} />
+        {/* Form Section */}
+        <div className="p-8">
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Email / Username */}
+            <div>
+              <label className="text-slate-700 text-sm font-semibold block mb-2">
+                Email Address or Username
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
+                  <User size={20} />
+                </div>
+                <input
+                  id="identifier"
+                  type="text"
+                  placeholder="e.g. user@students.cavendish.ac.ug"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  required
+                  className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
+                />
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Administrator</h2>
-            <p className="text-slate-500 mb-6 text-sm leading-relaxed">
-              Access the main control panel, manage system settings, security, and global configurations.
-            </p>
-            <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
-              <span>Access Portal</span>
-              <ArrowRight size={16} className="ml-1" />
-            </div>
-          </Link>
 
-          <Link href="/admin/registry" className="group bg-white p-8 rounded-2xl shadow-sm border border-border-subtle hover:shadow-xl hover:border-sis-accent/30 transition-all duration-300">
-            <div className="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <User className="text-sis-accent" size={28} />
+            {/* Password */}
+            <div>
+              <label className="text-slate-700 text-sm font-semibold block mb-2">
+                Password
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
+                  <Lock size={20} />
+                </div>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-12 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Registrar</h2>
-            <p className="text-slate-500 mb-6 text-sm leading-relaxed">
-              Manage student admissions, course registrations, academic records, and graduation workflows.
-            </p>
-            <div className="flex items-center text-sis-accent font-semibold text-sm group-hover:gap-2 transition-all">
-              <span>Access Portal</span>
-              <ArrowRight size={16} className="ml-1" />
-            </div>
-          </Link>
 
-          <Link href="/admin/finance" className="group bg-white p-8 rounded-2xl shadow-sm border border-border-subtle hover:shadow-xl hover:border-amber-500/30 transition-all duration-300">
-            <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Wallet className="text-amber-500" size={28} />
+            {/* Options */}
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-[#001a40] focus:ring-[#001a40]" 
+                />
+                <span className="text-slate-600 text-sm font-medium group-hover:text-slate-900">Remember me</span>
+              </label>
+              <button type="button" className="text-[#001a40] text-sm font-bold hover:underline">
+                Forgot password?
+              </button>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Finance Officer</h2>
-            <p className="text-slate-500 mb-6 text-sm leading-relaxed">
-              Manage student payments, ledgers, bursaries, and generate financial reports.
-            </p>
-            <div className="flex items-center text-amber-500 font-semibold text-sm group-hover:gap-2 transition-all">
-              <span>Access Portal</span>
-              <ArrowRight size={16} className="ml-1" />
-            </div>
-          </Link>
 
-          <Link href="/lecturer" className="group bg-white p-8 rounded-2xl shadow-sm border border-border-subtle hover:shadow-xl hover:border-purple-500/30 transition-all duration-300">
-            <div className="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <BookOpen className="text-purple-500" size={28} />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Lecturer</h2>
-            <p className="text-slate-500 mb-6 text-sm leading-relaxed">
-              Manage your courses, upload study materials, input student grades, and view schedules.
-            </p>
-            <div className="flex items-center text-purple-500 font-semibold text-sm group-hover:gap-2 transition-all">
-              <span>Access Portal</span>
-              <ArrowRight size={16} className="ml-1" />
-            </div>
-          </Link>
+            {/* Submit Button */}
+            <button
+              id="login-submit"
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-[#001a40] text-white font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-[#002a60] active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 transition-all shadow-lg shadow-blue-900/20"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                "Sign In to Portal"
+              )}
+            </button>
+          </form>
 
-          <Link href="/student/dashboard" className="group bg-white p-8 rounded-2xl shadow-sm border border-border-subtle hover:shadow-xl hover:border-finance-success/30 transition-all duration-300 md:col-span-2 lg:col-span-1">
-            <div className="w-14 h-14 bg-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <GraduationCap className="text-finance-success" size={28} />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Student Portal</h2>
-            <p className="text-slate-500 mb-6 text-sm leading-relaxed">
-              View your academic performance, real-time finance ledger, and upcoming events.
+          {/* Footer Text */}
+          <div className="mt-8 text-center">
+            <p className="text-slate-600 text-sm">
+              New to the portal?{" "}
+              <Link href="/enroll" className="text-[#001a40] font-bold hover:underline">
+                Apply for Account
+              </Link>
             </p>
-            <div className="flex items-center text-finance-success font-semibold text-sm group-hover:gap-2 transition-all">
-              <span>Access Portal</span>
-              <ArrowRight size={16} className="ml-1" />
-            </div>
-          </Link>
+          </div>
         </div>
       </div>
     </main>
   );
 }
+

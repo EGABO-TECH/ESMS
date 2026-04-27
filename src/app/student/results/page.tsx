@@ -4,26 +4,15 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Award, Info, Lock, Download, X, AlertTriangle, CheckCircle } from "lucide-react";
 
+import { MOCK_STUDENT_RESULTS, GRADING_SCALE } from "@/lib/mockData";
+
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
 const BALANCE_AMOUNT = "UGX 1,250,000";
 
-const results = [
-  { code: "SWE311", name: "Software Lifecycle",      credits: 4, score: 81, grade: "A",  gp: 5.0 },
-  { code: "SWE312", name: "Mobile App Dev",          credits: 4, score: 76, grade: "B+", gp: 4.5 },
-  { code: "SWE313", name: "Cloud Computing",         credits: 3, score: 83, grade: "A",  gp: 5.0 },
-  { code: "SWE314", name: "System Architecture",     credits: 4, score: 44, grade: "F",  gp: 0.0 },
-];
+const results = MOCK_STUDENT_RESULTS;
+const gradingScale = GRADING_SCALE;
 
-const gradingScale = [
-  { grade: "A",  range: "80–100", gp: "5.0", color: "text-finance-success" },
-  { grade: "B+", range: "75–79",  gp: "4.5", color: "text-primary" },
-  { grade: "B",  range: "70–74",  gp: "4.0", color: "text-primary" },
-  { grade: "C+", range: "65–69",  gp: "3.5", color: "text-exam-warning" },
-  { grade: "C",  range: "60–64",  gp: "3.0", color: "text-exam-warning" },
-  { grade: "D",  range: "50–59",  gp: "2.0", color: "text-orange-500" },
-  { grade: "F",  range: "0–49",   gp: "0.0", color: "text-error" },
-];
 
 const gradeColor = (grade: string) => {
   if (grade === "A") return "bg-finance-success/10 text-finance-success";
