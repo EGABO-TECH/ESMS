@@ -1,6 +1,6 @@
 "use client";
 
-import { Banknote, TrendingUp, TrendingDown, DollarSign, PieChart, ArrowUpRight, Download, Calendar } from "lucide-react";
+import { Banknote, TrendingUp, TrendingDown, PieChart, Download, Calendar } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { toast } from "sonner";
 

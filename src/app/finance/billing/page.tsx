@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Plus, Search, Filter, Download, MoreVertical, CreditCard, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { FileText, Plus, Search, Filter, Download, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 

@@ -20,7 +20,8 @@ import {
   Bell,
   Menu,
   X,
-  CalendarDays
+  CalendarDays,
+  BookOpen
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -58,6 +59,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="px-6 mb-8 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 flex items-center justify-center overflow-hidden bg-white rounded">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt="Cavendish University Uganda Logo"
                 className="w-full h-full object-contain"
