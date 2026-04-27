@@ -46,14 +46,7 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      const role = profile?.role ?? "student";
-      router.push(role === "admin" || role === "staff" ? "/admin" : "/student/dashboard");
+      router.push("/");
       router.refresh();
     }
   };

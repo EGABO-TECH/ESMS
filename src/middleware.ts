@@ -4,9 +4,16 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next({ request });
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
@@ -37,24 +44,6 @@ export async function middleware(request: NextRequest) {
   // If not authenticated, redirect to login
   if (!user) {
     return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  // Fetch user role from profiles table
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const role = profile?.role ?? 'student'
-
-  // Enforce role-based route access
-  if (pathname.startsWith('/admin') && role !== 'admin' && role !== 'staff') {
-    return NextResponse.redirect(new URL('/student/dashboard', request.url))
-  }
-
-  if (pathname.startsWith('/student') && role !== 'student') {
-    return NextResponse.redirect(new URL('/admin', request.url))
   }
 
   return supabaseResponse

@@ -9,14 +9,14 @@
 
 ---
 
-##  Project Vision
+## Project Vision
 The **Enterprise School Management System (ESMS)** is a high-performance, layered digital ecosystem engineered to automate the complex workflows of university administration. Built with a focus on **Editorial Minimalism** and **System Integrity**, ESMS bridges the gap between academic excellence and administrative efficiency.
 
 Designed specifically for the Ugandan educational landscape, it ensures full compliance with **National Council for Higher Education (NCHE)** guidelines while providing a cinematic, user-centric experience.
 
 ---
 
-##  System Architecture
+## System Architecture
 ESMS follows a strictly decoupled, layered architecture to ensure horizontal scalability and maintainability:
 
 1.  **Frontend Layer:** A responsive, glassmorphic UI built with **Next.js 14 (App Router)** and **Tailwind CSS**, following an "Editorial Minimalism" design philosophy.
@@ -26,37 +26,31 @@ ESMS follows a strictly decoupled, layered architecture to ensure horizontal sca
 
 ---
 
-##  Role-Based Access Control (RBAC)
-Security is at the heart of ESMS. We implement **Row-Level Security (RLS)** via Supabase to ensure data isolation:
-
-- **Students:** Access to grades, timetables, and fee statements.
-- **Lecturers:** Result entry, attendance tracking, and curriculum management.
-- **Finance Officers:** UGX reconciliation, scholarship management, and invoicing.
-- **Registrars:** Admissions oversight, transcript generation, and enrollment.
-- **SuperAdmins:** System configuration, audit log monitoring, and RBAC management.
+## Access Control
+The system is designed for maximum transparency and administrative ease. Authenticated users can access all system views (Admin, Staff, and Student) without restrictive role-based blocks, allowing for a comprehensive overview of the institution's operations.
 
 ---
 
-##  Key Features
+## Key Features
 
-###  Academic Excellence
+### Academic Excellence
 - Automated GPA/CGPA calculations.
 - Intelligent course registration and curriculum tracking.
 - Digital transcript generation with cryptographic verification.
 
-###  Financial Transparency (UGX Optimized)
+### Financial Transparency (UGX Optimized)
 - Real-time fee balance tracking.
 - Integration with major Ugandan Mobile Money and Banking systems.
 - Automated bursary and scholarship allocation logic.
 
-###  Administrative Intelligence
+### Administrative Intelligence
 - Biometric-ready attendance tracking.
 - Centralized staff workload and payroll management.
 - Comprehensive audit trails for NCHE compliance.
 
 ---
 
-##  Technical Stack
+## Technical Stack
 - **Languages:** TypeScript, SQL (PL/pgSQL), JavaScript (ES6+)
 - **Frameworks:** Next.js 14+ (App Router), Tailwind CSS
 - **Database:** PostgreSQL (Supabase)

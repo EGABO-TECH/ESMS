@@ -31,19 +31,7 @@ export async function GET(request: NextRequest) {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-
-        const role = profile?.role ?? 'student'
-
-        if (role === 'admin' || role === 'staff') {
-          return NextResponse.redirect(`${origin}/admin`)
-        } else {
-          return NextResponse.redirect(`${origin}/student/dashboard`)
-        }
+        return NextResponse.redirect(`${origin}/`)
       }
     }
   }
