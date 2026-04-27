@@ -17,7 +17,9 @@ import {
   Menu,
   X,
   CalendarDays,
-  FileText
+  FileText,
+  Users,
+  PieChart
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -100,6 +102,18 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
             <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/ledgers' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <CreditCard size={20} />
               <span className="font-medium">Ledgers</span>
+            </div>
+          </Link>
+          <Link href="/finance/payroll">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/payroll' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
+              <Users size={20} />
+              <span className="font-medium">Staff Payroll</span>
+            </div>
+          </Link>
+          <Link href="/finance/budget">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/finance/budget' ? 'bg-emerald-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
+              <PieChart size={20} />
+              <span className="font-medium">Budget Planning</span>
             </div>
           </Link>
           <Link href="/finance/reports">

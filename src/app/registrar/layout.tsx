@@ -17,7 +17,9 @@ import {
   Bell,
   Menu,
   X,
-  CalendarDays
+  CalendarDays,
+  GraduationCap,
+  FileText
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -100,6 +102,18 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
             <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/enrollments' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
               <UserPlus size={20} />
               <span className="font-medium">Enrollments</span>
+            </div>
+          </Link>
+          <Link href="/registrar/graduation">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/graduation' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
+              <GraduationCap size={20} />
+              <span className="font-medium">Graduation</span>
+            </div>
+          </Link>
+          <Link href="/registrar/transcripts">
+            <div className={`mx-2 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 ${pathname === '/registrar/transcripts' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}>
+              <FileText size={20} />
+              <span className="font-medium">Transcripts</span>
             </div>
           </Link>
           <Link href="/registrar/reports">
