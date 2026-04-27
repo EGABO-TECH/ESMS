@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { 
-  Users, 
   Search, 
   Filter, 
   Download, 
@@ -15,6 +14,8 @@ import {
   Clock,
   History
 } from "lucide-react";
+
+
 
 export default function RegistrarStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");

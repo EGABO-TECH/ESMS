@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { 
-  GraduationCap, 
   Search, 
   Filter, 
   ChevronRight,
@@ -14,6 +13,7 @@ import {
   TrendingUp,
   Download
 } from "lucide-react";
+
 
 export default function LecturerGradesPage() {
   const [activeCourse, setActiveCourse] = useState("SWE311");

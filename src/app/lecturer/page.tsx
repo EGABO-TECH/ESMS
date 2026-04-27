@@ -4,11 +4,12 @@ import { BookOpen, Users, ClipboardList, GraduationCap, ArrowRight, Clock, Check
 import { toast } from "sonner";
 import Link from "next/link";
 
-import { MOCK_STATS, MOCK_COURSES } from "@/lib/mockData";
+import { MOCK_COURSES } from "@/lib/mockData";
+
 
 export default function LecturerDashboard() {
-  const { totalStudents } = MOCK_STATS;
   const stats = [
+
     { title: "My Courses", value: "4", icon: BookOpen, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Assigned this sem" },
     { title: "Total Students", value: "248", icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "Across 4 modules" },
     { title: "Pending Grading", value: "32", icon: ClipboardList, color: "text-amber-600", bg: "bg-amber-50", trend: "Assignments due" },

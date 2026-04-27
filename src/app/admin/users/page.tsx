@@ -9,7 +9,6 @@ import {
   UserPlus, 
   ShieldCheck, 
   Lock, 
-  MoreVertical, 
   Mail, 
   Phone,
   ChevronRight,
@@ -17,6 +16,7 @@ import {
   UserCheck,
   Power
 } from "lucide-react";
+
 
 export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("");

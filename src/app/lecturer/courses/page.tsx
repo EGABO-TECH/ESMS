@@ -13,8 +13,10 @@ import {
   MoreVertical,
   CheckCircle,
   FileText,
-  Upload
+  Upload,
+  ArrowRight
 } from "lucide-react";
+
 
 export default function LecturerCoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");

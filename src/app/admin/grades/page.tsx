@@ -3,21 +3,17 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { 
-  GraduationCap, 
+  TrendingUp, 
   Search, 
-  Filter, 
   Award, 
   FileCheck, 
   AlertTriangle, 
   ChevronRight,
-  TrendingUp,
-  Download,
-  CheckCircle,
   MoreVertical,
-  BookOpen
+  Download
 } from "lucide-react";
 
-import { MOCK_STATS, MOCK_GRADING } from "@/lib/mockData";
+import { MOCK_GRADING } from "@/lib/mockData";
 
 export default function AdminGradesPage() {
   const [activeFaculty, setActiveFaculty] = useState("All");

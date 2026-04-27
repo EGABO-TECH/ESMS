@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import { MOCK_STATS, MOCK_TRANSACTIONS } from "@/lib/mockData";
 
 export default function FinanceDashboard() {
-  const { totalInvoiced, totalCollected, collectionRate, availableFunds, outstandingFees } = MOCK_STATS;
+  const { totalCollected, collectionRate, availableFunds, outstandingFees } = MOCK_STATS;
+
   const stats = [
     { title: "Total Revenue", value: `UGX ${(totalCollected / 1_000_000_000).toFixed(1)}B`, icon: Banknote, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+15% vs last sem" },
     { title: "Outstanding Fees", value: `UGX ${(outstandingFees / 1_000_000).toFixed(0)}M`, icon: DollarSign, color: "text-red-600", bg: "bg-red-50", trend: "14% of Total Invoiced" },

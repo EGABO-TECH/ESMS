@@ -17,9 +17,9 @@ import {
   Menu,
   X,
   CalendarDays,
-  FileText,
   ClipboardList
 } from "lucide-react";
+
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 
 export default function LecturerLayout({ children }: { children: ReactNode }) {

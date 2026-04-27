@@ -3,19 +3,18 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { 
-  CreditCard, 
   Search, 
   Filter, 
   Download, 
   CheckCircle, 
   Clock, 
-  AlertCircle, 
   ChevronRight,
-  TrendingUp,
   Banknote,
   Receipt,
   FileText
 } from "lucide-react";
+
+
 
 export default function FinancePaymentsPage() {
   const [filterStatus, setFilterStatus] = useState("All");
