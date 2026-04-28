@@ -20,6 +20,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Second factor state
+  const [needsSecondFactor, setNeedsSecondFactor] = useState(false);
+  const [code, setCode] = useState("");
+  const [secondFactorStrategy, setSecondFactorStrategy] = useState("");
+
   // Handle RBAC redirection once user is loaded
   useEffect(() => {
     if (userLoaded && user) {
@@ -67,6 +72,17 @@ export default function LoginPage() {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         toast.success("Login successful! Redirecting...");
+      } else if (result.status === "needs_second_factor") {
+        // Clerk requires a second factor (like New Device Verification or 2FA)
+        const strategy = result.supportedSecondFactors?.[0]?.strategy;
+        if (strategy) {
+          await signIn.prepareSecondFactor({ strategy: strategy as any });
+          setSecondFactorStrategy(strategy);
+          setNeedsSecondFactor(true);
+          toast.info("A verification code is required. Please check your email or phone.");
+        } else {
+          toast.error("Second factor required but no strategies supported.");
+        }
       } else {
         console.error("Incomplete sign in:", result);
         toast.error(`Login incomplete. Status: ${result.status}`);
@@ -78,6 +94,31 @@ export default function LoginPage() {
       } else {
         toast.error(err.message || "An error occurred during login.");
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifySecondFactor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signInLoaded) return;
+    
+    setLoading(true);
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: secondFactorStrategy as any,
+        code
+      });
+      
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        toast.success("Login successful! Redirecting...");
+      } else {
+        toast.error(`Verification incomplete. Status: ${result.status}`);
+      }
+    } catch (err: any) {
+      console.error("Verification error:", err);
+      toast.error(err.errors?.[0]?.longMessage || err.message || "Invalid verification code.");
     } finally {
       setLoading(false);
     }
@@ -103,89 +144,136 @@ export default function LoginPage() {
 
         {/* Form Section */}
         <div className="p-8">
-          <form onSubmit={handleLogin} className="space-y-6">
-            {/* Email / Username */}
-            <div>
-              <label className="text-slate-700 text-sm font-semibold block mb-2">
-                Email Address or Username
-              </label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
-                  <User size={20} />
-                </div>
+          {needsSecondFactor ? (
+            <form onSubmit={handleVerifySecondFactor} className="space-y-6">
+              <div className="text-center space-y-4">
+                <h2 className="text-[#001a40] text-xl font-bold">Additional Verification Required</h2>
+                <p className="text-slate-600 text-sm">
+                  Please enter the verification code sent to you to continue logging in.
+                </p>
+              </div>
+
+              <div>
+                <label className="text-slate-700 text-xs font-bold uppercase mb-2 block text-center">Verification Code</label>
                 <input
-                  id="identifier"
                   type="text"
-                  placeholder="e.g. user@students.cavendish.ac.ug"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="000000"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
+                  maxLength={6}
+                  className="w-full border-2 border-slate-200 rounded-lg p-4 text-center text-2xl font-bold tracking-[1em] outline-none focus:border-[#001a40] transition-all"
                 />
               </div>
-            </div>
 
-            {/* Password */}
-            <div>
-              <label className="text-slate-700 text-sm font-semibold block mb-2">
-                Password
-              </label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
-                  <Lock size={20} />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-[#001a40] text-white font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-[#002a60] transition-all shadow-lg"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    <span>Verifying...</span>
+                  </>
+                ) : (
+                  "Complete Login"
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setNeedsSecondFactor(false)}
+                className="w-full text-slate-500 text-sm font-bold hover:text-[#001a40] transition-colors"
+              >
+                Back to Login Form
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-6">
+              {/* Email / Username */}
+              <div>
+                <label className="text-slate-700 text-sm font-semibold block mb-2">
+                  Email Address or Username
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
+                    <User size={20} />
+                  </div>
+                  <input
+                    id="identifier"
+                    type="text"
+                    placeholder="e.g. user@students.cavendish.ac.ug"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    required
+                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
+                  />
                 </div>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-12 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="text-slate-700 text-sm font-semibold block mb-2">
+                  Password
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#001a40] transition-colors">
+                    <Lock size={20} />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-lg pl-11 pr-12 py-3.5 text-sm outline-none focus:ring-2 focus:ring-[#001a40]/10 focus:border-[#001a40] transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Options */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <input 
+                    type="checkbox" 
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-[#001a40] focus:ring-[#001a40]" 
+                  />
+                  <span className="text-slate-600 text-sm font-medium group-hover:text-slate-900">Remember me</span>
+                </label>
+                <button onClick={() => alert('Feature in development...')}  type="button" className="text-[#001a40] text-sm font-bold hover:underline">
+                  Forgot password?
                 </button>
               </div>
-            </div>
 
-            {/* Options */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-[#001a40] focus:ring-[#001a40]" 
-                />
-                <span className="text-slate-600 text-sm font-medium group-hover:text-slate-900">Remember me</span>
-              </label>
-              <button onClick={() => alert('Feature in development...')}  type="button" className="text-[#001a40] text-sm font-bold hover:underline">
-                Forgot password?
+              {/* Submit Button */}
+              <button
+                id="login-submit"
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-[#001a40] text-white font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-[#002a60] active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 transition-all shadow-lg shadow-blue-900/20"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  "Sign In to Portal"
+                )}
               </button>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              id="login-submit"
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-[#001a40] text-white font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-[#002a60] active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 transition-all shadow-lg shadow-blue-900/20"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin" size={20} />
-                  <span>Processing...</span>
-                </>
-              ) : (
-                "Sign In to Portal"
-              )}
-            </button>
-          </form>
+            </form>
+          )}
 
           {/* Footer Text */}
           <div className="mt-8 text-center">
