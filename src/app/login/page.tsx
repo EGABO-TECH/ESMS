@@ -23,15 +23,19 @@ export default function LoginPage() {
   // Handle RBAC redirection once user is loaded
   useEffect(() => {
     if (userLoaded && user) {
-      const role = (user.publicMetadata as any)?.role || "student";
+      // Role can be in unsafeMetadata (if signed up via our custom form) or publicMetadata
+      const rawRole = (user.unsafeMetadata as any)?.role || (user.publicMetadata as any)?.role || "student";
+      const role = rawRole.toString().toLowerCase();
       
       switch (role) {
+        case "administrator":
         case "admin":
           router.push("/admin");
           break;
         case "registrar":
           router.push("/registrar");
           break;
+        case "finance officer":
         case "finance":
           router.push("/finance");
           break;
@@ -67,8 +71,12 @@ export default function LoginPage() {
         toast.error("Login failed. Please check your credentials.");
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
-      toast.error(err.errors?.[0]?.message || "An error occurred during login.");
+      console.error("Login error object:", err);
+      if (err.errors && err.errors.length > 0) {
+        toast.error(err.errors[0].longMessage || err.errors[0].message);
+      } else {
+        toast.error(err.message || "An error occurred during login.");
+      }
     } finally {
       setLoading(false);
     }
