@@ -205,16 +205,18 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Bottom Nav (Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
-        {navItems.slice(0, 5).map(({ href, icon: Icon, label }) => {
+      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
+        <div className="min-w-max flex items-center h-full gap-1">
+        {navItems.map(({ href, icon: Icon, label }) => {
           const active = pathname === href;
           return (
-            <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 w-full ${active ? "text-primary" : "text-slate-500"}`}>
+            <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-primary" : "text-slate-500"}`}>
               <Icon size={20} className={active ? "fill-primary/20" : ""} />
               <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
             </Link>
           );
         })}
+        </div>
       </nav>
 
       <GlobalCalendarWidget isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} readOnly={true} />

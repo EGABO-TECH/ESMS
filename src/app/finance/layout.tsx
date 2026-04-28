@@ -24,6 +24,17 @@ import {
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
+const navItems = [
+  { href: "/finance", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/finance/payments", icon: Banknote, label: "Payments" },
+  { href: "/finance/billing", icon: FileText, label: "Billing" },
+  { href: "/finance/ledgers", icon: CreditCard, label: "Ledgers" },
+  { href: "/finance/payroll", icon: Users, label: "Staff Payroll" },
+  { href: "/finance/budget", icon: PieChart, label: "Budget Planning" },
+  { href: "/finance/reports", icon: BarChart, label: "Reports" },
+  { href: "/finance/settings", icon: Settings, label: "Settings" },
+];
+
 export default function FinanceLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -143,7 +154,7 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main Content Wrapper */}
-      <main className="flex-1 h-screen overflow-y-auto lg:ml-[280px] w-full">
+      <main className="flex-1 h-screen overflow-y-auto lg:ml-[280px] w-full pb-20 lg:pb-0">
         {/* TopNavBar */}
         <header className="flex justify-between items-center h-16 px-4 md:px-6 w-full sticky top-0 z-30 bg-white border-b border-slate-200">
           <div className="flex items-center gap-4">
@@ -223,6 +234,21 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
           {children}
         </div>
       </main>
+
+      {/* Bottom Nav (Mobile/Tablet) */}
+      <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
+        <div className="min-w-max flex items-center h-full gap-1">
+          {navItems.map(({ href, icon: Icon, label }) => {
+            const active = pathname === href;
+            return (
+              <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-emerald-600" : "text-slate-500"}`}>
+                <Icon size={20} className={active ? "fill-emerald-600/20" : ""} />
+                <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
 
       <GlobalCalendarWidget 
         isOpen={isCalendarOpen} 
