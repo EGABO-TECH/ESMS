@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Zap, Wallet, Info, Printer, Building2, Smartphone, CheckCircle, AlertCircle } from "lucide-react";
+import { Zap, Wallet, Info, Printer, Building2, Smartphone, CheckCircle, AlertCircle, X, CreditCard, Landmark, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
@@ -33,6 +33,7 @@ export default function StudentFinance() {
   const [simulating, setSimulating] = useState(false);
   const [payAmount, setPayAmount] = useState(String(outstanding));
   const [showPayPanel, setShowPayPanel] = useState(false);
+  const [showManage, setShowManage] = useState(false);
 
   const handleSimulatePayment = () => {
     const amount = Number(payAmount);
@@ -104,7 +105,7 @@ export default function StudentFinance() {
               <Zap size={18} /> Quick-pay
             </button>
             <button
-              onClick={() => toast.info("Opening wallet manager...")}
+              onClick={() => setShowManage(true)}
               className="flex items-center justify-center gap-2 bg-white border border-border-subtle text-on-surface py-3 px-4 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:bg-slate-50"
             >
               <Wallet size={18} /> Manage
@@ -249,7 +250,7 @@ export default function StudentFinance() {
                 }
               </div>
               <button
-                onClick={() => toast.info("Printing full statement...")}
+                onClick={() => { toast.success("Opening print preview..."); setTimeout(() => window.print(), 300); }}
                 className="flex items-center gap-2 text-primary text-xs font-bold hover:underline"
               >
                 <Printer size={14} /> Print Full Statement
@@ -269,6 +270,139 @@ export default function StudentFinance() {
           )}
         </div>
       </div>
+
+      {/* ── Wallet Management Modal ───────────────────────────── */}
+      {showManage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowManage(false)} />
+          <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-[#00174b] p-6 text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <Wallet size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">Payment Methods</h3>
+                    <p className="text-blue-200 text-xs">Choose how to clear your balance</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowManage(false)} className="text-white/70 hover:text-white">
+                  <X size={22} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              {/* Outstanding Balance Summary */}
+              <div className={`p-4 rounded-2xl border text-center ${balance > 0 ? "bg-error/5 border-error/20" : "bg-finance-success/5 border-finance-success/20"}`}>
+                <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Outstanding Balance</p>
+                <p className={`text-3xl font-black ${balance > 0 ? "text-error" : "text-finance-success"}`}>
+                  {balance > 0 ? `UGX ${balance.toLocaleString()}` : "CLEARED ✓"}
+                </p>
+              </div>
+
+              {/* Bank Transfer */}
+              <div className="bg-surface-container-low rounded-2xl p-5 border border-border-subtle">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Landmark size={18} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface text-sm">Bank Transfer</h4>
+                    <p className="text-xs text-on-surface-variant">Stanbic Bank Uganda</p>
+                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    { label: "Account Name", value: "Cavendish University Uganda" },
+                    { label: "Account Number", value: "9030012345678" },
+                    { label: "Bank", value: "Stanbic Bank Uganda" },
+                    { label: "Branch", value: "Ggaba Road Branch" },
+                    { label: "Reference", value: "CUU-2024-258154" },
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-border-subtle">
+                      <div>
+                        <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">{row.label}</p>
+                        <p className="text-xs font-bold text-on-surface font-mono">{row.value}</p>
+                      </div>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(row.value); toast.success(`${row.label} copied!`); }}
+                        className="text-on-surface-variant hover:text-primary transition-colors p-1"
+                        title="Copy"
+                      >
+                        <Copy size={13} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Money */}
+              <div className="bg-surface-container-low rounded-2xl p-5 border border-border-subtle">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <Smartphone size={18} className="text-yellow-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface text-sm">Mobile Money (MTN / Airtel)</h4>
+                    <p className="text-xs text-on-surface-variant">Instant payment — 24/7</p>
+                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    { label: "Merchant Code", value: "310055" },
+                    { label: "Reference", value: "CUU-2024-258154" },
+                    { label: "Amount (UGX)", value: balance.toLocaleString() },
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-border-subtle">
+                      <div>
+                        <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">{row.label}</p>
+                        <p className="text-xs font-bold text-on-surface font-mono">{row.value}</p>
+                      </div>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(row.value); toast.success(`${row.label} copied!`); }}
+                        className="text-on-surface-variant hover:text-primary transition-colors p-1"
+                        title="Copy"
+                      >
+                        <Copy size={13} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-on-surface-variant mt-3 leading-relaxed">
+                  Dial *165# (MTN) or *185# (Airtel) → Pay Bills → University Fees → Enter Merchant Code and your Student Number as reference.
+                </p>
+              </div>
+
+              {/* Credit/Debit Card */}
+              <div className="bg-surface-container-low rounded-2xl p-5 border border-border-subtle">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <CreditCard size={18} className="text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface text-sm">Online Card Payment</h4>
+                    <p className="text-xs text-on-surface-variant">Visa / Mastercard via secure gateway</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { toast.info("Redirecting to secure payment gateway..."); }}
+                  className="w-full py-3 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                >
+                  <CreditCard size={16} />
+                  Pay Online with Card — UGX {balance.toLocaleString()}
+                </button>
+              </div>
+
+              <p className="text-center text-[10px] text-on-surface-variant">
+                After payment, email your proof to <a href="mailto:bursar@cavendish.ac.ug" className="text-primary font-bold">bursar@cavendish.ac.ug</a> for same-day clearance confirmation.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

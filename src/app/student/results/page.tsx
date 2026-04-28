@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Award, Info, Lock, Download, X, AlertTriangle, CheckCircle } from "lucide-react";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
@@ -20,6 +21,7 @@ const gradeColor = (grade: string) => {
 };
 
 export default function StudentResults() {
+  const router = useRouter();
   const { studentResults: results } = useGlobalContext();
   const gradingScale = [
     { grade: "A",  range: "80–100", gp: "5.0", color: "text-finance-success" },
@@ -101,10 +103,10 @@ export default function StudentResults() {
               </p>
             </div>
             <button
-              onClick={() => toast.info("Redirecting to payment gateway...")}
+              onClick={() => router.push("/student/finance")}
               className="bg-error text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-700 transition-all shadow-lg active:scale-95 whitespace-nowrap"
             >
-              Pay Balance Online
+              Pay Balance Now
             </button>
           </div>
         )}
@@ -180,7 +182,7 @@ export default function StudentResults() {
               </div>
             </div>
             <button
-              onClick={() => toast.success("Downloading provisional results...")}
+              onClick={() => { toast.success("Opening print preview..."); setTimeout(() => window.print(), 300); }}
               className="bg-primary text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all shadow-xl flex items-center gap-3 active:scale-95"
             >
               <Download size={20} />
