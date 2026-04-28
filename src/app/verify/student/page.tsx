@@ -1,46 +1,48 @@
-"use client";
-
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import { buildVerificationPayload, signVerificationPayload } from "@/lib/qrSignature";
 
-const readParam = (value: string | null, fallback: string) => {
+const readParam = (
+  value: string | string[] | undefined,
+  fallback: string
+) => {
   if (!value) return fallback;
-  const trimmed = value.trim();
+  const normalized = Array.isArray(value) ? value[0] : value;
+  const trimmed = normalized.trim();
   return trimmed.length > 0 ? trimmed : fallback;
 };
 
-export default function StudentVerificationPage() {
-  const searchParams = useSearchParams();
+export default function StudentVerificationPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const params = searchParams ?? {};
 
-  const name = readParam(searchParams.get("name"), "Unknown Student");
-  const studentId = readParam(searchParams.get("id"), "N/A");
-  const course = readParam(searchParams.get("course"), "N/A");
-  const campus = readParam(searchParams.get("campus"), "N/A");
-  const validFrom = readParam(searchParams.get("validFrom"), "N/A");
-  const validTo = readParam(searchParams.get("validTo"), "N/A");
+  const name = readParam(params.name, "Unknown Student");
+  const studentId = readParam(params.id, "N/A");
+  const course = readParam(params.course, "N/A");
+  const campus = readParam(params.campus, "N/A");
+  const validFrom = readParam(params.validFrom, "N/A");
+  const validTo = readParam(params.validTo, "N/A");
   const avatar = readParam(
-    searchParams.get("avatar"),
+    params.avatar,
     "https://api.dicebear.com/7.x/avataaars/svg?seed=student"
   );
-  const status = readParam(searchParams.get("status"), "active");
-  const issuedAt = readParam(searchParams.get("issuedAt"), new Date().toISOString());
-  const sig = readParam(searchParams.get("sig"), "");
+  const status = readParam(params.status, "active");
+  const issuedAt = readParam(params.issuedAt, new Date().toISOString());
+  const sig = readParam(params.sig, "");
 
-  const expectedSig = useMemo(() => {
-    const payload = buildVerificationPayload({
-      name,
-      id: studentId,
-      course,
-      campus,
-      validFrom,
-      validTo,
-      avatar,
-      status,
-      issuedAt,
-    });
-    return signVerificationPayload(payload);
-  }, [name, studentId, course, campus, validFrom, validTo, avatar, status, issuedAt]);
+  const payload = buildVerificationPayload({
+    name,
+    id: studentId,
+    course,
+    campus,
+    validFrom,
+    validTo,
+    avatar,
+    status,
+    issuedAt,
+  });
+  const expectedSig = signVerificationPayload(payload);
 
   const isSignatureValid = sig.length > 0 && sig === expectedSig;
   const isActive = status.toLowerCase() === "active";
@@ -48,7 +50,6 @@ export default function StudentVerificationPage() {
   const verificationTone = isSignatureValid ? (isActive ? "text-emerald-700 bg-emerald-50 border-emerald-200" : "text-amber-700 bg-amber-50 border-amber-200") : "text-red-700 bg-red-50 border-red-200";
   const formattedIssuedAt = new Date(issuedAt).toLocaleString();
   const lastVerifiedAt = new Date().toLocaleString();
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
     <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
@@ -121,13 +122,11 @@ export default function StudentVerificationPage() {
 
           <div className="flex md:justify-end">
             <div className="w-full md:w-auto flex flex-col items-center justify-center bg-slate-50 rounded-xl p-4 border border-slate-200">
-              <div className="p-2 bg-white rounded-xl shadow-inner border border-slate-200">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`}
-                  alt="Verification QR Code"
-                  className="w-32 h-32"
-                />
+              <div className="w-32 h-32 rounded-2xl bg-[#00174b] text-white flex items-center justify-center text-center p-4 shadow-inner">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest">ESMS</p>
+                  <p className="text-[10px] text-blue-200 mt-2">Official Student Identity Verification</p>
+                </div>
               </div>
               <p className="text-[10px] text-slate-500 font-bold mt-3 uppercase tracking-wider">Verified by ESMS</p>
             </div>
