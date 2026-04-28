@@ -136,7 +136,7 @@ export default function EnrollmentPage() {
             <div className="text-center space-y-4">
               <h2 className="text-[#001a40] text-xl font-bold">Verify Your Email</h2>
               <p className="text-slate-600 text-sm">
-                We've sent a 6-digit verification code to <span className="font-semibold text-[#001a40]">{formData.email}</span>.
+                We&apos;ve sent a 6-digit verification code to <span className="font-semibold text-[#001a40]">{formData.email}</span>.
                 Please enter it below to complete your enrollment.
               </p>
             </div>
