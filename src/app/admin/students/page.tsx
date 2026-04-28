@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { 
   Users, 
@@ -23,12 +24,28 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdminStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("All");
+  const [filterRole, setFilterRole] = useState("All Programs");
 
   const { students } = useGlobalContext();
+  const filteredStudents = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return students.filter((student) => {
+      const matchesSearch =
+        query.length === 0 ||
+        student.name.toLowerCase().includes(query) ||
+        student.id.toLowerCase().includes(query) ||
+        student.program.toLowerCase().includes(query);
+
+      const matchesProgram =
+        filterRole === "All Programs" || student.program === filterRole;
+
+      return matchesSearch && matchesProgram;
+    });
+  }, [students, searchTerm, filterRole]);
 
 
   return (
+    <>
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -44,9 +61,9 @@ export default function AdminStudentsPage() {
           <button onClick={() => toast.success('Exporting student list...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
             <Download size={18} /> Export CSV
           </button>
-          <button onClick={() => toast.info('Opening new student form...')} className="px-4 py-2 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+          <Link href="/admin/students/register" className="px-4 py-2 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
             <Plus size={18} /> Register Student
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -71,7 +88,7 @@ export default function AdminStudentsPage() {
             <option>All Programs</option>
             <option>Software Engineering</option>
             <option>Data Science & AI</option>
-            <option>Business Admin</option>
+            <option>Business Admin (BBA)</option>
             <option>Laws (LLB)</option>
           </select>
           <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all">
@@ -98,7 +115,7 @@ export default function AdminStudentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {students.map((student, i) => (
+              {filteredStudents.map((student, i) => (
                 <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
@@ -152,7 +169,9 @@ export default function AdminStudentsPage() {
           </table>
         </div>
         <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Showing 5 of 4,892 Students</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Showing {filteredStudents.length} of {students.length} Students
+          </p>
           <div className="flex gap-2">
             <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-50 transition-all disabled:opacity-50" disabled>Previous</button>
             <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">Next Page</button>
@@ -191,5 +210,7 @@ export default function AdminStudentsPage() {
         </div>
       </div>
     </div>
+
+    </>
   );
 }
