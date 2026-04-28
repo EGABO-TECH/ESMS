@@ -183,18 +183,29 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             </div>
 
             {/* Profile Avatar → navigates to profile */}
-            <Link
-              href="/student/profile"
-              className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center hover:opacity-80 transition-opacity shadow-sm"
-              title="My Profile"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
-                alt="Student Profile"
-                className="w-full h-full object-cover"
-              />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/student/profile"
+                className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center hover:opacity-80 transition-opacity shadow-sm"
+                title="My Profile"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+                  alt="Student Profile"
+                  className="w-full h-full object-cover"
+                />
+              </Link>
+              
+              {/* Mobile Logout */}
+              <button
+                onClick={() => { toast.success("Logged out successfully"); router.push("/login"); }}
+                className="md:hidden text-white/70 hover:text-white p-1"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -205,14 +216,14 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Bottom Nav (Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
-        <div className="min-w-max flex items-center h-full gap-1">
+      <nav className="md:hidden fixed bottom-4 left-4 right-4 z-50 h-16 bg-white/90 backdrop-blur-md border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl overflow-x-auto no-scrollbar">
+        <div className="min-w-max flex items-center h-full px-2 gap-1">
         {navItems.map(({ href, icon: Icon, mobileLabel }) => {
           const active = pathname === href;
           return (
-            <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-primary" : "text-slate-500"}`}>
-              <Icon size={20} className={active ? "fill-primary/20" : ""} />
-              <span className="text-[9px] font-medium mt-0.5">{mobileLabel}</span>
+            <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] rounded-xl transition-all ${active ? "text-primary bg-primary/5" : "text-slate-500 hover:text-slate-700"}`}>
+              <Icon size={18} className={active ? "fill-primary/20 animate-pulse" : ""} />
+              <span className={`text-[9px] font-black mt-1 uppercase tracking-tighter ${active ? "opacity-100" : "opacity-60"}`}>{mobileLabel}</span>
             </Link>
           );
         })}
