@@ -24,6 +24,7 @@ const SEM_OPTIONS = ["1", "2"];
 type FormState = {
   name: string;
   email: string;
+  phoneNumber: string;
   program: string;
   year: string;
   sem: string;
@@ -35,6 +36,7 @@ type FormState = {
 const initialForm: FormState = {
   name: "",
   email: "",
+  phoneNumber: "+256 ",
   program: PROGRAM_OPTIONS[0],
   year: YEAR_OPTIONS[0],
   sem: SEM_OPTIONS[0],
@@ -78,6 +80,7 @@ export default function RegisterStudentPage() {
       sem: form.sem,
       status: form.status,
       email: form.email.trim().toLowerCase(),
+      phoneNumber: form.phoneNumber.trim(),
       nationality: form.nationality.trim(),
       applied_at: new Date().toISOString(),
       intake: form.intake.trim(),
@@ -140,6 +143,20 @@ export default function RegisterStudentPage() {
               onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary"
               placeholder="jane.doe@students.cavendish.ac.ug"
+            />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-black uppercase tracking-widest text-slate-500">
+              Phone Number
+            </span>
+            <input
+              required
+              value={form.phoneNumber}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, phoneNumber: e.target.value }))
+              }
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary"
+              placeholder="+256 700 000 000"
             />
           </label>
         </div>

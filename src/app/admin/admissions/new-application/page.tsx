@@ -70,6 +70,7 @@ export default function NewApplicationPage() {
         sem: "1",
         status: "Pending",
         email: form.email.trim().toLowerCase(),
+        phoneNumber: form.phoneNumber.trim(),
         nationality: form.nationality.trim(),
         applied_at: new Date().toISOString(),
         intake: form.intake,

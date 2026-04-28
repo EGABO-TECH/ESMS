@@ -4,43 +4,55 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Download, Plus, FileText, UserCheck, FolderOpen, AlertCircle, FileDigit, FileSignature } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function AdmissionsDashboard() {
   const [programFilter, setProgramFilter] = useState("All Programs");
   const [statusFilter, setStatusFilter] = useState("All Status");
+  const { students } = useGlobalContext();
 
-  const applicants = [
-    {
-      initials: "AB",
-      name: "Ababiku Brenda",
-      email: "b.ababiku@cavendish.ac.ug",
-      program: "AES Content",
-      submittedAt: "Oct 24, 2023",
-      status: "Pending",
-      documents: ["Transcript.pdf", "Resume.doc"],
-      avatarClass: "bg-blue-100 text-blue-700",
-    },
-    {
-      initials: "AA",
-      name: "Alimpa Anne Hillary",
-      email: "a.hillary@cavendish.ac.ug",
-      program: "Conservation",
-      submittedAt: "Oct 23, 2023",
-      status: "Completed",
-      documents: ["ID_Card.pdf"],
-      avatarClass: "bg-slate-100 text-slate-700",
-    },
-    {
-      initials: "EA",
-      name: "Egabo Aaron",
-      email: "a.egabo@cavendish.ac.ug",
-      program: "AES Content",
-      submittedAt: "Oct 23, 2023",
-      status: "Pending",
-      documents: ["Portfolio.pdf", "Letter.doc"],
-      avatarClass: "bg-purple-100 text-purple-700",
-    },
-  ];
+  const applicants = useMemo(
+    () =>
+      [...students]
+        .sort(
+          (a, b) =>
+            new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime()
+        )
+        .map((student, index) => ({
+          initials: student.name
+            .split(" ")
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((word) => word[0]?.toUpperCase() ?? "")
+            .join(""),
+          name: student.name,
+          email: student.email,
+          program: student.program,
+          submittedAt: new Date(student.applied_at).toLocaleDateString("en-UG", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+          status: student.status,
+          documents: ["N/A"],
+          avatarClass:
+            index % 3 === 0
+              ? "bg-blue-100 text-blue-700"
+              : index % 3 === 1
+              ? "bg-slate-100 text-slate-700"
+              : "bg-purple-100 text-purple-700",
+        })),
+    [students]
+  );
+
+  const programOptions = useMemo(
+    () => ["All Programs", ...Array.from(new Set(applicants.map((applicant) => applicant.program)))],
+    [applicants]
+  );
+  const statusOptions = useMemo(
+    () => ["All Status", ...Array.from(new Set(applicants.map((applicant) => applicant.status)))],
+    [applicants]
+  );
 
   const filteredApplicants = useMemo(
     () =>
@@ -51,7 +63,7 @@ export default function AdmissionsDashboard() {
           statusFilter === "All Status" || applicant.status === statusFilter;
         return matchProgram && matchStatus;
       }),
-    [programFilter, statusFilter]
+    [applicants, programFilter, statusFilter]
   );
 
   const downloadApplicantsCsv = () => {
@@ -172,18 +184,18 @@ export default function AdmissionsDashboard() {
               value={programFilter}
               onChange={(e) => setProgramFilter(e.target.value)}
             >
-              <option>All Programs</option>
-              <option>AES Content</option>
-              <option>Conservation</option>
+              {programOptions.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
             </select>
             <select
               className="border border-border-subtle rounded-lg text-sm bg-slate-50 focus:ring-primary px-3 py-2 outline-none"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option>All Status</option>
-              <option>Completed</option>
-              <option>Pending</option>
+              {statusOptions.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
             </select>
           </div>
         </div>

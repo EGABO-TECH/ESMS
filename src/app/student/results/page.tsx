@@ -24,8 +24,9 @@ const gradeColor = (grade: string) => {
 
 export default function StudentResults() {
   const router = useRouter();
-  const { studentResults: results, students } = useGlobalContext();
+  const { studentResults: allResults, students } = useGlobalContext();
   const rawStudent = students[0];
+  const results = allResults.filter((result) => result.studentId === rawStudent.id);
   
   const handleDownloadResults = () => {
     const doc = new jsPDF();

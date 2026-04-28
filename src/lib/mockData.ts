@@ -7,6 +7,7 @@ export const MOCK_STUDENTS = [
     sem: "1", 
     status: "Enrolled", 
     email: "a.egabo@students.cavendish.ac.ug", 
+    phoneNumber: "+256 700 111 111",
     nationality: "Ugandan", 
     applied_at: "2023-10-23T09:15:00Z",
     intake: "Aug 2022"
@@ -19,6 +20,7 @@ export const MOCK_STUDENTS = [
     sem: "1", 
     status: "Pending", 
     email: "n.faida@students.cavendish.ac.ug", 
+    phoneNumber: "+256 700 222 222",
     nationality: "Ugandan", 
     applied_at: "2024-01-10T11:00:00Z",
     intake: "Aug 2025"
@@ -31,6 +33,7 @@ export const MOCK_STUDENTS = [
     sem: "2", 
     status: "Enrolled", 
     email: "b.ababiku@students.cavendish.ac.ug", 
+    phoneNumber: "+256 700 333 333",
     nationality: "Ugandan", 
     applied_at: "2023-10-24T10:00:00Z",
     intake: "Aug 2023"
@@ -43,6 +46,7 @@ export const MOCK_STUDENTS = [
     sem: "1", 
     status: "Enrolled", 
     email: "h.alimpa@students.cavendish.ac.ug", 
+    phoneNumber: "+256 700 444 444",
     nationality: "Kenyan", 
     applied_at: "2023-10-23T14:30:00Z",
     intake: "Jan 2024"
@@ -55,6 +59,7 @@ export const MOCK_STUDENTS = [
     sem: "2", 
     status: "Inactive", 
     email: "a.kirabo@students.cavendish.ac.ug", 
+    phoneNumber: "+256 700 555 555",
     nationality: "Ugandan", 
     applied_at: "2023-09-15T08:00:00Z",
     intake: "Aug 2024"
@@ -108,9 +113,9 @@ export const GRADING_SCALE = [
 ];
 
 export const MOCK_STUDENT_RESULTS = [
-  { code: "SWE311", name: "Software Lifecycle",      credits: 4, score: 81, grade: "A",  gp: 5.0 },
-  { code: "SWE312", name: "Mobile App Dev",          credits: 4, score: 76, grade: "B+", gp: 4.5 },
-  { code: "SWE313", name: "Cloud Computing",         credits: 3, score: 83, grade: "A",  gp: 5.0 },
-  { code: "SWE314", name: "System Architecture",     credits: 4, score: 44, grade: "F",  gp: 0.0 },
+  { studentId: "CUU-258-154", code: "SWE311", name: "Software Lifecycle", credits: 4, cw: 34, exam: 47, score: 81, grade: "A", gp: 5.0 },
+  { studentId: "CUU-258-154", code: "SWE312", name: "Mobile App Dev", credits: 4, cw: 31, exam: 45, score: 76, grade: "B+", gp: 4.5 },
+  { studentId: "CUU-258-154", code: "SWE313", name: "Cloud Computing", credits: 3, cw: 35, exam: 48, score: 83, grade: "A", gp: 5.0 },
+  { studentId: "CUU-258-154", code: "SWE314", name: "System Architecture", credits: 4, cw: 18, exam: 26, score: 44, grade: "F", gp: 0.0 },
 ];
 
