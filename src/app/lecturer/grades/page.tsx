@@ -49,7 +49,6 @@ export default function LecturerGradesPage() {
   const {
     students: rawStudents,
     courses,
-    grading,
     setGrading,
     studentResults,
     setStudentResults,
