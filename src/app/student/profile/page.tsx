@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import {
   GraduationCap, User, Phone, Globe, Mail, ShieldCheck,
@@ -173,8 +173,10 @@ export default function StudentProfile() {
     return "Fail";
   };
   const gradeClass = getGradeClass(student.cgpa);
-  const verificationUrl = useMemo(() => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const [verificationUrl, setVerificationUrl] = useState("");
+
+  useEffect(() => {
+    const origin = window.location.origin;
     const issuedAt = new Date().toISOString();
     const status = HAS_BALANCE ? "restricted" : "active";
     const avatar = profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`;
@@ -202,7 +204,7 @@ export default function StudentProfile() {
       issuedAt,
       sig,
     });
-    return `${origin}/verify/student?${params.toString()}`;
+    setVerificationUrl(`${origin}/verify/student?${params.toString()}`);
   }, [profileImage]);
 
   return (
@@ -702,7 +704,7 @@ export default function StudentProfile() {
                   <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verificationUrl)}`}
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verificationUrl || "https://cavendish.ac.ug")}`}
                       alt="Student QR Code"
                       className="w-32 h-32"
                     />
