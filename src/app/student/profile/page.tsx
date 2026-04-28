@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import {
   GraduationCap, User, Phone, Globe, Mail, ShieldCheck,
@@ -10,6 +10,7 @@ import {
 import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { buildVerificationPayload, signVerificationPayload } from "@/lib/qrSignature";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const student = {
@@ -172,6 +173,37 @@ export default function StudentProfile() {
     return "Fail";
   };
   const gradeClass = getGradeClass(student.cgpa);
+  const verificationUrl = useMemo(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const issuedAt = new Date().toISOString();
+    const status = HAS_BALANCE ? "restricted" : "active";
+    const avatar = profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`;
+    const payload = buildVerificationPayload({
+      name: student.full_name,
+      id: student.student_number,
+      course: student.programme,
+      campus: student.campus,
+      validFrom: student.enrolled_date,
+      validTo: student.expected_graduation,
+      avatar,
+      status,
+      issuedAt,
+    });
+    const sig = signVerificationPayload(payload);
+    const params = new URLSearchParams({
+      name: student.full_name,
+      id: student.student_number,
+      course: student.programme,
+      campus: student.campus,
+      validFrom: student.enrolled_date,
+      validTo: student.expected_graduation,
+      avatar,
+      status,
+      issuedAt,
+      sig,
+    });
+    return `${origin}/verify/student?${params.toString()}`;
+  }, [profileImage]);
 
   return (
     <main className="w-full pb-12">
@@ -604,68 +636,80 @@ export default function StudentProfile() {
       {showID && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowID(false)} />
-          <div className="relative w-full max-w-[320px] bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="relative w-full max-w-[680px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-300">
             {/* Navy Header */}
-            <div className="bg-[#00174b] h-24 flex items-center justify-center relative overflow-hidden">
-              <div className="text-center z-10">
-                <p className="text-[10px] text-white font-black uppercase tracking-[0.2em]">Student Identification</p>
-                <p className="text-[8px] text-blue-200 mt-0.5">Cavendish University Uganda</p>
+            <div className="bg-[#00174b] px-5 py-4 flex items-center justify-between relative overflow-hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-white rounded-md p-1.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/cuu-logo.png" alt="Cavendish University Uganda Logo" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-blue-200 font-bold uppercase tracking-widest">Student Virtual ID</p>
+                  <p className="text-sm text-white font-black">Cavendish University Uganda</p>
+                </div>
               </div>
             </div>
 
             {/* ID Body */}
-            <div className="p-8 -mt-12 text-center space-y-4">
-              <div className="inline-block p-1 bg-white rounded-full shadow-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
-                  alt={student.full_name}
-                  className="w-24 h-24 rounded-full bg-gray-50 border-4 border-gray-100"
-                />
-              </div>
-
-              <div>
-                <h4 className="text-xl font-black text-[#00174b] leading-tight">{student.full_name}</h4>
-                <p className="text-[10px] font-bold text-primary uppercase mt-1">{student.student_number}</p>
-              </div>
-
-              <div className="bg-surface-container-low p-3 rounded-xl space-y-1.5 text-left">
-                <div>
-                  <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Course</p>
-                  <p className="text-[11px] font-bold text-on-surface leading-tight">{student.programme}</p>
-                </div>
-                <div className="flex justify-between items-end gap-2">
+            <div className="p-5 md:p-6 grid grid-cols-1 md:grid-cols-[1fr_220px] gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="inline-block p-1 bg-white rounded-full shadow-xl">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
+                      alt={student.full_name}
+                      className="w-20 h-20 rounded-full bg-gray-50 border-4 border-gray-100"
+                    />
+                  </div>
                   <div>
-                    <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Campus</p>
-                    <p className="text-[11px] font-bold text-on-surface">{student.campus}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[8px] text-on-surface-variant font-bold uppercase tracking-wider">Validity</p>
-                    <p className="text-[9px] font-black text-finance-success">{student.enrolled_date} — {student.expected_graduation}</p>
+                    <h4 className="text-2xl font-black text-[#00174b] leading-tight">{student.full_name}</h4>
+                    <p className="text-xs font-bold text-primary uppercase mt-1">{student.student_number}</p>
                   </div>
                 </div>
+
+                <div className="bg-surface-container-low p-4 rounded-xl space-y-2 text-left">
+                  <div>
+                    <p className="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider">Course</p>
+                    <p className="text-sm font-bold text-on-surface leading-tight">{student.programme}</p>
+                  </div>
+                  <div className="flex justify-between items-end gap-3">
+                    <div>
+                      <p className="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider">Campus</p>
+                      <p className="text-sm font-bold text-on-surface">{student.campus}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider">Validity</p>
+                      <p className="text-[11px] font-black text-finance-success">{student.enrolled_date} - {student.expected_graduation}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="w-2 h-2 bg-finance-success rounded-full animate-pulse" />
+                  <span className="text-[11px] font-black text-[#00174b] uppercase tracking-widest">Active Student</span>
+                </div>
+
+                <p className="text-[10px] text-on-surface-variant font-medium leading-relaxed pt-2 border-t border-border-subtle">
+                  Official Virtual ID card for University entry and academic verification.
+                </p>
               </div>
 
               {/* QR Code */}
-              <div className="flex justify-center py-1">
-                <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`NAME: ${student.full_name}\nID: ${student.student_number}\nCOURSE: ${student.programme}\nCAMPUS: ${student.campus}\nVALID: ${student.enrolled_date} to ${student.expected_graduation}`)}`}
-                    alt="Student QR Code"
-                    className="w-24 h-24"
-                  />
+              <div className="flex md:justify-end">
+                <div className="w-full md:w-auto flex flex-col items-center justify-center bg-slate-50 rounded-xl p-4 border border-border-subtle">
+                  <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verificationUrl)}`}
+                      alt="Student QR Code"
+                      className="w-32 h-32"
+                    />
+                  </div>
+                  <p className="text-[10px] text-on-surface-variant font-bold mt-3 uppercase tracking-wider">Scan to Verify</p>
                 </div>
               </div>
-
-              <div className="flex items-center justify-center gap-2 pt-1">
-                <span className="w-2 h-2 bg-finance-success rounded-full animate-pulse" />
-                <span className="text-[10px] font-black text-[#00174b] uppercase tracking-widest">Active Student</span>
-              </div>
-
-              <p className="text-[8px] text-on-surface-variant font-medium leading-relaxed pt-2 border-t border-border-subtle">
-                Official Virtual ID card for University entry and academic verification.
-              </p>
             </div>
 
             {/* Close button */}
