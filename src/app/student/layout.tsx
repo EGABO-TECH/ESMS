@@ -17,13 +17,13 @@ const NOTIFICATIONS = [
 ];
 
 const navItems = [
-  { href: "/student/dashboard",  icon: Home,         label: "Dashboard" },
-  { href: "/student/profile",    icon: User,         label: "My Profile" },
-  { href: "/student/academics",  icon: BookOpen,     label: "Academics" },
-  { href: "/student/results",    icon: Award,        label: "My Results" },
-  { href: "/student/finance",    icon: Wallet,       label: "Finance" },
-  { href: "/student/communication", icon: Megaphone, label: "Communication" },
-  { href: "/student/roadmap",    icon: Map,          label: "Semester Roadmap" },
+  { href: "/student/dashboard",  icon: Home,         label: "Dashboard", mobileLabel: "Dashboard" },
+  { href: "/student/profile",    icon: User,         label: "My Profile", mobileLabel: "Profile" },
+  { href: "/student/academics",  icon: BookOpen,     label: "Academics", mobileLabel: "Academics" },
+  { href: "/student/results",    icon: Award,        label: "My Results", mobileLabel: "Results" },
+  { href: "/student/finance",    icon: Wallet,       label: "Finance", mobileLabel: "Finance" },
+  { href: "/student/communication", icon: Megaphone, label: "Communication", mobileLabel: "Comms" },
+  { href: "/student/roadmap",    icon: Map,          label: "Semester Roadmap", mobileLabel: "Roadmap" },
 ];
 
 export default function StudentLayout({ children }: { children: ReactNode }) {
@@ -207,12 +207,12 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
       {/* Bottom Nav (Mobile) */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
         <div className="min-w-max flex items-center h-full gap-1">
-        {navItems.map(({ href, icon: Icon, label }) => {
+        {navItems.map(({ href, icon: Icon, mobileLabel }) => {
           const active = pathname === href;
           return (
             <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-primary" : "text-slate-500"}`}>
               <Icon size={20} className={active ? "fill-primary/20" : ""} />
-              <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
+              <span className="text-[9px] font-medium mt-0.5">{mobileLabel}</span>
             </Link>
           );
         })}

@@ -24,12 +24,12 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 const navItems = [
-  { href: "/lecturer", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/lecturer/courses", icon: BookOpen, label: "My Courses" },
-  { href: "/lecturer/grades", icon: GraduationCap, label: "Grading Center" },
-  { href: "/lecturer/assignments", icon: ClipboardList, label: "Assignments" },
-  { href: "/lecturer/reports", icon: BarChart, label: "Class Reports" },
-  { href: "/lecturer/settings", icon: Settings, label: "Settings" },
+  { href: "/lecturer", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
+  { href: "/lecturer/courses", icon: BookOpen, label: "My Courses", mobileLabel: "Courses" },
+  { href: "/lecturer/grades", icon: GraduationCap, label: "Grading Center", mobileLabel: "Grades" },
+  { href: "/lecturer/assignments", icon: ClipboardList, label: "Assignments", mobileLabel: "Assignments" },
+  { href: "/lecturer/reports", icon: BarChart, label: "Class Reports", mobileLabel: "Reports" },
+  { href: "/lecturer/settings", icon: Settings, label: "Settings", mobileLabel: "Settings" },
 ];
 
 export default function LecturerLayout({ children }: { children: ReactNode }) {
@@ -223,12 +223,12 @@ export default function LecturerLayout({ children }: { children: ReactNode }) {
       {/* Bottom Nav (Mobile/Tablet) */}
       <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
         <div className="min-w-max flex items-center h-full gap-1">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {navItems.map(({ href, icon: Icon, mobileLabel }) => {
             const active = pathname === href;
             return (
               <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-indigo-600" : "text-slate-500"}`}>
                 <Icon size={20} className={active ? "fill-indigo-600/20" : ""} />
-                <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
+                <span className="text-[9px] font-medium mt-0.5">{mobileLabel}</span>
               </Link>
             );
           })}

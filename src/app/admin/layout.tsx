@@ -27,18 +27,18 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 const navItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/students", icon: Users, label: "Students" },
-  { href: "/admin/courses", icon: BookOpen, label: "Academics" },
-  { href: "/admin/admissions", icon: UserPlus, label: "Admissions" },
-  { href: "/admin/enrollments", icon: GraduationCap, label: "Enrollments" },
-  { href: "/admin/grades", icon: BarChart, label: "Grades Center" },
-  { href: "/admin/finance", icon: Banknote, label: "Finance" },
-  { href: "/admin/registry", icon: Users, label: "Registry" },
-  { href: "/admin/users", icon: Users, label: "Staff & Users" },
-  { href: "/admin/communication", icon: MessageSquare, label: "Communication" },
-  { href: "/admin/reports", icon: BarChart, label: "Reports" },
-  { href: "/admin/settings", icon: Settings, label: "Settings" },
+  { href: "/admin", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
+  { href: "/admin/students", icon: Users, label: "Students", mobileLabel: "Students" },
+  { href: "/admin/courses", icon: BookOpen, label: "Academics", mobileLabel: "Academics" },
+  { href: "/admin/admissions", icon: UserPlus, label: "Admissions", mobileLabel: "Admissions" },
+  { href: "/admin/enrollments", icon: GraduationCap, label: "Enrollments", mobileLabel: "Enroll" },
+  { href: "/admin/grades", icon: BarChart, label: "Grades Center", mobileLabel: "Grades" },
+  { href: "/admin/finance", icon: Banknote, label: "Finance", mobileLabel: "Finance" },
+  { href: "/admin/registry", icon: Users, label: "Registry", mobileLabel: "Registry" },
+  { href: "/admin/users", icon: Users, label: "Staff & Users", mobileLabel: "Users" },
+  { href: "/admin/communication", icon: MessageSquare, label: "Communication", mobileLabel: "Comms" },
+  { href: "/admin/reports", icon: BarChart, label: "Reports", mobileLabel: "Reports" },
+  { href: "/admin/settings", icon: Settings, label: "Settings", mobileLabel: "Settings" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -311,12 +311,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Bottom Nav (Mobile/Tablet) */}
       <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
         <div className="min-w-max flex items-center h-full gap-1">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {navItems.map(({ href, icon: Icon, mobileLabel }) => {
             const active = pathname === href;
             return (
               <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-primary" : "text-slate-500"}`}>
                 <Icon size={20} className={active ? "fill-primary/20" : ""} />
-                <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
+                <span className="text-[9px] font-medium mt-0.5">{mobileLabel}</span>
               </Link>
             );
           })}

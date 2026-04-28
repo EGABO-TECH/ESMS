@@ -25,14 +25,14 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
 const navItems = [
-  { href: "/registrar", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/registrar/students", icon: Users, label: "Students" },
-  { href: "/registrar/courses", icon: BookOpen, label: "Courses" },
-  { href: "/registrar/enrollments", icon: UserPlus, label: "Enrollments" },
-  { href: "/registrar/graduation", icon: GraduationCap, label: "Graduation" },
-  { href: "/registrar/transcripts", icon: FileText, label: "Transcripts" },
-  { href: "/registrar/reports", icon: BarChart, label: "Reports" },
-  { href: "/registrar/settings", icon: Settings, label: "Settings" },
+  { href: "/registrar", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
+  { href: "/registrar/students", icon: Users, label: "Students", mobileLabel: "Students" },
+  { href: "/registrar/courses", icon: BookOpen, label: "Courses", mobileLabel: "Courses" },
+  { href: "/registrar/enrollments", icon: UserPlus, label: "Enrollments", mobileLabel: "Enroll" },
+  { href: "/registrar/graduation", icon: GraduationCap, label: "Graduation", mobileLabel: "Graduation" },
+  { href: "/registrar/transcripts", icon: FileText, label: "Transcripts", mobileLabel: "Transcripts" },
+  { href: "/registrar/reports", icon: BarChart, label: "Reports", mobileLabel: "Reports" },
+  { href: "/registrar/settings", icon: Settings, label: "Settings", mobileLabel: "Settings" },
 ];
 
 export default function RegistrarLayout({ children }: { children: ReactNode }) {
@@ -239,12 +239,12 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
       {/* Bottom Nav (Mobile/Tablet) */}
       <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 h-16 px-2 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] overflow-x-auto">
         <div className="min-w-max flex items-center h-full gap-1">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {navItems.map(({ href, icon: Icon, mobileLabel }) => {
             const active = pathname === href;
             return (
               <Link key={href} href={href} className={`flex flex-col items-center justify-center py-1 px-3 min-w-[72px] ${active ? "text-blue-600" : "text-slate-500"}`}>
                 <Icon size={20} className={active ? "fill-blue-600/20" : ""} />
-                <span className="text-[9px] font-medium mt-0.5">{label.split(" ")[0]}</span>
+                <span className="text-[9px] font-medium mt-0.5">{mobileLabel}</span>
               </Link>
             );
           })}
