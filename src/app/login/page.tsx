@@ -4,9 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { User, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useSignIn, useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded: userLoaded, user } = useUser();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -14,29 +20,58 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Mock authentication logic
-    setTimeout(() => {
-      setLoading(false);
-      const idLower = identifier.toLowerCase();
-      if (idLower.includes("admin")) {
-        router.push("/admin");
-      } else if (idLower.includes("registrar")) {
-        router.push("/registrar");
-      } else if (idLower.includes("finance")) {
-        router.push("/finance");
-      } else if (idLower.includes("lecturer")) {
-        router.push("/lecturer");
-      } else if (idLower.includes("student")) {
-        router.push("/student/dashboard");
-      } else {
-        router.push("/student/dashboard"); // Default fallback
+  // Handle RBAC redirection once user is loaded
+  useEffect(() => {
+    if (userLoaded && user) {
+      const role = (user.publicMetadata as any)?.role || "student";
+      
+      switch (role) {
+        case "admin":
+          router.push("/admin");
+          break;
+        case "registrar":
+          router.push("/registrar");
+          break;
+        case "finance":
+          router.push("/finance");
+          break;
+        case "lecturer":
+          router.push("/lecturer");
+          break;
+        case "student":
+        default:
+          router.push("/student/dashboard");
+          break;
       }
       router.refresh();
-    }, 1500);
+    }
+  }, [userLoaded, user, router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signInLoaded) return;
+
+    setLoading(true);
+
+    try {
+      const result = await signIn.create({
+        identifier,
+        password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        toast.success("Login successful! Redirecting...");
+      } else {
+        console.error(JSON.stringify(result, null, 2));
+        toast.error("Login failed. Please check your credentials.");
+      }
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2));
+      toast.error(err.errors?.[0]?.message || "An error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -147,9 +182,9 @@ export default function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-slate-600 text-sm">
               New to the portal?{" "}
-              <button onClick={() => alert('Feature in development...')}  className="text-[#001a40] font-bold hover:underline">
+              <Link href="/enroll" className="text-[#001a40] font-bold hover:underline">
                 Apply for Account
-              </button>
+              </Link>
             </p>
           </div>
         </div>

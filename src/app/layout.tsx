@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { GlobalProvider } from "@/lib/GlobalContext";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const publicSans = Public_Sans({
@@ -20,13 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${publicSans.variable} font-sans antialiased`}>
-        <GlobalProvider>
-          {children}
-          <Toaster richColors position="top-right" />
-        </GlobalProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${publicSans.variable} font-sans antialiased`}>
+          <GlobalProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </GlobalProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
