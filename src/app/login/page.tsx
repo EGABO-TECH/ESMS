@@ -61,14 +61,15 @@ export default function LoginPage() {
       const result = await signIn.create({
         identifier,
         password,
+        strategy: "password"
       });
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         toast.success("Login successful! Redirecting...");
       } else {
-        console.error(JSON.stringify(result, null, 2));
-        toast.error("Login failed. Please check your credentials.");
+        console.error("Incomplete sign in:", result);
+        toast.error(`Login incomplete. Status: ${result.status}`);
       }
     } catch (err: any) {
       console.error("Login error object:", err);
