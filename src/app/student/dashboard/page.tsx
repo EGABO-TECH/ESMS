@@ -5,7 +5,7 @@ import { BookOpen, Wallet, CalendarDays, TrendingUp, AlertCircle, Award, Map, Us
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function StudentDashboard() {
-  const { students } = useGlobalContext();
+  const { students, profileImage } = useGlobalContext();
   // The logged-in student is always the first in the list (Egabo Aaron)
   const rawStudent = students[0];
 
@@ -41,7 +41,7 @@ export default function StudentDashboard() {
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center shadow-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+              src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
               alt={profile.full_name}
               className="w-full h-full object-cover"
             />

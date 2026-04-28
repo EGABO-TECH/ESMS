@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   GraduationCap, User, Phone, Globe, Mail, ShieldCheck,
   FileText, Ticket, Lock, IdCard, Download, X, QrCode,
-  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map
+  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map, Camera
 } from "lucide-react";
+import { useGlobalContext } from "@/lib/GlobalContext";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const student = {
@@ -36,6 +39,9 @@ const HAS_BALANCE = true;
 const BALANCE_AMOUNT = 1_250_000;
 
 export default function StudentProfile() {
+  const { profileImage, setProfileImage } = useGlobalContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [showID, setShowID] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,6 +52,18 @@ export default function StudentProfile() {
   const [emergencyContact, setEmergencyContact] = useState(student.emergency_contact);
   // Originals for cancel
   const [originals] = useState({ personalEmail: student.personal_email, phone: student.phone, emergencyContact: student.emergency_contact });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+        toast.success("Profile picture updated!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleCancelEdit = () => {
     setPersonalEmail(originals.personalEmail);
@@ -61,6 +79,88 @@ export default function StudentProfile() {
       setEditMode(false);
       toast.success("Profile updated successfully!");
     }, 900);
+  };
+
+  const handleDownloadDoc = (docType: string) => {
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString();
+    const studentID = student.student_number;
+
+    // -- Header --
+    doc.setFillColor(0, 23, 75); // CUU Dark Blue
+    doc.rect(0, 0, 210, 40, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("CAVENDISH UNIVERSITY UGANDA", 105, 20, { align: "center" });
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text(docType, 105, 30, { align: "center" });
+
+    // -- Info Section --
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(`Student Name: ${student.full_name}`, 14, 55);
+    doc.text(`Student ID: ${student.student_number}`, 14, 61);
+    doc.text(`Programme: ${student.programme}`, 14, 67);
+    doc.text(`Date: ${date}`, 140, 55);
+    doc.text(`Status: Official Copy`, 140, 61);
+
+    // -- Content based on docType --
+    if (docType === "Admission Letter") {
+      doc.setFont("helvetica", "bold");
+      doc.text("OFFER OF ADMISSION", 105, 85, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      const text = [
+        "We are pleased to offer you admission to Cavendish University Uganda for the academic year 2024/2025.",
+        "",
+        "This offer is based on your academic qualifications and the university's entrance requirements. We are confident that you will find your time at Cavendish University rewarding and challenging.",
+        "",
+        "Please note the following terms and conditions:",
+        "1. You must present all original academic documents for verification.",
+        "2. Tuition and functional fees must be paid as per the university fee structure.",
+        "3. You are required to attend the orientation program on September 5th, 2024.",
+        "",
+        "We look forward to welcoming you to our campus."
+      ];
+      doc.text(text, 14, 100);
+    } else if (docType === "Academic Transcript") {
+      autoTable(doc, {
+        startY: 80,
+        head: [["SEMESTER", "CREDITS", "GPA", "STATUS"]],
+        body: [
+          ["Semester I 2023", "24", "4.12", "Completed"],
+          ["Semester II 2023", "20", "4.35", "Completed"],
+          ["Semester I 2024", "22", "4.28", "In Progress"],
+        ],
+        theme: "grid",
+        headStyles: { fillColor: [0, 23, 75] }
+      });
+      doc.setFont("helvetica", "bold");
+      doc.text(`CUMULATIVE GPA: 4.25`, 14, (doc as any).lastAutoTable.finalY + 15);
+    } else if (docType === "Examination Permit") {
+      doc.setFillColor(245, 245, 245);
+      doc.rect(14, 80, 182, 60, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("2026 EXAM PERMIT", 105, 95, { align: "center" });
+      doc.setFontSize(10);
+      doc.text(`STUDENT: ${student.full_name.toUpperCase()}`, 105, 105, { align: "center" });
+      doc.text(`PROGRAMME: ${student.programme.toUpperCase()}`, 105, 112, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.text("This permit entitles the bearer to sit for all registered", 105, 125, { align: "center" });
+      doc.text("examinations for the current semester.", 105, 130, { align: "center" });
+    }
+
+    // -- Footer --
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text("This is an electronically generated document. No signature required.", 14, 280);
+
+    // Save
+    doc.save(`${docType.replace(" ", "_")}_${studentID}.pdf`);
+    toast.success(`${docType} downloaded successfully.`);
   };
 
   const getGradeClass = (cgpa: number) => {
@@ -88,15 +188,32 @@ export default function StudentProfile() {
           <div className="bg-white rounded-2xl p-8 border border-border-subtle shadow-sm">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               {/* Avatar */}
-              <div className="relative flex-shrink-0">
-                <div className="w-28 h-28 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center">
+              <div className="relative flex-shrink-0 group">
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-28 h-28 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center cursor-pointer relative"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
+                    src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
                     alt={student.full_name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
                   />
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="text-white" size={24} />
+                  </div>
                 </div>
+                
+                {/* Hidden File Input */}
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+
                 <div className="absolute bottom-1 right-1 bg-finance-success text-white p-1 rounded-full border-2 border-white shadow" title="Verified by Registry">
                   <CheckCircle2 size={14} />
                 </div>
@@ -397,14 +514,13 @@ export default function StudentProfile() {
             )}
           </div>
 
-          {/* Document Vault */}
           <div className="bg-white rounded-2xl p-8 border border-border-subtle shadow-sm">
             <h3 className="text-lg font-bold text-on-surface flex items-center gap-2 mb-6">
               <ShieldCheck size={20} className="text-primary" /> Document Vault
             </h3>
             <div className="space-y-3">
               <div
-                onClick={() => toast.success("Downloading Admission Letter...")}
+                onClick={() => handleDownloadDoc("Admission Letter")}
                 className="flex items-center justify-between p-3 rounded-xl border border-border-subtle hover:bg-surface-container-low transition-colors group cursor-pointer"
               >
                 <div className="flex items-center gap-3">
@@ -415,7 +531,7 @@ export default function StudentProfile() {
               </div>
 
               <div
-                onClick={() => toast.success("Downloading Academic Transcript...")}
+                onClick={() => handleDownloadDoc("Academic Transcript")}
                 className="flex items-center justify-between p-3 rounded-xl border border-border-subtle hover:bg-surface-container-low transition-colors group cursor-pointer"
               >
                 <div className="flex items-center gap-3">
@@ -427,7 +543,7 @@ export default function StudentProfile() {
 
               {/* Exam Permit — Financial Gate */}
               <div
-                onClick={() => HAS_BALANCE ? toast.error("Exam Permit locked — clear outstanding balance first.") : toast.success("Downloading Exam Permit...")}
+                onClick={() => HAS_BALANCE ? toast.error("Exam Permit locked — clear outstanding balance first.") : handleDownloadDoc("Examination Permit")}
                 className={`flex items-center justify-between p-3 rounded-xl border transition-colors group cursor-pointer ${HAS_BALANCE ? "bg-error/5 border-error/20" : "border-border-subtle hover:bg-surface-container-low"}`}
               >
                 <div className="flex items-center gap-3">
@@ -502,7 +618,7 @@ export default function StudentProfile() {
               <div className="inline-block p-1 bg-white rounded-full shadow-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
+                  src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
                   alt={student.full_name}
                   className="w-24 h-24 rounded-full bg-gray-50 border-4 border-gray-100"
                 />

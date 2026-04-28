@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Zap, Wallet, Info, Printer, Building2, Smartphone, CheckCircle, AlertCircle, X, CreditCard, Landmark, Copy } from "lucide-react";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
@@ -34,6 +36,69 @@ export default function StudentFinance() {
   const [payAmount, setPayAmount] = useState(String(outstanding));
   const [showPayPanel, setShowPayPanel] = useState(false);
   const [showManage, setShowManage] = useState(false);
+
+  const handleDownloadStatement = () => {
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString();
+
+    // -- Header --
+    doc.setFillColor(0, 23, 75); // CUU Dark Blue
+    doc.rect(0, 0, 210, 40, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("CAVENDISH UNIVERSITY UGANDA", 105, 20, { align: "center" });
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text("Official Financial Statement", 105, 30, { align: "center" });
+
+    // -- Student Info Section --
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(`Student Name: Egabo Aaron`, 14, 55);
+    doc.text(`Student ID: CUU-2024-258154`, 14, 61);
+    doc.text(`Academic Year: 2025/2026`, 14, 67);
+    doc.text(`Statement Date: ${date}`, 140, 55);
+    doc.text(`Currency: UGX`, 140, 61);
+
+    // -- Statement Table --
+    const tableData = ledger.map(item => [
+      item.date,
+      item.desc,
+      item.debit > 0 ? item.debit.toLocaleString() : "-",
+      item.credit > 0 ? item.credit.toLocaleString() : "-",
+      item.balance.toLocaleString()
+    ]);
+
+    autoTable(doc, {
+      startY: 75,
+      head: [["DATE", "DESCRIPTION", "DEBIT", "CREDIT", "BALANCE"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: { fillColor: [0, 23, 75] },
+      styles: { fontSize: 9 },
+      columnStyles: {
+        2: { halign: "right" },
+        3: { halign: "right" },
+        4: { halign: "right", fontStyle: "bold" }
+      }
+    });
+
+    // -- Summary Footer --
+    const finalY = (doc as any).lastAutoTable.finalY || 150;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text(`OUTSTANDING BALANCE: UGX ${balance.toLocaleString()}`, 196, finalY + 15, { align: "right" });
+    
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(150, 150, 150);
+    doc.text("This is an electronically generated statement. For any discrepancies, please contact the Bursar's office.", 14, 280);
+
+    // Save
+    doc.save(`Financial_Statement_CUU-2024-258154.pdf`);
+    toast.success("Financial statement downloaded successfully.");
+  };
 
   const handleSimulatePayment = () => {
     const amount = Number(payAmount);
@@ -250,7 +315,7 @@ export default function StudentFinance() {
                 }
               </div>
               <button
-                onClick={() => { toast.success("Opening print preview..."); setTimeout(() => window.print(), 300); }}
+                onClick={handleDownloadStatement}
                 className="flex items-center gap-2 text-primary text-xs font-bold hover:underline"
               >
                 <Printer size={14} /> Print Full Statement
