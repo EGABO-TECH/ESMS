@@ -11,7 +11,7 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { buildVerificationPayload, signVerificationPayload } from "@/lib/qrSignature";
-import { QRCodeCanvas } from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const student = {
@@ -703,7 +703,7 @@ export default function StudentProfile() {
               <div className="flex md:justify-end">
                 <div className="w-full md:w-auto flex flex-col items-center justify-center bg-slate-50 rounded-xl p-4 border border-border-subtle">
                   <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle flex items-center justify-center">
-                    <QRCodeCanvas
+                    <QRCodeSVG
                       value={verificationUrl || "https://cavendish.ac.ug"}
                       size={128}
                       level={"H"}
