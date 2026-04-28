@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { 
   Search, 
@@ -21,14 +22,57 @@ export default function RegistrarStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { students: rawStudents } = useGlobalContext();
 
-  const students = rawStudents.map(s => ({
-    id: s.id.replace("CUU-", ""),
-    name: s.name,
-    program: s.program.split(" (")[0],
-    year: s.year,
-    status: s.status === "Enrolled" ? "Active" : s.status,
-    intake: s.intake
-  }));
+  const students = useMemo(
+    () =>
+      rawStudents.map((s) => ({
+        id: s.id.replace("CUU-", ""),
+        name: s.name,
+        program: s.program.split(" (")[0],
+        year: s.year,
+        status: s.status === "Enrolled" ? "Active" : s.status,
+        intake: s.intake,
+        email: s.email,
+      })),
+    [rawStudents]
+  );
+
+  const filteredStudents = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return students;
+    return students.filter(
+      (student) =>
+        student.name.toLowerCase().includes(query) ||
+        student.id.toLowerCase().includes(query) ||
+        student.program.toLowerCase().includes(query)
+    );
+  }, [searchTerm, students]);
+
+  const downloadCsv = () => {
+    const headers = ["Student ID", "Name", "Program", "Year", "Status", "Intake", "Email"];
+    const rows = filteredStudents.map((student) => [
+      student.id,
+      student.name,
+      student.program,
+      student.year,
+      student.status,
+      student.intake,
+      student.email,
+    ]);
+
+    const escapeValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => escapeValue(String(value))).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `student-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Student ledger download started.");
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -43,12 +87,12 @@ export default function RegistrarStudentsPage() {
           <p className="text-slate-500 mt-1">Official repository for student academic files and registry status.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Exporting official student ledger...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
+          <button onClick={downloadCsv} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
             <Download size={18} /> Official Export
           </button>
-          <button onClick={() => toast.info('Opening new admission form...')} className="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+          <Link href="/registrar/students/new-admission" className="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
             <Plus size={18} /> New Admission
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -104,7 +148,7 @@ export default function RegistrarStudentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {students.map((s, i) => (
+              {filteredStudents.map((s, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
