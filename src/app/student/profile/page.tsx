@@ -175,12 +175,19 @@ export default function StudentProfile() {
   };
   const gradeClass = getGradeClass(student.cgpa);
   const [verificationUrl, setVerificationUrl] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     const origin = window.location.origin;
     const issuedAt = new Date().toISOString();
     const status = HAS_BALANCE ? "restricted" : "active";
-    const avatar = profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`;
+    
+    // We EXCLUDE the avatar from the QR code data because base64 strings are too large for QR codes
     const payload = buildVerificationPayload({
       name: student.full_name,
       id: student.student_number,
@@ -188,7 +195,7 @@ export default function StudentProfile() {
       campus: student.campus,
       validFrom: student.enrolled_date,
       validTo: student.expected_graduation,
-      avatar,
+      avatar: "PERSISTED_PROFILE", // Placeholder, verification page will pull from DB/Local
       status,
       issuedAt,
     });
@@ -200,7 +207,7 @@ export default function StudentProfile() {
       campus: student.campus,
       validFrom: student.enrolled_date,
       validTo: student.expected_graduation,
-      avatar,
+      // avatar: profileImage, // REMOVED: Too large for QR data
       status,
       issuedAt,
       sig,
@@ -702,14 +709,18 @@ export default function StudentProfile() {
               {/* QR Code */}
               <div className="flex md:justify-end">
                 <div className="w-full md:w-auto flex flex-col items-center justify-center bg-slate-50 rounded-xl p-4 border border-border-subtle">
-                  <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle flex items-center justify-center">
-                    <QRCodeSVG
-                      value={verificationUrl || "https://cavendish.ac.ug"}
-                      size={128}
-                      level={"H"}
-                      includeMargin={false}
-                      className="w-32 h-32"
-                    />
+                  <div className="p-2 bg-white rounded-xl shadow-inner border border-border-subtle flex items-center justify-center min-h-[144px] min-w-[144px]">
+                    {mounted ? (
+                      <QRCodeSVG
+                        value={verificationUrl || "https://cavendish.ac.ug"}
+                        size={128}
+                        level={"H"}
+                        includeMargin={false}
+                        className="w-32 h-32"
+                      />
+                    ) : (
+                      <div className="w-32 h-32 bg-slate-100 animate-pulse rounded-lg" />
+                    )}
                   </div>
                   <p className="text-[10px] text-on-surface-variant font-bold mt-3 uppercase tracking-wider">Scan to Verify</p>
                 </div>
