@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   GraduationCap, User, Phone, Globe, Mail, ShieldCheck,
   FileText, Ticket, Lock, IdCard, Download, X, QrCode,
-  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map
+  BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map, Camera
 } from "lucide-react";
+import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -38,6 +39,9 @@ const HAS_BALANCE = true;
 const BALANCE_AMOUNT = 1_250_000;
 
 export default function StudentProfile() {
+  const { profileImage, setProfileImage } = useGlobalContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [showID, setShowID] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -48,6 +52,18 @@ export default function StudentProfile() {
   const [emergencyContact, setEmergencyContact] = useState(student.emergency_contact);
   // Originals for cancel
   const [originals] = useState({ personalEmail: student.personal_email, phone: student.phone, emergencyContact: student.emergency_contact });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+        toast.success("Profile picture updated!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleCancelEdit = () => {
     setPersonalEmail(originals.personalEmail);
@@ -172,15 +188,32 @@ export default function StudentProfile() {
           <div className="bg-white rounded-2xl p-8 border border-border-subtle shadow-sm">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               {/* Avatar */}
-              <div className="relative flex-shrink-0">
-                <div className="w-28 h-28 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center">
+              <div className="relative flex-shrink-0 group">
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-28 h-28 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center cursor-pointer relative"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
+                    src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
                     alt={student.full_name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
                   />
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="text-white" size={24} />
+                  </div>
                 </div>
+                
+                {/* Hidden File Input */}
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+
                 <div className="absolute bottom-1 right-1 bg-finance-success text-white p-1 rounded-full border-2 border-white shadow" title="Verified by Registry">
                   <CheckCircle2 size={14} />
                 </div>
@@ -585,7 +618,7 @@ export default function StudentProfile() {
               <div className="inline-block p-1 bg-white rounded-full shadow-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
+                  src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
                   alt={student.full_name}
                   className="w-24 h-24 rounded-full bg-gray-50 border-4 border-gray-100"
                 />

@@ -7,6 +7,7 @@ import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut, M
 import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 const NOTIFICATIONS = [
   { id: 1, type: "urgent", title: "Outstanding Balance", body: "UGX 1,250,000 due by May 27, 2026. Clear to unlock exam permit.", time: "2h ago", read: false },
@@ -28,6 +29,7 @@ const navItems = [
 export default function StudentLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { profileImage } = useGlobalContext();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
@@ -188,7 +190,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+                src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
                 alt="Student Profile"
                 className="w-full h-full object-cover"
               />

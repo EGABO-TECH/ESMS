@@ -32,6 +32,10 @@ type GlobalContextType = {
   // Dark Mode
   darkMode: boolean;
   toggleDarkMode: () => void;
+
+  // Profile Image
+  profileImage: string | null;
+  setProfileImage: (image: string | null) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -67,6 +71,23 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleDarkMode = () => setDarkMode(prev => !prev);
 
+  // Profile Image
+  const [profileImage, setProfileImageState] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("esms-profile-image");
+    }
+    return null;
+  });
+
+  const setProfileImage = (image: string | null) => {
+    setProfileImageState(image);
+    if (image) {
+      localStorage.setItem("esms-profile-image", image);
+    } else {
+      localStorage.removeItem("esms-profile-image");
+    }
+  };
+
   const enrollStudent = (studentId: string) => {
     setStudents(prev => prev.map(s => s.id === studentId ? { ...s, status: "Enrolled" } : s));
   };
@@ -92,6 +113,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       updateCourseProgress,
       darkMode,
       toggleDarkMode,
+      profileImage,
+      setProfileImage,
     }}>
       {children}
     </GlobalContext.Provider>
