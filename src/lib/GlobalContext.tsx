@@ -49,7 +49,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("esms-dark-mode");
       if (saved !== null) return saved === "true";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return false; // Default to light mode
     }
     return false;
   });
