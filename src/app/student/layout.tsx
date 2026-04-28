@@ -1,12 +1,19 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut, Megaphone } from "lucide-react";
+import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut, Megaphone, X, CheckCircle2, AlertCircle, Info } from "lucide-react";
 import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
+
+const NOTIFICATIONS = [
+  { id: 1, type: "urgent", title: "Outstanding Balance", body: "UGX 1,250,000 due by May 27, 2026. Clear to unlock exam permit.", time: "2h ago", read: false },
+  { id: 2, type: "info",   title: "Coursework Deadline Reminder", body: "Submit all assignments before May 20, 2026 at 23:59 EAT.", time: "1d ago", read: false },
+  { id: 3, type: "success", title: "Mid-Semester Results Posted", body: "Your mid-semester results for SWE411 are now available.", time: "3d ago", read: true },
+  { id: 4, type: "info",   title: "Registration Open", body: "Semester II module registration opens June 1, 2026.", time: "1w ago", read: true },
+];
 
 const navItems = [
   { href: "/student/dashboard",  icon: Home,         label: "Dashboard" },
@@ -22,6 +29,23 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const notifRef = useRef<HTMLDivElement>(null);
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setIsNotifOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const markAllRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const markRead = (id: number) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
 
   return (
     <div className="bg-surface-bg text-on-surface flex h-screen overflow-hidden">
@@ -94,15 +118,73 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             >
               <CalendarDays size={20} />
             </button>
-            <Bell
-              onClick={() => toast.info("No new notifications")}
-              className="text-white md:text-slate-600 cursor-pointer hover:opacity-70 transition-opacity"
-              size={20}
-            />
-            <div
-              onClick={() => { toast.success("Logged out"); router.push("/login"); }}
-              className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity shadow-sm"
-              title="Logout"
+
+            {/* Notification Bell with Dropdown */}
+            <div className="relative" ref={notifRef}>
+              <button
+                onClick={() => setIsNotifOpen(v => !v)}
+                className="relative text-white md:text-slate-600 hover:opacity-70 transition-opacity p-1"
+                title="Notifications"
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-error text-white text-[9px] font-black rounded-full flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {isNotifOpen && (
+                <div className="absolute right-0 top-10 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 z-[100] overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+                    <h4 className="font-bold text-slate-900 text-sm">Notifications</h4>
+                    <div className="flex items-center gap-3">
+                      {unreadCount > 0 && (
+                        <button onClick={markAllRead} className="text-[10px] font-bold text-primary hover:underline">Mark all read</button>
+                      )}
+                      <button onClick={() => setIsNotifOpen(false)}><X size={16} className="text-slate-400" /></button>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-slate-50 max-h-80 overflow-y-auto">
+                    {notifications.map(n => (
+                      <div
+                        key={n.id}
+                        onClick={() => markRead(n.id)}
+                        className={`flex gap-3 px-5 py-4 cursor-pointer transition-colors hover:bg-slate-50 ${!n.read ? "bg-primary/[0.02]" : ""}`}
+                      >
+                        <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          n.type === "urgent" ? "bg-error/10" : n.type === "success" ? "bg-finance-success/10" : "bg-primary/10"
+                        }`}>
+                          {n.type === "urgent" && <AlertCircle size={16} className="text-error" />}
+                          {n.type === "success" && <CheckCircle2 size={16} className="text-finance-success" />}
+                          {n.type === "info" && <Info size={16} className="text-primary" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className={`text-xs font-bold ${!n.read ? "text-slate-900" : "text-slate-600"} leading-tight`}>{n.title}</p>
+                            {!n.read && <span className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1" />}
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{n.body}</p>
+                          <p className="text-[10px] text-slate-400 mt-1 font-medium">{n.time}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {unreadCount === 0 && (
+                    <div className="px-5 py-6 text-center">
+                      <CheckCircle2 size={24} className="text-finance-success mx-auto mb-2" />
+                      <p className="text-xs font-bold text-slate-500">All caught up!</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Profile Avatar → navigates to profile */}
+            <Link
+              href="/student/profile"
+              className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 md:border-border-subtle bg-primary/10 flex items-center justify-center hover:opacity-80 transition-opacity shadow-sm"
+              title="My Profile"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -110,7 +192,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                 alt="Student Profile"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </Link>
           </div>
         </header>
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, BookOpen, Clock, History, Search, PlusCircle, Download, AlertTriangle, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FileText, BookOpen, Clock, History, Search, PlusCircle, Download, AlertTriangle, CheckCircle, X, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
@@ -44,6 +44,7 @@ const semesterKeys = Object.keys(historicalEnrollments).sort().reverse();
 type TabId = "enrollment" | "history";
 
 export default function StudentAcademics() {
+  const router = useRouter();
   const { students, courses } = useGlobalContext();
   const rawStudent = students[0];
 
@@ -55,7 +56,6 @@ export default function StudentAcademics() {
     year_of_study: Number(rawStudent.year),
   };
 
-  // Use live courses from context as registered modules
   const myModules = courses.slice(0, 4).map(c => ({
     code: c.code,
     name: c.name,
@@ -65,10 +65,21 @@ export default function StudentAcademics() {
 
   const [activeTab, setActiveTab] = useState<TabId>("enrollment");
   const [search, setSearch] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
 
   const filteredPrograms = allPrograms.filter(p =>
     p.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Program description map (abbreviated)
+  const programDescriptions: Record<string, string> = {
+    "B.Sc. Software Engineering": "Covers software design, architecture, testing, and modern full-stack development. Graduates work as engineers, architects, and CTOs.",
+    "B.Sc. Computer Science": "Theoretical and applied computing — algorithms, AI, systems programming, and research. Ideal for those pursuing postgraduate studies.",
+    "B.Sc. Data Science & AI": "Machine learning, big data analytics, neural networks, and statistical modelling. One of the most sought-after degrees globally.",
+    "Bachelor of Laws (LLB)": "Comprehensive legal training covering civil, criminal, commercial, and international law.",
+    "BBA - Accounting & Finance": "Financial accounting, audit, tax, and corporate finance aligned with ICPAU and ACCA standards.",
+    "MBA (All Specializations)": "Executive management programme with specialisations in Finance, HR, Marketing, and Operations.",
+  };
 
   return (
     <main className="w-full pb-12">
@@ -173,11 +184,11 @@ export default function StudentAcademics() {
               {filteredPrograms.map(p => (
                 <div
                   key={p}
-                  onClick={() => toast.info(`${p} — added to wishlist`)}
+                  onClick={() => setSelectedProgram(p)}
                   className="p-3 bg-surface-container-low rounded-xl hover:bg-primary hover:text-white transition-all cursor-pointer group flex items-center justify-between"
                 >
                   <span className="text-xs font-semibold">{p}</span>
-                  <PlusCircle size={16} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                  <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </div>
               ))}
               {filteredPrograms.length === 0 && (
@@ -238,24 +249,24 @@ export default function StudentAcademics() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <div className="relative inline-block group/btn">
-                            <button
-                              disabled={HAS_BALANCE}
-                              onClick={() => toast.success(`Registered for ${m.code} examinations!`)}
-                              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                                HAS_BALANCE
-                                  ? "bg-surface-container text-on-surface-variant cursor-not-allowed"
-                                  : "bg-primary text-white hover:opacity-90 shadow-sm"
-                              }`}
-                            >
-                              {HAS_BALANCE ? <><AlertTriangle size={12} className="inline mr-1" />Blocked</> : <><CheckCircle size={12} className="inline mr-1" />Register for Exams</>}
-                            </button>
-                            {HAS_BALANCE && (
-                              <div className="absolute bottom-full right-0 mb-2 w-48 hidden group-hover/btn:block bg-slate-900 text-white text-[10px] p-2 rounded-lg shadow-xl z-50">
-                                Clear outstanding balance to register for exams.
-                              </div>
-                            )}
-                          </div>
+                          <button
+                            onClick={() => {
+                              if (HAS_BALANCE) {
+                                router.push("/student/finance");
+                              } else {
+                                toast.success(`Registered for ${m.code} examinations!`);
+                              }
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all active:scale-95 ${
+                              HAS_BALANCE
+                                ? "bg-error/10 text-error hover:bg-error/20"
+                                : "bg-primary text-white hover:opacity-90 shadow-sm"
+                            }`}
+                          >
+                            {HAS_BALANCE
+                              ? <><AlertTriangle size={12} className="inline mr-1" />Clear Balance</>
+                              : <><CheckCircle size={12} className="inline mr-1" />Register for Exams</>}
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -315,6 +326,82 @@ export default function StudentAcademics() {
             </div>
           ))}
         </section>
+      )}
+
+      {/* ── Program Detail Modal ─────────────────────────────── */}
+      {selectedProgram && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedProgram(null)} />
+          <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-[#00174b] p-6 text-white">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-2">Programme Details</p>
+                  <h3 className="text-xl font-bold leading-tight">{selectedProgram}</h3>
+                  <p className="text-blue-200 text-xs mt-1">Cavendish University Uganda</p>
+                </div>
+                <button onClick={() => setSelectedProgram(null)} className="text-white/70 hover:text-white shrink-0">
+                  <X size={22} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-8 space-y-5">
+              {/* Description */}
+              <div>
+                <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">About This Programme</p>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  {programDescriptions[selectedProgram] ||
+                    "This programme is offered by Cavendish University Uganda and prepares students with the knowledge and skills required in their respective professional field. Contact the Admissions Office for the full prospectus."}
+                </p>
+              </div>
+
+              {/* Meta info */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-surface-container-low p-3 rounded-xl">
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-wider mb-1">Duration</p>
+                  <p className="text-sm font-bold text-on-surface">
+                    {selectedProgram.startsWith("MBA") || selectedProgram.startsWith("Master") ? "2 Years" :
+                     selectedProgram.startsWith("Higher") ? "1 Year" : "3–4 Years"}
+                  </p>
+                </div>
+                <div className="bg-surface-container-low p-3 rounded-xl">
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-wider mb-1">Mode</p>
+                  <p className="text-sm font-bold text-on-surface">Full-time / Part-time</p>
+                </div>
+                <div className="bg-surface-container-low p-3 rounded-xl">
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-wider mb-1">Accreditation</p>
+                  <p className="text-sm font-bold text-on-surface">NCHE Uganda</p>
+                </div>
+                <div className="bg-surface-container-low p-3 rounded-xl">
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-wider mb-1">Campus</p>
+                  <p className="text-sm font-bold text-on-surface">Main Campus</p>
+                </div>
+              </div>
+
+              {/* Note about current enrolment */}
+              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 text-sm text-primary font-medium">
+                <span className="font-black">Note:</span> To change your registered programme, contact the Academic Registrar with a formal request letter and your student ID.
+              </div>
+
+              <div className="flex gap-3 pt-1">
+                <button
+                  onClick={() => { setSelectedProgram(null); toast.success("Programme details saved to your wishlist."); }}
+                  className="flex-1 py-3 bg-[#00174b] text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                >
+                  <PlusCircle size={16} /> Add to Wishlist
+                </button>
+                <button
+                  onClick={() => setSelectedProgram(null)}
+                  className="px-5 py-3 bg-surface-container-low text-on-surface font-bold rounded-xl text-sm hover:bg-surface-container transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );

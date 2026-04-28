@@ -38,6 +38,30 @@ const BALANCE_AMOUNT = 1_250_000;
 export default function StudentProfile() {
   const [showID, setShowID] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Editable fields
+  const [personalEmail, setPersonalEmail] = useState(student.personal_email);
+  const [phone, setPhone] = useState(student.phone);
+  const [emergencyContact, setEmergencyContact] = useState(student.emergency_contact);
+  // Originals for cancel
+  const [originals] = useState({ personalEmail: student.personal_email, phone: student.phone, emergencyContact: student.emergency_contact });
+
+  const handleCancelEdit = () => {
+    setPersonalEmail(originals.personalEmail);
+    setPhone(originals.phone);
+    setEmergencyContact(originals.emergencyContact);
+    setEditMode(false);
+  };
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setEditMode(false);
+      toast.success("Profile updated successfully!");
+    }, 900);
+  };
 
   const getGradeClass = (cgpa: number) => {
     if (cgpa >= 4.5) return "First Class";
@@ -156,73 +180,142 @@ export default function StudentProfile() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
                 <User size={20} className="text-primary" /> Personal Details
+                {editMode && <span className="ml-2 px-2 py-0.5 text-[9px] font-black uppercase bg-primary/10 text-primary rounded-full">Editing</span>}
               </h3>
               <button
-                onClick={() => { setEditMode(!editMode); if (!editMode) toast.info("Edit mode enabled — changes are local only in demo mode"); }}
+                onClick={() => editMode ? handleCancelEdit() : setEditMode(true)}
                 className="flex items-center gap-1.5 text-primary text-xs font-bold hover:underline"
               >
                 <Edit3 size={14} /> {editMode ? "Cancel" : "Edit Details"}
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-start gap-3">
-                <Mail size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">University Email</p>
-                  <p className="text-sm font-medium text-on-surface">{student.email}</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* University Email — Read-only */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Mail size={12} /> University Email
+                  <span className="ml-auto text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">READ-ONLY</span>
+                </label>
+                <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface-variant border border-border-subtle">
+                  {student.email}
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Mail size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Personal Email</p>
-                  <p className="text-sm font-medium text-on-surface">{student.personal_email}</p>
+
+              {/* Personal Email — Editable */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Mail size={12} /> Personal Email
+                </label>
+                {editMode ? (
+                  <input
+                    type="email"
+                    value={personalEmail}
+                    onChange={e => setPersonalEmail(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-white border-2 border-primary/30 focus:border-primary rounded-xl text-sm font-medium text-on-surface outline-none transition-colors"
+                    placeholder="Personal email address"
+                  />
+                ) : (
+                  <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface border border-border-subtle">
+                    {personalEmail}
+                  </div>
+                )}
+              </div>
+
+              {/* Nationality — Read-only */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Globe size={12} /> Nationality
+                  <span className="ml-auto text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">READ-ONLY</span>
+                </label>
+                <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface-variant border border-border-subtle">
+                  {student.nationality}
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Globe size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Nationality</p>
-                  <p className="text-sm font-medium text-on-surface">{student.nationality}</p>
+
+              {/* Mobile Number — Editable */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Phone size={12} /> Mobile Number
+                </label>
+                {editMode ? (
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-white border-2 border-primary/30 focus:border-primary rounded-xl text-sm font-medium text-on-surface outline-none transition-colors"
+                    placeholder="+256 7XX XXX XXX"
+                  />
+                ) : (
+                  <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface border border-border-subtle">
+                    {phone}
+                  </div>
+                )}
+              </div>
+
+              {/* Emergency Contact — Editable */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Phone size={12} /> Emergency Contact
+                </label>
+                {editMode ? (
+                  <input
+                    type="tel"
+                    value={emergencyContact}
+                    onChange={e => setEmergencyContact(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-white border-2 border-primary/30 focus:border-primary rounded-xl text-sm font-medium text-on-surface outline-none transition-colors"
+                    placeholder="+256 7XX XXX XXX"
+                  />
+                ) : (
+                  <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface border border-border-subtle">
+                    {emergencyContact}
+                  </div>
+                )}
+              </div>
+
+              {/* Programme — Read-only */}
+              <div>
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <BookOpen size={12} /> Programme
+                  <span className="ml-auto text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">READ-ONLY</span>
+                </label>
+                <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface-variant border border-border-subtle">
+                  {student.programme}
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Phone size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Mobile Number</p>
-                  <p className="text-sm font-medium text-on-surface">{student.phone}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Emergency Contact</p>
-                  <p className="text-sm font-medium text-on-surface">{student.emergency_contact}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <BookOpen size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Programme</p>
-                  <p className="text-sm font-medium text-on-surface">{student.programme}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Globe size={16} className="text-on-surface-variant mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Delivery Mode</p>
-                  <p className="text-sm font-medium text-on-surface">{student.delivery_mode}</p>
+
+              {/* Delivery Mode — Read-only, full width */}
+              <div className="sm:col-span-2">
+                <label className="text-[10px] text-on-surface-variant font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                  <Globe size={12} /> Delivery Mode
+                  <span className="ml-auto text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">READ-ONLY</span>
+                </label>
+                <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface-variant border border-border-subtle">
+                  {student.delivery_mode}
                 </div>
               </div>
             </div>
+
             {editMode && (
-              <div className="mt-6 pt-6 border-t border-border-subtle">
+              <div className="mt-6 pt-6 border-t border-border-subtle flex items-center gap-3">
                 <button
-                  onClick={() => { setEditMode(false); toast.success("Profile details updated successfully!"); }}
-                  className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 flex items-center gap-2"
                 >
-                  Save Changes
+                  {isSaving ? (
+                    <><span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Saving...</>
+                  ) : (
+                    <>Save Changes</>
+                  )}
                 </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-5 py-2.5 bg-surface-container-low text-on-surface rounded-xl font-bold text-sm hover:bg-surface-container transition-colors"
+                >
+                  Cancel
+                </button>
+                <p className="text-[10px] text-on-surface-variant ml-2">Only personal contact details can be edited. Academic records require Registrar approval.</p>
               </div>
             )}
           </div>
