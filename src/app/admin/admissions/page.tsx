@@ -1,9 +1,93 @@
 "use client";
 
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Download, Plus, FileText, UserCheck, FolderOpen, AlertCircle, FileDigit, FileSignature } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdmissionsDashboard() {
+  const [programFilter, setProgramFilter] = useState("All Programs");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+
+  const applicants = [
+    {
+      initials: "AB",
+      name: "Ababiku Brenda",
+      email: "b.ababiku@cavendish.ac.ug",
+      program: "AES Content",
+      submittedAt: "Oct 24, 2023",
+      status: "Pending",
+      documents: ["Transcript.pdf", "Resume.doc"],
+      avatarClass: "bg-blue-100 text-blue-700",
+    },
+    {
+      initials: "AA",
+      name: "Alimpa Anne Hillary",
+      email: "a.hillary@cavendish.ac.ug",
+      program: "Conservation",
+      submittedAt: "Oct 23, 2023",
+      status: "Completed",
+      documents: ["ID_Card.pdf"],
+      avatarClass: "bg-slate-100 text-slate-700",
+    },
+    {
+      initials: "EA",
+      name: "Egabo Aaron",
+      email: "a.egabo@cavendish.ac.ug",
+      program: "AES Content",
+      submittedAt: "Oct 23, 2023",
+      status: "Pending",
+      documents: ["Portfolio.pdf", "Letter.doc"],
+      avatarClass: "bg-purple-100 text-purple-700",
+    },
+  ];
+
+  const filteredApplicants = useMemo(
+    () =>
+      applicants.filter((applicant) => {
+        const matchProgram =
+          programFilter === "All Programs" || applicant.program === programFilter;
+        const matchStatus =
+          statusFilter === "All Status" || applicant.status === statusFilter;
+        return matchProgram && matchStatus;
+      }),
+    [programFilter, statusFilter]
+  );
+
+  const downloadApplicantsCsv = () => {
+    const headers = [
+      "Applicant Name",
+      "Email",
+      "Program",
+      "Date Submitted",
+      "Status",
+      "Documents",
+    ];
+
+    const rows = filteredApplicants.map((applicant) => [
+      applicant.name,
+      applicant.email,
+      applicant.program,
+      applicant.submittedAt,
+      applicant.status,
+      applicant.documents.join(" | "),
+    ]);
+
+    const quote = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows]
+      .map((row) => row.map((item) => quote(String(item))).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `admissions-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Admissions report download started.");
+  };
+
   return (
     <div className="p-lg space-y-lg max-w-[1600px] mx-auto">
       {/* Header Section */}
@@ -13,12 +97,12 @@ export default function AdmissionsDashboard() {
           <p className="font-body-lg text-body-lg text-slate-500 mt-1">Cavendish University Uganda Central Portal</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Exporting admissions report...')} className="bg-white border border-border-subtle px-4 py-2 rounded-lg font-button text-button text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+          <button onClick={downloadApplicantsCsv} className="bg-white border border-border-subtle px-4 py-2 rounded-lg font-button text-button text-slate-700 hover:bg-slate-50 flex items-center gap-2">
             <Download size={20} /> Export Report
           </button>
-          <button onClick={() => toast.info('Opening application form...')} className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button hover:opacity-90 flex items-center gap-2">
+          <Link href="/admin/admissions/new-application" className="bg-primary text-white px-4 py-2 rounded-lg font-button text-button hover:opacity-90 flex items-center gap-2">
             <Plus size={20} /> New Application
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -83,12 +167,20 @@ export default function AdmissionsDashboard() {
         <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="font-h3 text-h3 text-slate-900">Recent Applicants</h3>
           <div className="flex items-center gap-2">
-            <select className="border border-border-subtle rounded-lg text-sm bg-slate-50 focus:ring-primary px-3 py-2 outline-none">
+            <select
+              className="border border-border-subtle rounded-lg text-sm bg-slate-50 focus:ring-primary px-3 py-2 outline-none"
+              value={programFilter}
+              onChange={(e) => setProgramFilter(e.target.value)}
+            >
               <option>All Programs</option>
               <option>AES Content</option>
               <option>Conservation</option>
             </select>
-            <select className="border border-border-subtle rounded-lg text-sm bg-slate-50 focus:ring-primary px-3 py-2 outline-none">
+            <select
+              className="border border-border-subtle rounded-lg text-sm bg-slate-50 focus:ring-primary px-3 py-2 outline-none"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
               <option>All Status</option>
               <option>Completed</option>
               <option>Pending</option>
@@ -108,88 +200,57 @@ export default function AdmissionsDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {/* Row 1 */}
-              <tr className="hover:bg-slate-50/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs">AB</div>
-                    <div>
-                      <p className="font-medium text-slate-900">Ababiku Brenda</p>
-                      <p className="text-xs text-slate-500">b.ababiku@cavendish.ac.ug</p>
+              {filteredApplicants.map((applicant, index) => (
+                <tr key={`${applicant.email}-${index}`} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${applicant.avatarClass}`}>
+                        {applicant.initials}
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">{applicant.name}</p>
+                        <p className="text-xs text-slate-500">{applicant.email}</p>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">AES Content</td>
-                <td className="px-6 py-4 text-sm text-slate-600">Oct 24, 2023</td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <div title="Transcript.pdf"><FileDigit className="text-slate-400 cursor-pointer hover:text-red-500" size={20} /></div>
-                    <div title="Resume.doc"><FileSignature className="text-slate-400 cursor-pointer hover:text-blue-500" size={20} /></div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
-                </td>
-              </tr>
-              {/* Row 2 */}
-              <tr className="hover:bg-slate-50/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xs">AA</div>
-                    <div>
-                      <p className="font-medium text-slate-900">Alimpa Anne Hillary</p>
-                      <p className="text-xs text-slate-500">a.hillary@cavendish.ac.ug</p>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{applicant.program}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{applicant.submittedAt}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        applicant.status === "Completed"
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
+                      {applicant.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      {applicant.documents.map((document, docIndex) => (
+                        <div key={`${document}-${docIndex}`} title={document}>
+                          {document.toLowerCase().endsWith(".pdf") ? (
+                            <FileDigit className="text-slate-400 cursor-pointer hover:text-red-500" size={20} />
+                          ) : (
+                            <FileSignature className="text-slate-400 cursor-pointer hover:text-blue-500" size={20} />
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">Conservation</td>
-                <td className="px-6 py-4 text-sm text-slate-600">Oct 23, 2023</td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Completed</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <div title="ID_Card.pdf"><FileDigit className="text-slate-400 cursor-pointer hover:text-red-500" size={20} /></div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
-                </td>
-              </tr>
-              {/* Row 3 */}
-              <tr className="hover:bg-slate-50/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xs">EA</div>
-                    <div>
-                      <p className="font-medium text-slate-900">Egabo Aaron</p>
-                      <p className="text-xs text-slate-500">a.egabo@cavendish.ac.ug</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">AES Content</td>
-                <td className="px-6 py-4 text-sm text-slate-600">Oct 23, 2023</td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <div title="Portfolio.pdf"><FileDigit className="text-slate-400 cursor-pointer hover:text-red-500" size={20} /></div>
-                    <div title="Letter.doc"><FileSignature className="text-slate-400 cursor-pointer hover:text-blue-500" size={20} /></div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button onClick={() => toast.info('Loading application review...')} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">Review</button>
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button onClick={() => toast.info("Loading application review...")} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                      Review
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         <div className="p-4 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-sm text-slate-500">Showing 1 to 3 of 403 entries</p>
+          <p className="text-sm text-slate-500">Showing {filteredApplicants.length} entries</p>
           <div className="flex gap-1">
             <button onClick={() => toast.error('Already on first page')} className="px-3 py-1 border rounded hover:bg-slate-50 text-slate-600 text-sm">Prev</button>
             <button onClick={() => alert('Feature in development...')}  className="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
