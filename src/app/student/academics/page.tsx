@@ -400,6 +400,7 @@ export default function StudentAcademics() {
             </div>
           ))}
         </section>
+      )}
       {/* ── Timetable Tab ── */}
       {activeTab === "timetable" && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">

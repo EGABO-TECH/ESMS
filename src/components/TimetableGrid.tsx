@@ -104,7 +104,7 @@ export default function TimetableGrid({ filterType, filterValue }: TimetableGrid
           </div>
 
           {/* Time Slots */}
-          {TIME_SLOTS.map((time, timeIdx) => (
+          {TIME_SLOTS.map((time) => (
             <div key={time} className={`grid grid-cols-[120px_repeat(7,1fr)] border-b border-slate-50 last:border-b-0`}>
               <div className="p-6 border-r border-slate-100 flex flex-col items-center justify-center bg-slate-50/20">
                 <Clock size={16} className="text-slate-400 mb-1" />
