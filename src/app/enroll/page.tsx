@@ -364,14 +364,29 @@ export default function EnrollmentPage() {
                           className="w-full border border-slate-200 rounded-lg p-3 text-sm outline-none focus:border-[#001a40] transition-all bg-white"
                         >
                           <option value="">Select Program...</option>
+                          <option value="Certificate in Higher Education (HEC)">Certificate in Higher Education (HEC)</option>
+                          <option value="Diploma in Business Administration (DBA)">Diploma in Business Administration (DBA)</option>
+                          <option value="Diploma in Computer Science (DCS)">Diploma in Computer Science (DCS)</option>
+                          <option value="Diploma in Information Technology (DIT)">Diploma in Information Technology (DIT)</option>
                           <option value="Bachelor of Business Administration (BBA)">Bachelor of Business Administration (BBA)</option>
-                          <option value="Bachelor of Science in Computer Science">Bachelor of Science in Computer Science</option>
-                          <option value="Bachelor of Science in Information Technology">Bachelor of Science in Information Technology</option>
-                          <option value="Bachelor Of Science in Software Engineering">Bachelor Of Science in Software Engineering</option>
-                          <option value="Bachelor of Science in Data Science and Artificial Intelligence">Bachelor of Science in Data Science and Artificial Intelligence</option>
-                          <option value="Bachelor of Science in Public Health">Bachelor of Science in Public Health</option>
-                          <option value="Bachelor of Arts in International Relations and Diplomacy">Bachelor of Arts in International Relations and Diplomacy</option>
+                          <option value="Bachelor of Public Administration and Management (BPAM)">Bachelor of Public Administration and Management (BPAM)</option>
+                          <option value="Bachelor of Science in Computer Science (BCS)">Bachelor of Science in Computer Science (BCS)</option>
+                          <option value="Bachelor of Science in Information Technology (BIT)">Bachelor of Science in Information Technology (BIT)</option>
+                          <option value="Bachelor of Science in Software Engineering (BSE)">Bachelor of Science in Software Engineering (BSE)</option>
+                          <option value="Bachelor of Science in Data Science and Analytics (BDSA)">Bachelor of Science in Data Science and Analytics (BDSA)</option>
+                          <option value="Bachelor of Public Health (BPH)">Bachelor of Public Health (BPH)</option>
+                          <option value="Bachelor of Environmental Health Sciences (BEHS)">Bachelor of Environmental Health Sciences (BEHS)</option>
+                          <option value="Bachelor of Arts in International Relations and Diplomatic Studies (BIRDS)">Bachelor of Arts in International Relations and Diplomatic Studies (BIRDS)</option>
+                          <option value="Bachelor of Journalism and Communication (BJC)">Bachelor of Journalism and Communication (BJC)</option>
                           <option value="Bachelor of Laws (LLB)">Bachelor of Laws (LLB)</option>
+                          <option value="Master of Business Administration (MBA)">Master of Business Administration (MBA)</option>
+                          <option value="Master of Public Health (MPH)">Master of Public Health (MPH)</option>
+                          <option value="Master of Project Management (MPM)">Master of Project Management (MPM)</option>
+                          <option value="Master of Information Technology (MIT)">Master of Information Technology (MIT)</option>
+                          <option value="Master of International Relations and Diplomatic Studies (MIRDS)">Master of International Relations and Diplomatic Studies (MIRDS)</option>
+                          <option value="Master of Security Studies (MSS)">Master of Security Studies (MSS)</option>
+                          <option value="Master of Education (MED)">Master of Education (MED)</option>
+                          <option value="Master of Laws (LLM)">Master of Laws (LLM)</option>
                         </select>
                       </div>
                       <div className="grid grid-cols-2 gap-4">

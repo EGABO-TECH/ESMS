@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.6",
+    "@supabase/supabase-js": "^2.105.1",
+    "dotenv": "^17.4.2",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^1.11.0",
@@ -17,7 +19,8 @@
     "qrcode.react": "^4.2.0",
     "react": "^18",
     "react-dom": "^18",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",

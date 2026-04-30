@@ -5,9 +5,12 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
+import TimetableGrid from "@/components/TimetableGrid";
+import { useState } from "react";
 
 export default function LecturerDashboard() {
   const { courses } = useGlobalContext();
+  const [showFullTimetable, setShowFullTimetable] = useState(false);
 
   const stats = [
 
@@ -19,6 +22,26 @@ export default function LecturerDashboard() {
 
   const myCourses = courses.slice(0, 4);
 
+
+  if (showFullTimetable) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900">University Timetable</h1>
+            <p className="text-slate-500 mt-1">Full teaching schedule for the current semester</p>
+          </div>
+          <button 
+            onClick={() => setShowFullTimetable(false)}
+            className="px-6 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-all"
+          >
+            Back to Dashboard
+          </button>
+        </div>
+        <TimetableGrid filterType="all" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -144,7 +167,7 @@ export default function LecturerDashboard() {
                 </div>
               ))}
             </div>
-            <button onClick={() => toast.info('Loading full timetable...')} className="w-full mt-6 py-2 text-xs font-bold text-indigo-600 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors">
+            <button onClick={() => setShowFullTimetable(true)} className="w-full mt-6 py-2 text-xs font-bold text-indigo-600 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors">
               View Weekly Timetable
             </button>
           </div>

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import TimetableGrid from "@/components/TimetableGrid";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
@@ -43,7 +44,7 @@ const historicalEnrollments: Record<string, { id: number; grade: string; courses
 
 const semesterKeys = Object.keys(historicalEnrollments).sort().reverse();
 
-type TabId = "enrollment" | "history";
+type TabId = "enrollment" | "history" | "timetable";
 
 export default function StudentAcademics() {
   const router = useRouter();
@@ -223,7 +224,7 @@ export default function StudentAcademics() {
 
       {/* ── Tabs ── */}
       <div className="flex gap-1 bg-surface-container-low rounded-xl p-1 w-fit mb-8">
-        {(["enrollment", "history"] as TabId[]).map(tab => (
+        {(["enrollment", "history", "timetable"] as TabId[]).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -231,7 +232,7 @@ export default function StudentAcademics() {
               activeTab === tab ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
-            {tab === "enrollment" ? "Current Enrollment" : "Grade History"}
+            {tab === "enrollment" ? "Current Enrollment" : tab === "history" ? "Grade History" : "Weekly Timetable"}
           </button>
         ))}
       </div>
@@ -399,6 +400,14 @@ export default function StudentAcademics() {
             </div>
           ))}
         </section>
+      {/* ── Timetable Tab ── */}
+      {activeTab === "timetable" && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <TimetableGrid 
+            filterType="program" 
+            filterValue={student.programme.split('(').pop()?.replace(')', '') || 'BSE'} 
+          />
+        </div>
       )}
 
       {/* ── Program Detail Modal ─────────────────────────────── */}

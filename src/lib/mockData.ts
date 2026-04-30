@@ -2,7 +2,7 @@ export const MOCK_STUDENTS = [
   { 
     id: "CUU-258-154", 
     name: "Egabo Aaron", 
-    program: "Software Engineering", 
+    program: "Bachelor of Science in Software Engineering (BSE)", 
     year: "4", 
     sem: "1", 
     status: "Enrolled", 
@@ -15,7 +15,7 @@ export const MOCK_STUDENTS = [
   { 
     id: "CUU-230-500", 
     name: "Faida Nancy", 
-    program: "Data Science & AI", 
+    program: "Bachelor of Science in Data Science and Analytics (BDSA)", 
     year: "1", 
     sem: "1", 
     status: "Pending", 
@@ -28,7 +28,7 @@ export const MOCK_STUDENTS = [
   { 
     id: "CUU-273-318", 
     name: "Ababiku Brenda", 
-    program: "Business Admin (BBA)", 
+    program: "Bachelor of Business Administration (BBA)", 
     year: "3", 
     sem: "2", 
     status: "Enrolled", 
@@ -41,7 +41,7 @@ export const MOCK_STUDENTS = [
   { 
     id: "CUU-269-896", 
     name: "Alimpa Anne Hillary", 
-    program: "Information Technology (BSIT)", 
+    program: "Bachelor of Science in Information Technology (BIT)", 
     year: "2", 
     sem: "1", 
     status: "Enrolled", 
@@ -54,7 +54,7 @@ export const MOCK_STUDENTS = [
   { 
     id: "CUU-274-961", 
     name: "Kirabo Alice", 
-    program: "Laws (LLB)", 
+    program: "Bachelor of Laws (LLB)", 
     year: "1", 
     sem: "2", 
     status: "Inactive", 
