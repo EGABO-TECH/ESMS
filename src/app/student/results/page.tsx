@@ -8,6 +8,7 @@ import { Award, Info, Lock, Download, X, AlertTriangle, CheckCircle } from "luci
 import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useUser } from "@clerk/nextjs";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
@@ -26,11 +27,15 @@ export default function StudentResults() {
   const router = useRouter();
   const { studentResults: allResults, students } = useGlobalContext();
   const rawStudent = students[0];
+  const { user, isLoaded } = useUser();
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const displayName = clerkName || rawStudent.name;
+
   const results = allResults.filter((result) => result.studentId === rawStudent.id);
   
   const handleDownloadResults = () => {
     const doc = new jsPDF();
-    const studentName = rawStudent.name;
+    const studentName = displayName;
     const studentID = rawStudent.id;
     const date = new Date().toLocaleDateString();
 

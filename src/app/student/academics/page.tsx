@@ -8,6 +8,7 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import TimetableGrid from "@/components/TimetableGrid";
+import { useUser } from "@clerk/nextjs";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
@@ -50,6 +51,9 @@ export default function StudentAcademics() {
   const router = useRouter();
   const { students, courses } = useGlobalContext();
   const rawStudent = students[0];
+  const { user, isLoaded } = useUser();
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const displayName = clerkName || rawStudent.name;
 
   const student = {
     cgpa: 4.25,
@@ -86,7 +90,7 @@ export default function StudentAcademics() {
 
   const handleDownloadTimetable = () => {
     const doc = new jsPDF();
-    const studentName = rawStudent.name;
+    const studentName = displayName;
     const studentID = rawStudent.id;
     const date = new Date().toLocaleDateString();
 

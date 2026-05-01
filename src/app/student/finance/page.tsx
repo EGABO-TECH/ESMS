@@ -5,6 +5,7 @@ import { Zap, Wallet, Info, Printer, Building2, Smartphone, CheckCircle, AlertCi
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useUser } from "@clerk/nextjs";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const HAS_BALANCE = true;
@@ -36,6 +37,10 @@ export default function StudentFinance() {
   const [payAmount, setPayAmount] = useState(String(outstanding));
   const [showPayPanel, setShowPayPanel] = useState(false);
   const [showManage, setShowManage] = useState(false);
+  
+  const { user, isLoaded } = useUser();
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const displayName = clerkName || "Egabo Aaron";
 
   const handleDownloadStatement = () => {
     const doc = new jsPDF();
@@ -55,7 +60,7 @@ export default function StudentFinance() {
     // -- Student Info Section --
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    doc.text(`Student Name: Egabo Aaron`, 14, 55);
+    doc.text(`Student Name: ${displayName}`, 14, 55);
     doc.text(`Student ID: CUU-2024-258154`, 14, 61);
     doc.text(`Academic Year: 2025/2026`, 14, 67);
     doc.text(`Statement Date: ${date}`, 140, 55);
