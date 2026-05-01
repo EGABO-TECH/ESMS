@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { useUser } from "@clerk/nextjs";
 
 const NOTIFICATIONS = [
   { id: 1, type: "urgent", title: "Outstanding Balance", body: "UGX 1,250,000 due by May 27, 2026. Clear to unlock exam permit.", time: "2h ago", read: false },
@@ -30,6 +31,10 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { profileImage } = useGlobalContext();
+  const { user, isLoaded } = useUser();
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const avatarUrl = user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || "egabo_aaron"}`;
+  
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
@@ -191,7 +196,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+                  src={avatarUrl}
                   alt="Student Profile"
                   className="w-full h-full object-cover"
                 />

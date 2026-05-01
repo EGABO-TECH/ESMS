@@ -3,13 +3,20 @@
 import Link from "next/link";
 import { BookOpen, Wallet, CalendarDays, TrendingUp, AlertCircle, Award, Map, User, Lock } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { useUser } from "@clerk/nextjs";
 
 export default function StudentDashboard() {
   const { students, profileImage } = useGlobalContext();
-  // The logged-in student is always the first in the list (Egabo Aaron)
+  const { user, isLoaded } = useUser();
+  
+  // Fallback to mock student if Clerk data is missing or loading
   const rawStudent = students[0];
+  
+  // Extract real name from Clerk user
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const displayName = clerkName || rawStudent.name;
 
-  const profile = { full_name: rawStudent.name, campus: "Main Campus" };
+  const profile = { full_name: displayName, campus: "Main Campus" };
   const student = {
     cgpa: 4.25, credits_earned: 86, credits_remaining: 34,
     programme: rawStudent.program, year_of_study: Number(rawStudent.year), student_number: rawStudent.id.replace("CUU-", "")
@@ -41,7 +48,7 @@ export default function StudentDashboard() {
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-primary/20 overflow-hidden bg-primary/10 flex items-center justify-center shadow-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=egabo_aaron`}
+              src={user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || "egabo_aaron"}`}
               alt={profile.full_name}
               className="w-full h-full object-cover"
             />
@@ -186,7 +193,7 @@ export default function StudentDashboard() {
             <span className="font-semibold text-slate-700">My Profile</span>
           </div>
           <p className="text-sm text-slate-500">View your Virtual ID, documents, and personal details.</p>
-          <p className="text-xs text-primary font-semibold mt-2">{profile.full_name} · CUU-2024-258154</p>
+          <p className="text-xs text-primary font-semibold mt-2">{profile.full_name} · CUU-{student.student_number}</p>
         </Link>
       </div>
     </main>
