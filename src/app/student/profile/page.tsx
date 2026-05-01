@@ -210,7 +210,10 @@ export default function StudentProfile() {
     const issuedAt = new Date().toISOString();
     const status = HAS_BALANCE ? "restricted" : "active";
     
-    // We EXCLUDE the avatar from the QR code data because base64 strings are too large for QR codes
+    // Use Clerk's imageUrl if available because it's a short URL safe for QR codes.
+    // Base64 strings from profileImage are too large, so we fallback to empty if no Clerk image.
+    const qrAvatarUrl = user?.imageUrl || "";
+
     const payload = buildVerificationPayload({
       name: displayName,
       id: student.student_number,
@@ -218,7 +221,7 @@ export default function StudentProfile() {
       campus: student.campus,
       validFrom: student.enrolled_date,
       validTo: student.expected_graduation,
-      avatar: "PERSISTED_PROFILE", // Placeholder, verification page will pull from DB/Local
+      avatar: qrAvatarUrl,
       status,
       issuedAt,
     });
@@ -230,13 +233,13 @@ export default function StudentProfile() {
       campus: student.campus,
       validFrom: student.enrolled_date,
       validTo: student.expected_graduation,
-      // avatar: profileImage, // REMOVED: Too large for QR data
+      avatar: qrAvatarUrl,
       status,
       issuedAt,
       sig,
     });
     setVerificationUrl(`${origin}/verify/student?${params.toString()}`);
-  }, [profileImage]);
+  }, [profileImage, displayName, user?.imageUrl]);
 
   return (
     <main className="w-full pb-12">

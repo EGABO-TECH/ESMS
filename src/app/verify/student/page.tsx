@@ -25,7 +25,7 @@ export default function StudentVerificationPage({
   const validTo = readParam(params.validTo, "N/A");
   const avatar = readParam(
     params.avatar,
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=student"
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
   );
   const status = readParam(params.status, "active");
   const issuedAt = readParam(params.issuedAt, new Date().toISOString());
