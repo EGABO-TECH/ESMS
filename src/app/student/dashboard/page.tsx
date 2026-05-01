@@ -6,7 +6,7 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 import { useUser } from "@clerk/nextjs";
 
 export default function StudentDashboard() {
-  const { students, profileImage } = useGlobalContext();
+  const { students, profileImage, hasBalance } = useGlobalContext();
   const { user, isLoaded } = useUser();
   
   // Fallback to mock student if Clerk data is missing or loading
@@ -27,7 +27,6 @@ export default function StudentDashboard() {
     { id: 2, title: "Coursework Upload Deadline", event_date: "2026-05-20T00:00:00Z" },
     { id: 3, title: "Final Examinations", event_date: "2026-06-10T00:00:00Z" },
   ];
-  const HAS_BALANCE = finance.balance_ugx > 0;
 
   const getGradeClass = (cgpa: number) => {
     if (cgpa >= 4.5) return "First Class";
@@ -71,7 +70,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* Outstanding Balance Alert */}
-      {HAS_BALANCE && (
+      {hasBalance && (
         <div className="mb-6 p-4 bg-error/5 border border-error/20 rounded-xl flex items-center gap-3">
           <AlertCircle className="text-error shrink-0" size={20} />
           <div className="flex-1">
@@ -112,11 +111,11 @@ export default function StudentDashboard() {
               </div>
               <span className="font-semibold text-slate-700">Finance</span>
             </div>
-            {HAS_BALANCE && <AlertCircle className="text-error" size={18} />}
+            {hasBalance && <AlertCircle className="text-error" size={18} />}
           </div>
           <p className="text-sm text-slate-500 mb-1">Outstanding Balance</p>
-          <p className={`text-2xl font-black ${HAS_BALANCE ? "text-error" : "text-finance-success"}`}>
-            {HAS_BALANCE ? `UGX ${finance.balance_ugx.toLocaleString()}` : "CLEARED"}
+          <p className={`text-2xl font-black ${hasBalance ? "text-error" : "text-finance-success"}`}>
+            {hasBalance ? `UGX ${finance.balance_ugx.toLocaleString()}` : "CLEARED"}
           </p>
           <p className="text-xs text-slate-400 mt-1">
             Due: {new Date(finance.due_date).toLocaleDateString("en-UG", { day: "numeric", month: "long", year: "numeric" })}
@@ -161,7 +160,7 @@ export default function StudentDashboard() {
             </div>
             <span className="font-semibold text-slate-700">My Results</span>
           </div>
-          {HAS_BALANCE
+          {hasBalance
             ? <div className="flex items-center gap-2 text-error">
                 <Lock size={16} /><p className="text-sm font-bold">Locked — clear balance</p>
               </div>

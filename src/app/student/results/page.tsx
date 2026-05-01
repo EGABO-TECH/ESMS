@@ -11,7 +11,6 @@ import autoTable from "jspdf-autotable";
 import { useUser } from "@clerk/nextjs";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
-const HAS_BALANCE = true;
 const BALANCE_AMOUNT = "UGX 1,250,000";
 
 
@@ -25,7 +24,7 @@ const gradeColor = (grade: string) => {
 
 export default function StudentResults() {
   const router = useRouter();
-  const { studentResults: allResults, students } = useGlobalContext();
+  const { studentResults: allResults, students, hasBalance } = useGlobalContext();
   const rawStudent = students[0];
   const { user, isLoaded } = useUser();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
@@ -176,7 +175,7 @@ export default function StudentResults() {
         )}
 
         {/* Financial Gate Banner */}
-        {HAS_BALANCE && (
+        {hasBalance && (
           <div className="bg-error/5 border border-error/20 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-4">
             <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0">
               <Lock size={28} className="text-error" />
@@ -220,22 +219,22 @@ export default function StudentResults() {
                       <td className="px-6 py-4 font-medium text-on-surface text-sm">{r.name}</td>
                       <td className="px-6 py-4 text-center text-sm text-on-surface-variant">{r.credits}</td>
                       <td className="px-6 py-4 text-center">
-                        {HAS_BALANCE
+                        {hasBalance
                           ? <span className="text-[10px] font-bold text-error bg-error/5 px-2 py-1 rounded">BLOCKED</span>
                           : <span className={`text-sm font-bold ${isFail ? "text-error" : "text-on-surface"}`}>{r.score}</span>
                         }
                       </td>
                       <td className="px-6 py-4 text-center">
-                        {HAS_BALANCE
+                        {hasBalance
                           ? <span className="text-[10px] font-bold text-error bg-error/5 px-2 py-1 rounded">BLOCKED</span>
                           : <span className={`px-2.5 py-1 rounded-full font-bold text-xs ${gradeColor(r.grade)}`}>{r.grade}</span>
                         }
                       </td>
                       <td className="px-6 py-4 text-center font-bold text-on-surface text-sm">
-                        {HAS_BALANCE ? "—" : r.gp.toFixed(1)}
+                        {hasBalance ? "—" : r.gp.toFixed(1)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {!HAS_BALANCE && isFail ? (
+                        {!hasBalance && isFail ? (
                           <button
                             onClick={() => setRetakeModule({ code: r.code, name: r.name })}
                             className="text-[11px] font-bold text-error hover:underline underline-offset-4"
@@ -255,7 +254,7 @@ export default function StudentResults() {
         </div>
 
         {/* GPA Summary — shown only if cleared */}
-        {!HAS_BALANCE && (
+        {!hasBalance && (
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-8 bg-white border border-border-subtle rounded-2xl shadow-sm">
             <div className="flex items-center gap-6">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">

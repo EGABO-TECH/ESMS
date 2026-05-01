@@ -38,11 +38,10 @@ const student = {
 };
 
 // Set this to true to simulate outstanding balance (financial gate)
-const HAS_BALANCE = true;
 const BALANCE_AMOUNT = 1_250_000;
 
 export default function StudentProfile() {
-  const { profileImage, setProfileImage } = useGlobalContext();
+  const { profileImage, setProfileImage, hasBalance } = useGlobalContext();
   const { user, isLoaded } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -208,7 +207,7 @@ export default function StudentProfile() {
     if (typeof window === "undefined") return;
     const origin = window.location.origin;
     const issuedAt = new Date().toISOString();
-    const status = HAS_BALANCE ? "restricted" : "active";
+    const status = hasBalance ? "restricted" : "active";
     
     // Use Clerk's imageUrl if available because it's a short URL safe for QR codes.
     // Base64 strings from profileImage are too large, so we fallback to empty if no Clerk image.
@@ -239,7 +238,7 @@ export default function StudentProfile() {
       sig,
     });
     setVerificationUrl(`${origin}/verify/student?${params.toString()}`);
-  }, [profileImage, displayName, user?.imageUrl]);
+  }, [profileImage, displayName, user?.imageUrl, hasBalance]);
 
   return (
     <main className="w-full pb-12">
@@ -517,16 +516,16 @@ export default function StudentProfile() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-on-surface-variant">Account Balance</span>
-                <span className={`text-sm font-bold flex items-center gap-1 ${HAS_BALANCE ? "text-error" : "text-finance-success"}`}>
-                  <span className={`w-2 h-2 rounded-full ${HAS_BALANCE ? "bg-error animate-pulse" : "bg-finance-success"}`}/>
-                  {HAS_BALANCE ? "Outstanding" : "Paid"}
+                <span className={`text-sm font-bold flex items-center gap-1 ${hasBalance ? "text-error" : "text-finance-success"}`}>
+                  <span className={`w-2 h-2 rounded-full ${hasBalance ? "bg-error animate-pulse" : "bg-finance-success"}`}/>
+                  {hasBalance ? "Outstanding" : "Paid"}
                 </span>
               </div>
               <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                <div className={`h-full ${HAS_BALANCE ? "bg-error w-1/2" : "bg-finance-success w-full"} rounded-full`} />
+                <div className={`h-full ${hasBalance ? "bg-error w-1/2" : "bg-finance-success w-full"} rounded-full`} />
               </div>
-              <p className={`text-2xl font-black ${HAS_BALANCE ? "text-error" : "text-finance-success"}`}>
-                {HAS_BALANCE ? `UGX ${BALANCE_AMOUNT.toLocaleString()}` : "CLEARED"}
+              <p className={`text-2xl font-black ${hasBalance ? "text-error" : "text-finance-success"}`}>
+                {hasBalance ? `UGX ${BALANCE_AMOUNT.toLocaleString()}` : "CLEARED"}
               </p>
             </div>
             <button
@@ -559,10 +558,10 @@ export default function StudentProfile() {
               </li>
               <li className="flex justify-between items-center">
                 <div>
-                  <span className={`text-[10px] ${HAS_BALANCE ? "text-error" : "text-blue-300"} uppercase font-bold tracking-tight block`}>Final Examinations</span>
-                  <span className={`font-medium ${HAS_BALANCE ? "text-red-300" : ""}`}>June 10, 2026</span>
+                  <span className={`text-[10px] ${hasBalance ? "text-error" : "text-blue-300"} uppercase font-bold tracking-tight block`}>Final Examinations</span>
+                  <span className={`font-medium ${hasBalance ? "text-red-300" : ""}`}>June 10, 2026</span>
                 </div>
-                {HAS_BALANCE
+                {hasBalance
                   ? <Lock size={18} className="text-error" />
                   : <span className="text-blue-300 text-lg">→</span>
                 }
@@ -575,7 +574,7 @@ export default function StudentProfile() {
                 <span className="text-blue-300 text-lg">→</span>
               </li>
             </ul>
-            {HAS_BALANCE && (
+            {hasBalance && (
               <div className="bg-error/20 border border-error/30 rounded-xl p-4 text-center">
                 <p className="text-[11px] text-red-300 font-bold">Clear your balance to unlock exam access</p>
               </div>
@@ -611,17 +610,17 @@ export default function StudentProfile() {
 
               {/* Exam Permit — Financial Gate */}
               <div
-                onClick={() => HAS_BALANCE ? toast.error("Exam Permit locked — clear outstanding balance first.") : handleDownloadDoc("Examination Permit")}
-                className={`flex items-center justify-between p-3 rounded-xl border transition-colors group cursor-pointer ${HAS_BALANCE ? "bg-error/5 border-error/20" : "border-border-subtle hover:bg-surface-container-low"}`}
+                onClick={() => hasBalance ? toast.error("Exam Permit locked — clear outstanding balance first.") : handleDownloadDoc("Examination Permit")}
+                className={`flex items-center justify-between p-3 rounded-xl border transition-colors group cursor-pointer ${hasBalance ? "bg-error/5 border-error/20" : "border-border-subtle hover:bg-surface-container-low"}`}
               >
                 <div className="flex items-center gap-3">
-                  {HAS_BALANCE
+                  {hasBalance
                     ? <Lock size={18} className="text-error" />
                     : <Ticket size={18} className="text-on-surface-variant group-hover:text-primary" />
                   }
-                  <span className={`text-sm font-medium ${HAS_BALANCE ? "text-error" : "text-on-surface"}`}>Exam Permit 2026</span>
+                  <span className={`text-sm font-medium ${hasBalance ? "text-error" : "text-on-surface"}`}>Exam Permit 2026</span>
                 </div>
-                {HAS_BALANCE
+                {hasBalance
                   ? <span className="text-[9px] bg-error/10 text-error px-1.5 py-0.5 rounded-full font-black uppercase">LOCKED</span>
                   : <Download size={14} className="text-on-surface-variant" />
                 }

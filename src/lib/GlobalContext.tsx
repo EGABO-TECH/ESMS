@@ -36,6 +36,10 @@ type GlobalContextType = {
   // Profile Image
   profileImage: string | null;
   setProfileImage: (image: string | null) => void;
+
+  // Financial State
+  hasBalance: boolean;
+  setHasBalance: (hasBalance: boolean) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -47,6 +51,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
   const [grading, setGrading] = useState(MOCK_GRADING);
   const [studentResults, setStudentResults] = useState(MOCK_STUDENT_RESULTS);
+  const [hasBalance, setHasBalance] = useState(true);
 
   // Initialise from localStorage or system preference
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -115,6 +120,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       toggleDarkMode,
       profileImage,
       setProfileImage,
+      hasBalance,
+      setHasBalance,
     }}>
       {children}
     </GlobalContext.Provider>

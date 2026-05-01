@@ -11,7 +11,6 @@ import TimetableGrid from "@/components/TimetableGrid";
 import { useUser } from "@clerk/nextjs";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
-const HAS_BALANCE = true;
 
 const allPrograms = [
   "B.Sc. Software Engineering", "B.Sc. Computer Science", "B.Sc. Data Science & AI", "B.Sc. Information Technology",
@@ -49,7 +48,7 @@ type TabId = "enrollment" | "history" | "timetable";
 
 export default function StudentAcademics() {
   const router = useRouter();
-  const { students, courses } = useGlobalContext();
+  const { students, courses, hasBalance } = useGlobalContext();
   const rawStudent = students[0];
   const { user, isLoaded } = useUser();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
@@ -292,7 +291,7 @@ export default function StudentAcademics() {
               </div>
 
               {/* Financial Gate Banner */}
-              {HAS_BALANCE && (
+              {hasBalance && (
                 <div className="mx-6 my-4 p-4 bg-error/5 border border-error/20 rounded-xl flex items-start gap-3">
                   <AlertTriangle size={18} className="text-error shrink-0 mt-0.5" />
                   <div>
@@ -329,19 +328,19 @@ export default function StudentAcademics() {
                         <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => {
-                              if (HAS_BALANCE) {
+                              if (hasBalance) {
                                 router.push("/student/finance");
                               } else {
                                 toast.success(`Registered for ${m.code} examinations!`);
                               }
                             }}
                             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all active:scale-95 ${
-                              HAS_BALANCE
+                              hasBalance
                                 ? "bg-error/10 text-error hover:bg-error/20"
                                 : "bg-primary text-white hover:opacity-90 shadow-sm"
                             }`}
                           >
-                            {HAS_BALANCE
+                            {hasBalance
                               ? <><AlertTriangle size={12} className="inline mr-1" />Clear Balance</>
                               : <><CheckCircle size={12} className="inline mr-1" />Register for Exams</>}
                           </button>

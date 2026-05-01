@@ -7,8 +7,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useUser } from "@clerk/nextjs";
 
+import { useGlobalContext } from "@/lib/GlobalContext";
+
 // ─── Mock Data ────────────────────────────────────────────────────────────────
-const HAS_BALANCE = true;
 
 const rawTransactions = [
   { date: "01/02/2026", desc: "Tuition Fees — Semester 1",    debit: 1_800_000, credit: 0 },
@@ -31,10 +32,11 @@ const outstanding  = running; // final running balance
 
 
 export default function StudentFinance() {
-  const [balance, setBalance] = useState(outstanding);
-  const [isCleared, setIsCleared] = useState(!HAS_BALANCE || outstanding <= 0);
+  const { hasBalance, setHasBalance } = useGlobalContext();
+  const [balance, setBalance] = useState(hasBalance ? outstanding : 0);
+  const [isCleared, setIsCleared] = useState(!hasBalance || balance <= 0);
   const [simulating, setSimulating] = useState(false);
-  const [payAmount, setPayAmount] = useState(String(outstanding));
+  const [payAmount, setPayAmount] = useState(String(balance > 0 ? balance : 0));
   const [showPayPanel, setShowPayPanel] = useState(false);
   const [showManage, setShowManage] = useState(false);
   
@@ -115,6 +117,9 @@ export default function StudentFinance() {
       const newBal = balance - amount;
       setBalance(newBal);
       setIsCleared(newBal <= 0);
+      if (newBal <= 0) {
+        setHasBalance(false);
+      }
       setSimulating(false);
       setShowPayPanel(false);
       toast.success(`UGX ${amount.toLocaleString()} processed via Mobile Money. ${newBal <= 0 ? "Account fully cleared! 🎉" : `Remaining: UGX ${newBal.toLocaleString()}`}`);
