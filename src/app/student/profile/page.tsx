@@ -8,6 +8,7 @@ import {
   BookOpen, TrendingUp, Calendar, Edit3, CheckCircle2, Map, Camera
 } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { useUser } from "@clerk/nextjs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { buildVerificationPayload, signVerificationPayload } from "@/lib/qrSignature";
@@ -42,7 +43,12 @@ const BALANCE_AMOUNT = 1_250_000;
 
 export default function StudentProfile() {
   const { profileImage, setProfileImage } = useGlobalContext();
+  const { user, isLoaded } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const displayName = clerkName || student.full_name;
+  const avatarUrl = user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || student.username}`;
   
   const [showID, setShowID] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -55,13 +61,30 @@ export default function StudentProfile() {
   // Originals for cancel
   const [originals] = useState({ personalEmail: student.personal_email, phone: student.phone, emergencyContact: student.emergency_contact });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    if (user) {
+      try {
+        setIsUploadingImage(true);
+        toast.loading("Uploading profile picture...", { id: "upload-avatar" });
+        await user.setProfileImage({ file });
+        toast.success("Profile picture updated permanently!", { id: "upload-avatar" });
+      } catch (err) {
+        console.error("Avatar upload failed:", err);
+        toast.error("Failed to update profile picture.", { id: "upload-avatar" });
+      } finally {
+        setIsUploadingImage(false);
+      }
+    } else {
+      // Fallback for mock user
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result as string);
-        toast.success("Profile picture updated!");
+        toast.success("Profile picture temporarily updated!");
       };
       reader.readAsDataURL(file);
     }
@@ -102,7 +125,7 @@ export default function StudentProfile() {
     // -- Info Section --
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    doc.text(`Student Name: ${student.full_name}`, 14, 55);
+    doc.text(`Student Name: ${displayName}`, 14, 55);
     doc.text(`Student ID: ${student.student_number}`, 14, 61);
     doc.text(`Programme: ${student.programme}`, 14, 67);
     doc.text(`Date: ${date}`, 140, 55);
@@ -148,7 +171,7 @@ export default function StudentProfile() {
       doc.setFontSize(16);
       doc.text("2026 EXAM PERMIT", 105, 95, { align: "center" });
       doc.setFontSize(10);
-      doc.text(`STUDENT: ${student.full_name.toUpperCase()}`, 105, 105, { align: "center" });
+      doc.text(`STUDENT: ${displayName.toUpperCase()}`, 105, 105, { align: "center" });
       doc.text(`PROGRAMME: ${student.programme.toUpperCase()}`, 105, 112, { align: "center" });
       doc.setFont("helvetica", "normal");
       doc.text("This permit entitles the bearer to sit for all registered", 105, 125, { align: "center" });
@@ -189,7 +212,7 @@ export default function StudentProfile() {
     
     // We EXCLUDE the avatar from the QR code data because base64 strings are too large for QR codes
     const payload = buildVerificationPayload({
-      name: student.full_name,
+      name: displayName,
       id: student.student_number,
       course: student.programme,
       campus: student.campus,
@@ -201,7 +224,7 @@ export default function StudentProfile() {
     });
     const sig = signVerificationPayload(payload);
     const params = new URLSearchParams({
-      name: student.full_name,
+      name: displayName,
       id: student.student_number,
       course: student.programme,
       campus: student.campus,
@@ -237,9 +260,9 @@ export default function StudentProfile() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
-                    alt={student.full_name}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    src={avatarUrl}
+                    alt={displayName}
+                    className={`w-full h-full object-cover transition-transform group-hover:scale-110 ${isUploadingImage ? 'opacity-50' : ''}`}
                   />
                   {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -264,7 +287,7 @@ export default function StudentProfile() {
               {/* Identity Info */}
               <div className="flex-grow text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center gap-2 mb-1">
-                  <h2 className="text-3xl font-black text-on-surface">{student.full_name}</h2>
+                  <h2 className="text-3xl font-black text-on-surface">{displayName}</h2>
                   <span className="inline-flex items-center px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase tracking-wider">Student</span>
                 </div>
                 <p className="text-base font-bold text-on-surface mb-1">{student.programme}</p>
@@ -357,7 +380,7 @@ export default function StudentProfile() {
                   <span className="ml-auto text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">READ-ONLY</span>
                 </label>
                 <div className="px-3 py-2.5 bg-surface-container-low rounded-xl text-sm font-medium text-on-surface-variant border border-border-subtle">
-                  {student.email}
+                  {user?.primaryEmailAddress?.emailAddress || student.email}
                 </div>
               </div>
 
@@ -668,13 +691,13 @@ export default function StudentProfile() {
                   <div className="inline-block p-1 bg-white rounded-full shadow-xl">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.username}`}
-                      alt={student.full_name}
-                      className="w-20 h-20 rounded-full bg-gray-50 border-4 border-gray-100"
+                      src={avatarUrl}
+                      alt={displayName}
+                      className="w-20 h-20 rounded-full bg-gray-50 border-4 border-gray-100 object-cover"
                     />
                   </div>
                   <div>
-                    <h4 className="text-2xl font-black text-[#00174b] leading-tight">{student.full_name}</h4>
+                    <h4 className="text-2xl font-black text-[#00174b] leading-tight">{displayName}</h4>
                     <p className="text-xs font-bold text-primary uppercase mt-1">{student.student_number}</p>
                   </div>
                 </div>
