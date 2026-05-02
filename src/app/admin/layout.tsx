@@ -26,6 +26,7 @@ import {
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useClerk } from "@clerk/nextjs";
+import SidebarDeleteAccountButton from "@/components/SidebarDeleteAccountButton";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
@@ -181,6 +182,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <LogOut size={20} />
             <span className="font-public-sans text-sm font-medium">Logout</span>
           </div>
+          <SidebarDeleteAccountButton className="flex items-center gap-3 px-4 py-3 cursor-pointer text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200" textClassName="font-public-sans text-sm font-medium" />
         </div>
       </aside>
 

@@ -24,6 +24,7 @@ import {
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useClerk } from "@clerk/nextjs";
+import SidebarDeleteAccountButton from "@/components/SidebarDeleteAccountButton";
 
 const navItems = [
   { href: "/finance", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
@@ -151,6 +152,7 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
           </div>
+          <SidebarDeleteAccountButton className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200" textClassName="font-medium" />
         </div>
       </aside>
 

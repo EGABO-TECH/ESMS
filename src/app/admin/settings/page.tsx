@@ -1,8 +1,9 @@
 "use client";
 
-import { Settings, Shield, Bell, Globe, Lock, Database, Save, ChevronRight } from "lucide-react";
+import { Settings, Shield, Bell, Globe, Lock, Database, Save, ChevronRight, User } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
@@ -13,6 +14,7 @@ export default function AdminSettingsPage() {
     { id: "notifications", title: "System Alerts", icon: Bell, desc: "Configure broadcast rules and automated notifications." },
     { id: "regional", title: "Regional & Localization", icon: Globe, desc: "Currency (UGX), timezone, and language settings." },
     { id: "database", title: "Data Management", icon: Database, desc: "Backup protocols, audit logs, and system maintenance." },
+    { id: "account", title: "Personal Account", icon: User, desc: "Manage your personal profile and account data." },
   ];
 
   return (
@@ -128,7 +130,22 @@ export default function AdminSettingsPage() {
                 </div>
               )}
               
-              {activeTab !== 'general' && activeTab !== 'security' && (
+              {activeTab === 'account' && (
+                <div className="space-y-6">
+                  <div className="mb-6">
+                    <h3 className="font-bold text-slate-900">Personal Information</h3>
+                    <p className="text-sm text-slate-500">Update your profile information and manage your account.</p>
+                  </div>
+                  
+                  {/* We can add profile form fields here later */}
+                  
+                  <div className="pt-6 border-t border-slate-100">
+                    <DeleteAccountButton />
+                  </div>
+                </div>
+              )}
+
+              {activeTab !== 'general' && activeTab !== 'security' && activeTab !== 'account' && (
                 <div className="py-12 text-center">
                   <Settings size={48} className="mx-auto text-slate-200 mb-4 animate-spin-slow" />
                   <p className="text-slate-500 font-bold">Module {activeTab} is ready for configuration.</p>

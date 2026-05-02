@@ -9,6 +9,7 @@ import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { useUser, useClerk } from "@clerk/nextjs";
+import SidebarDeleteAccountButton from "@/components/SidebarDeleteAccountButton";
 
 const NOTIFICATIONS = [
   { id: 1, type: "urgent", title: "Outstanding Balance", body: "UGX 1,250,000 due by May 27, 2026. Clear to unlock exam permit.", time: "2h ago", read: false },
@@ -95,6 +96,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             <LogOut size={20} />
             <span className="font-medium text-sm">Logout</span>
           </div>
+          <SidebarDeleteAccountButton />
         </div>
       </aside>
 
