@@ -22,6 +22,7 @@ import {
 
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { useClerk } from "@clerk/nextjs";
 
 const navItems = [
   { href: "/lecturer", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
@@ -38,6 +39,7 @@ export default function LecturerLayout({ children }: { children: ReactNode }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const router = useRouter();
+  const { signOut } = useClerk();
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -131,7 +133,7 @@ export default function LecturerLayout({ children }: { children: ReactNode }) {
             <HelpCircle size={20} />
             <span className="font-medium">Support</span>
           </div>
-          <div onClick={() => { toast.success('Logged out successfully'); router.push('/login'); }} className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
+          <div onClick={() => signOut({ redirectUrl: '/login' })} className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
           </div>

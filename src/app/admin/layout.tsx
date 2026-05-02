@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { useClerk } from "@clerk/nextjs";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
@@ -47,6 +48,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const router = useRouter();
+  const { signOut } = useClerk();
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <HelpCircle size={20} />
             <span className="font-public-sans text-sm font-medium">Support</span>
           </div>
-          <div onClick={() => { toast.success('Logged out successfully'); router.push('/login'); }} className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
+          <div onClick={() => signOut({ redirectUrl: '/login' })} className="text-slate-400 hover:text-white flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-800 transition-all duration-200">
             <LogOut size={20} />
             <span className="font-public-sans text-sm font-medium">Logout</span>
           </div>

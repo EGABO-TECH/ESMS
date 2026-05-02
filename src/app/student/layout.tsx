@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useGlobalContext } from "@/lib/GlobalContext";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 
 const NOTIFICATIONS = [
   { id: 1, type: "urgent", title: "Outstanding Balance", body: "UGX 1,250,000 due by May 27, 2026. Clear to unlock exam permit.", time: "2h ago", read: false },
@@ -32,6 +32,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { profileImage } = useGlobalContext();
   const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
   const avatarUrl = user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || "egabo_aaron"}`;
   
@@ -88,7 +89,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
         {/* Logout */}
         <div className="px-2 pt-4 border-t border-white/10">
           <div
-            onClick={() => { toast.success("Logged out successfully"); router.push("/login"); }}
+            onClick={() => signOut({ redirectUrl: '/login' })}
             className="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 cursor-pointer transition-colors"
           >
             <LogOut size={20} />
@@ -204,7 +205,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
               
               {/* Mobile Logout */}
               <button
-                onClick={() => { toast.success("Logged out successfully"); router.push("/login"); }}
+                onClick={() => signOut({ redirectUrl: '/login' })}
                 className="md:hidden text-white/70 hover:text-white p-1"
                 title="Logout"
               >
