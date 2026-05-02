@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useRef, useEffect, ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { 
@@ -41,7 +41,6 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const router = useRouter();
   const { signOut } = useClerk();
   const notifRef = useRef<HTMLDivElement>(null);
 

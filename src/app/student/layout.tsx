@@ -2,9 +2,9 @@
 
 import { ReactNode, useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Home, Wallet, BookOpen, User, Bell, CalendarDays, Award, Map, LogOut, Megaphone, X, CheckCircle2, AlertCircle, Info } from "lucide-react";
-import { toast } from "sonner";
+
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { useGlobalContext } from "@/lib/GlobalContext";
@@ -29,7 +29,7 @@ const navItems = [
 
 export default function StudentLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+
   const { profileImage } = useGlobalContext();
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
