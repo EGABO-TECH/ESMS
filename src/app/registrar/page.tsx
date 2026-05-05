@@ -1,13 +1,13 @@
 "use client";
 
-import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, ArrowRight, Plus, CheckCircle2, XCircle } from "lucide-react";
+import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, ArrowRight, Plus, CheckCircle2, XCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
-  const { stats, students, courses } = useGlobalContext();
+  const { stats, students, courses, deleteStudent, deleteCourse } = useGlobalContext();
   const { totalStudents } = stats;
 
   const activeCourses = courses.filter(c => c.status === "Active").length;
@@ -21,6 +21,7 @@ export default function RegistrarDashboard() {
 
   const recentStudents = students.slice(0, 5).map(s => ({
     id: s.id.split('-').slice(1).join('-'),
+    rawId: s.id,
     name: s.name,
     program: s.program.split(' (')[0],
     year: s.year,
@@ -106,11 +107,26 @@ export default function RegistrarDashboard() {
                     <td className="px-6 py-4 text-sm text-slate-600 font-medium">{s.program}</td>
                     <td className="px-6 py-4 text-sm text-slate-500">Year {s.year}</td>
                     <td className="px-6 py-4 text-right">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                        s.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                      }`}>
-                        {s.status}
-                      </span>
+                      <div className="flex items-center justify-end gap-3">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                          s.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {s.status}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Are you sure you want to delete ${s.name}?`)) {
+                              deleteStudent(s.rawId);
+                              toast.success("Student deleted successfully");
+                            }
+                          }}
+                          className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                          title="Delete Student"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -198,21 +214,34 @@ export default function RegistrarDashboard() {
                     <p className="text-[11px] text-slate-400 mt-0.5">{course.faculty} · {course.lecturer}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-6 text-xs">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Credits</p>
-                    <p className="font-black text-blue-600">{course.credits} CU</p>
+                  <div className="flex items-center gap-6 text-xs">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Credits</p>
+                      <p className="font-black text-blue-600">{course.credits} CU</p>
+                    </div>
+                    <span className={`flex items-center gap-1 font-black text-[10px] uppercase tracking-widest ${
+                      course.status === "Active" ? "text-emerald-500" : "text-slate-400"
+                    }`}>
+                      {course.status === "Active"
+                        ? <CheckCircle2 size={13} />
+                        : <XCircle size={13} />
+                      }
+                      {course.status}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`Are you sure you want to delete ${course.code}?`)) {
+                          deleteCourse(course.code);
+                          toast.success("Course deleted successfully");
+                        }
+                      }}
+                      className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                      title="Delete Course"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <span className={`flex items-center gap-1 font-black text-[10px] uppercase tracking-widest ${
-                    course.status === "Active" ? "text-emerald-500" : "text-slate-400"
-                  }`}>
-                    {course.status === "Active"
-                      ? <CheckCircle2 size={13} />
-                      : <XCircle size={13} />
-                    }
-                    {course.status}
-                  </span>
-                </div>
               </div>
             ))}
           </div>

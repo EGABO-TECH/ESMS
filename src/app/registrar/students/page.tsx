@@ -13,19 +13,21 @@ import {
   UserCheck,
   UserPlus,
   Clock,
-  History
+  History,
+  Trash2
 } from "lucide-react";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { students: rawStudents } = useGlobalContext();
+  const { students: rawStudents, deleteStudent } = useGlobalContext();
 
   const students = useMemo(
     () =>
       rawStudents.map((s) => ({
         id: s.id.replace("CUU-", ""),
+        rawId: s.id,
         name: s.name,
         program: s.program.split(" (")[0],
         year: s.year,
@@ -167,8 +169,20 @@ export default function RegistrarStudentsPage() {
                       <button onClick={() => toast.info(`Viewing academic file for ${s.id}`)} className="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-lg text-[11px] font-black uppercase transition-all">
                         Full File
                       </button>
-                      <button onClick={() => alert('Feature in development...')}  className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                      <button onClick={() => alert('Feature in development...')}  className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg" title="History">
                         <History size={16} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete ${s.name}?`)) {
+                            deleteStudent(s.rawId);
+                            toast.success("Student deleted successfully");
+                          }
+                        }}
+                        className="text-slate-400 hover:text-red-500 p-1.5 rounded-lg transition-colors" 
+                        title="Delete Student"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import {
   BookOpen, Search, Filter, Plus, BookText, GraduationCap, Clock,
-  CheckCircle, XCircle, MoreVertical, X, AlertCircle,
+  CheckCircle, XCircle, MoreVertical, X, AlertCircle, Trash2
 } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
@@ -42,7 +42,7 @@ export default function RegistrarCoursesPage() {
   const [errors, setErrors] = useState<Partial<NewCourseForm>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { courses, setCourses } = useGlobalContext();
+  const { courses, setCourses, deleteCourse } = useGlobalContext();
 
   const filtered = courses.filter(
     (c) =>
@@ -239,9 +239,23 @@ export default function RegistrarCoursesPage() {
                 {course.status === "Active" ? <CheckCircle size={12} /> : <XCircle size={12} />}
                 {course.status}
               </span>
-              <button onClick={() => toast.info(`Opening syllabus for ${course.code}`)} className="text-[11px] font-bold text-blue-600 hover:underline">
-                Edit Details →
-              </button>
+              <div className="flex items-center gap-3">
+                <button onClick={() => toast.info(`Opening syllabus for ${course.code}`)} className="text-[11px] font-bold text-blue-600 hover:underline">
+                  Edit Details →
+                </button>
+                <button 
+                  onClick={() => {
+                    if (confirm(`Are you sure you want to delete ${course.code}?`)) {
+                      deleteCourse(course.code);
+                      toast.success("Course deleted successfully");
+                    }
+                  }}
+                  className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                  title="Delete Course"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
           </div>
         ))}

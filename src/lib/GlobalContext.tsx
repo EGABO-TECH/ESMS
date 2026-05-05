@@ -41,6 +41,8 @@ type GlobalContextType = {
   enrollStudent: (studentId: string) => void;
   verifyTransaction: (transactionId: string) => void;
   updateCourseProgress: (courseCode: string, newProgress: number) => void;
+  deleteStudent: (studentId: string) => void;
+  deleteCourse: (courseCode: string) => void;
 
   // Dark Mode
   darkMode: boolean;
@@ -149,6 +151,14 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     setCourses(prev => prev.map(c => c.code === courseCode ? { ...c, progress: newProgress } : c));
   };
 
+  const deleteStudent = (studentId: string) => {
+    setStudents(prev => prev.filter(s => s.id !== studentId));
+  };
+
+  const deleteCourse = (courseCode: string) => {
+    setCourses(prev => prev.filter(c => c.code !== courseCode));
+  };
+
   return (
     <GlobalContext.Provider value={{
       students, setStudents,
@@ -164,6 +174,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       enrollStudent,
       verifyTransaction,
       updateCourseProgress,
+      deleteStudent,
+      deleteCourse,
       darkMode,
       toggleDarkMode,
       profileImage,
