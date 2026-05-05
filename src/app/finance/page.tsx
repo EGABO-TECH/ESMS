@@ -5,8 +5,10 @@ import { Banknote, TrendingUp, DollarSign, Wallet, ArrowUpRight, ArrowDownRight,
 import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { exportToCSV } from "@/lib/exportUtils";
+import { useRouter } from "next/navigation";
 
 export default function FinanceDashboard() {
+  const router = useRouter();
   const { stats, transactions } = useGlobalContext();
   const { totalCollected, collectionRate, availableFunds, outstandingFees } = stats;
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,7 +122,11 @@ export default function FinanceDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredTransactions.map((t, i) => (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors cursor-pointer group">
+                  <tr 
+                    key={i} 
+                    onClick={() => router.push(`/finance/ledger/${t.id}`)}
+                    className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                  >
                     <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400 group-hover:text-emerald-600 transition-colors">{t.id}</td>
                     <td className="px-6 py-4">
                       <p className="font-bold text-slate-700 text-sm">{t.student}</p>
