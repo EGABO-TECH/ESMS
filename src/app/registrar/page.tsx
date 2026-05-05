@@ -1,20 +1,22 @@
 "use client";
 
-import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, ArrowRight } from "lucide-react";
+import { Users, BookOpen, GraduationCap, TrendingUp, CheckCircle, Clock, ArrowRight, Plus, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
-  const { stats, students } = useGlobalContext();
+  const { stats, students, courses } = useGlobalContext();
   const { totalStudents } = stats;
 
+  const activeCourses = courses.filter(c => c.status === "Active").length;
+
   const registrarStats = [
-    { title: "Student Population", value: totalStudents.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-50", trend: "Active Enrollments" },
-    { title: "Transcript Requests", value: "48", icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50", trend: "12 Pending Review" },
-    { title: "Graduation Apps", value: "156", icon: GraduationCap, color: "text-amber-600", bg: "bg-amber-50", trend: "Class of 2025" },
-    { title: "Record Integrity", value: "99.8%", icon: TrendingUp, color: "text-indigo-600", bg: "bg-indigo-50", trend: "System Audit: Clean" },
+    { title: "Student Population",  value: totalStudents.toLocaleString(), icon: Users,          color: "text-blue-600",   bg: "bg-blue-50",   trend: "Active Enrollments"  },
+    { title: "Active Courses",       value: activeCourses.toString(),        icon: BookOpen,       color: "text-emerald-600", bg: "bg-emerald-50", trend: `${courses.length} Total in Catalog` },
+    { title: "Graduation Apps",      value: "156",                           icon: GraduationCap,  color: "text-amber-600",  bg: "bg-amber-50",  trend: "Class of 2025"        },
+    { title: "Record Integrity",     value: "99.8%",                         icon: TrendingUp,     color: "text-indigo-600", bg: "bg-indigo-50", trend: "System Audit: Clean"  },
   ];
 
   const recentStudents = students.slice(0, 5).map(s => ({
@@ -25,20 +27,23 @@ export default function RegistrarDashboard() {
     status: s.status === 'Enrolled' ? 'Active' : s.status
   }));
 
+  // Show the 3 most recently added courses (first in array = newest because we prepend on add)
+  const recentCourses = courses.slice(0, 4);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900">Registrar Dashboard</h1>
-          <p className="text-slate-500 mt-1">Academic Records & Student Lifecycle Overview</p>
+          <p className="text-slate-500 mt-1">Academic Records &amp; Student Lifecycle Overview</p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => toast.info('Loading report generator...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
             Generate Report
           </button>
           <Link href="/registrar/students">
-            <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+            <button className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
               Add New Student <ArrowRight size={16} />
             </button>
           </Link>
@@ -67,6 +72,7 @@ export default function RegistrarDashboard() {
         ))}
       </div>
 
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Recent Students Table */}
         <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -127,7 +133,7 @@ export default function RegistrarDashboard() {
                     <p className="text-sm font-bold">October 15, 2025</p>
                   </div>
                 </div>
-                <button onClick={() => alert('Feature in development...')}  className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
+                <button onClick={() => alert('Feature in development...')} className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
                   Update Registry Policy
                 </button>
               </div>
@@ -155,6 +161,70 @@ export default function RegistrarDashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ── Recent Courses Section ── */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Course Catalog</h2>
+            <p className="text-slate-400 text-xs mt-0.5">{courses.length} courses registered — showing the {recentCourses.length} most recent</p>
+          </div>
+          <Link
+            href="/registrar/courses"
+            className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2"
+          >
+            <Plus size={15} /> Add Course
+          </Link>
+        </div>
+
+        {courses.length === 0 ? (
+          <div className="py-16 text-center text-slate-400">
+            <BookOpen size={36} className="mx-auto mb-3 opacity-30" />
+            <p className="font-bold text-sm">No courses registered yet.</p>
+            <p className="text-xs mt-1">Click "Add Course" to get started.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-50">
+            {recentCourses.map((course, i) => (
+              <div key={i} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors group">
+                <div className="flex items-center gap-4">
+                  {/* Code badge */}
+                  <div className="px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg text-[10px] font-black text-blue-700 uppercase min-w-[64px] text-center">
+                    {course.code}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-800 text-sm group-hover:text-blue-700 transition-colors">{course.name}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{course.faculty} · {course.lecturer}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6 text-xs">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Credits</p>
+                    <p className="font-black text-blue-600">{course.credits} CU</p>
+                  </div>
+                  <span className={`flex items-center gap-1 font-black text-[10px] uppercase tracking-widest ${
+                    course.status === "Active" ? "text-emerald-500" : "text-slate-400"
+                  }`}>
+                    {course.status === "Active"
+                      ? <CheckCircle2 size={13} />
+                      : <XCircle size={13} />
+                    }
+                    {course.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {courses.length > 4 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50">
+            <Link href="/registrar/courses" className="text-blue-600 text-sm font-bold hover:underline flex items-center gap-1">
+              View all {courses.length} courses <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

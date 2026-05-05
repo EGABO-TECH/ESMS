@@ -40,6 +40,7 @@ export default function LoginPage() {
         case "registrar":
           router.push("/registrar");
           break;
+        case "finance_officer":
         case "finance officer":
         case "finance":
           router.push("/finance");
