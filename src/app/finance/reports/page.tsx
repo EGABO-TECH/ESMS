@@ -25,9 +25,47 @@ export default function FinanceReportsPage() {
   const handleDownload = (report: any) => {
     try {
       toast.loading(`Preparing ${report.title}...`);
-      // Mocking report data based on title
-      const mockData = [{ title: report.title, category: report.category, date: report.date, type: report.type, status: 'Audited' }];
-      exportToCSV(mockData, report.title.replace(/\s+/g, '_'));
+      
+      let reportData: any[] = [];
+
+      switch (report.category) {
+        case 'Revenue':
+          reportData = [
+            { Month: 'January', Projected: 450000000, Actual: 442000000, Variance: -8000000 },
+            { Month: 'February', Projected: 480000000, Actual: 495000000, Variance: 15000000 },
+            { Month: 'March', Projected: 520000000, Actual: 510000000, Variance: -10000000 },
+            { Month: 'April', Projected: 500000000, Actual: 505000000, Variance: 5000000 },
+          ];
+          break;
+        case 'Expenses':
+          reportData = [
+            { Item: 'Staff Salaries', Allocated: 1200000000, Spent: 1180000000, Balance: 20000000 },
+            { Item: 'Infrastructure', Allocated: 800000000, Spent: 750000000, Balance: 50000000 },
+            { Item: 'Utility Bills', Allocated: 150000000, Spent: 142000000, Balance: 8000000 },
+            { Item: 'Research Grants', Allocated: 300000000, Spent: 210000000, Balance: 90000000 },
+          ];
+          break;
+        case 'Collection':
+          reportData = [
+            { Department: 'Faculty of Science', Students: 450, Paid: 412, Rate: '91.5%' },
+            { Department: 'Faculty of Arts', Students: 380, Paid: 345, Rate: '90.7%' },
+            { Department: 'School of Law', Students: 210, Paid: 198, Rate: '94.2%' },
+            { Department: 'Business School', Students: 560, Paid: 510, Rate: '91.0%' },
+          ];
+          break;
+        case 'Receivables':
+          reportData = [
+            { StudentID: 'CUU/2024/001', Name: 'John Doe', Balance: 1250000, DaysOverdue: 15 },
+            { StudentID: 'CUU/2024/045', Name: 'Jane Smith', Balance: 840000, DaysOverdue: 32 },
+            { StudentID: 'CUU/2024/112', Name: 'Mark Okello', Balance: 2100000, DaysOverdue: 45 },
+            { StudentID: 'CUU/2024/089', Name: 'Alice Nabirye', Balance: 450000, DaysOverdue: 10 },
+          ];
+          break;
+        default:
+          reportData = [{ title: report.title, category: report.category, date: report.date, status: 'Audited' }];
+      }
+
+      exportToCSV(reportData, report.title.replace(/\s+/g, '_'));
       toast.dismiss();
       toast.success(`${report.title} downloaded`);
     } catch {
