@@ -4,7 +4,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Printer, ChevronLeft, ShieldCheck, Activity, CreditCard, ArrowUpRight, Hash } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
-
 export default function LedgerDetailPage() {
   const { id } = useParams();
   const router = useRouter();
