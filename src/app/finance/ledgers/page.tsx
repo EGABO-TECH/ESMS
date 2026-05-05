@@ -6,7 +6,10 @@ import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { exportToCSV } from "@/lib/exportUtils";
 
+import { useRouter } from "next/navigation";
+
 export default function FinanceLedgersPage() {
+  const router = useRouter();
   const { transactions } = useGlobalContext();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -82,7 +85,11 @@ export default function FinanceLedgersPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredTransactions.map((tx, i) => (
-                    <tr key={tx.id} className="hover:bg-slate-50 transition-colors group cursor-pointer">
+                    <tr 
+                      key={tx.id} 
+                      onClick={() => router.push(`/finance/ledger/${tx.id}`)}
+                      className="hover:bg-slate-50 transition-colors group cursor-pointer"
+                    >
                       <td className="px-6 py-4">
                         <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{new Date(tx.date).toLocaleDateString()}</p>
                         <p className="text-[10px] text-slate-400 font-mono">#{tx.id}</p>

@@ -6,7 +6,10 @@ import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { exportToCSV } from "@/lib/exportUtils";
 
+import { useRouter } from "next/navigation";
+
 export default function FinanceBillingPage() {
+  const router = useRouter();
   const { students } = useGlobalContext();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -118,7 +121,11 @@ export default function FinanceBillingPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredInvoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-slate-50 transition-colors cursor-pointer group">
+                <tr 
+                  key={inv.id} 
+                  onClick={() => router.push(`/finance/invoice/${inv.id}`)}
+                  className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                >
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{inv.id}</p>
                     <p className="text-[10px] text-slate-400 uppercase tracking-widest">Tuition Fee - Sem II</p>
