@@ -33,7 +33,7 @@ export default function FinanceBillingPage() {
       exportToCSV(invoices, `ESMS_Billing_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("Billing report downloaded");
-    } catch (error) {
+    } catch {
       toast.error("Export failed");
     }
   };
@@ -138,7 +138,7 @@ export default function FinanceBillingPage() {
               ))}
               {filteredInvoices.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No invoices found matching "{searchQuery}"</td>
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No invoices found matching &quot;{searchQuery}&quot;</td>
                 </tr>
               )}
             </tbody>

@@ -32,7 +32,7 @@ export default function FinanceDashboard() {
       exportToCSV(transactions, `ESMS_Finance_Ledgers_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("Ledger export downloaded");
-    } catch (error) {
+    } catch {
       toast.error("Failed to export ledgers");
     }
   };
@@ -139,7 +139,7 @@ export default function FinanceDashboard() {
                 ))}
                 {filteredTransactions.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No transactions found matching "{searchQuery}"</td>
+                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No transactions found matching &quot;{searchQuery}&quot;</td>
                   </tr>
                 )}
               </tbody>

@@ -5,15 +5,15 @@ import { BarChart, FileText, Download, Search, TrendingUp, Banknote, CreditCard,
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 
+const reports = [
+  { id: 1, title: "Monthly Revenue Forecast", category: "Revenue", date: "Oct 27, 2025", type: "CSV" },
+  { id: 2, title: "Expenditure Audit Q3", category: "Expenses", date: "Oct 25, 2025", type: "CSV" },
+  { id: 3, title: "Fee Collection Efficiency", category: "Collection", date: "Oct 20, 2025", type: "CSV" },
+  { id: 4, title: "Outstanding Debtors List", category: "Receivables", date: "Oct 18, 2025", type: "CSV" },
+];
+
 export default function FinanceReportsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-
-  const reports = [
-    { id: 1, title: "Monthly Revenue Forecast", category: "Revenue", date: "Oct 27, 2025", type: "CSV" },
-    { id: 2, title: "Expenditure Audit Q3", category: "Expenses", date: "Oct 25, 2025", type: "CSV" },
-    { id: 3, title: "Fee Collection Efficiency", category: "Collection", date: "Oct 20, 2025", type: "CSV" },
-    { id: 4, title: "Outstanding Debtors List", category: "Receivables", date: "Oct 18, 2025", type: "CSV" },
-  ];
 
   const filteredReports = useMemo(() => {
     return reports.filter(r => 
@@ -30,7 +30,7 @@ export default function FinanceReportsPage() {
       exportToCSV(mockData, report.title.replace(/\s+/g, '_'));
       toast.dismiss();
       toast.success(`${report.title} downloaded`);
-    } catch (error) {
+    } catch {
       toast.error("Download failed");
     }
   };
@@ -116,7 +116,7 @@ export default function FinanceReportsPage() {
               </div>
             ))}
             {filteredReports.length === 0 && (
-              <div className="p-10 text-center text-slate-400 text-sm font-medium">No reports found matching "{searchQuery}"</div>
+              <div className="p-10 text-center text-slate-400 text-sm font-medium">No reports found matching &quot;{searchQuery}&quot;</div>
             )}
           </div>
         </div>

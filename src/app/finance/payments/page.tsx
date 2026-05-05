@@ -39,7 +39,7 @@ export default function FinancePaymentsPage() {
       exportToCSV(filteredPayments, `ESMS_Payments_${filterStatus}_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("Payment registry exported");
-    } catch (error) {
+    } catch {
       toast.error("Failed to export registry");
     }
   };

@@ -18,7 +18,7 @@ export default function FinanceBudgetPage() {
       exportToCSV(budgets, `ESMS_Budget_Status_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("Budget report downloaded");
-    } catch (error) {
+    } catch {
       toast.error("Export failed");
     }
   };

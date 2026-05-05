@@ -5,15 +5,15 @@ import { Users, Banknote, Clock, Download, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCSV } from "@/lib/exportUtils";
 
+const staff = [
+  { name: "Dr. James Okello", role: "Professor", dept: "Science", basic: 4500000, allowances: 500000, status: "Paid" },
+  { name: "Sarah Nakato", role: "Lecturer", dept: "Arts", basic: 3200000, allowances: 300000, status: "Paid" },
+  { name: "Moses Musoke", role: "Admin", dept: "Registry", basic: 2800000, allowances: 200000, status: "Pending" },
+  { name: "Dr. Alice Nabirye", role: "Asst. Professor", dept: "Law", basic: 3800000, allowances: 400000, status: "Paid" },
+];
+
 export default function FinancePayrollPage() {
   const [searchQuery, setSearchQuery] = useState("");
-
-  const staff = [
-    { name: "Dr. James Okello", role: "Professor", dept: "Science", basic: 4500000, allowances: 500000, status: "Paid" },
-    { name: "Sarah Nakato", role: "Lecturer", dept: "Arts", basic: 3200000, allowances: 300000, status: "Paid" },
-    { name: "Moses Musoke", role: "Admin", dept: "Registry", basic: 2800000, allowances: 200000, status: "Pending" },
-    { name: "Dr. Alice Nabirye", role: "Asst. Professor", dept: "Law", basic: 3800000, allowances: 400000, status: "Paid" },
-  ];
 
   const filteredStaff = useMemo(() => {
     return staff.filter(s => 
@@ -29,7 +29,7 @@ export default function FinancePayrollPage() {
       exportToCSV(staff, `ESMS_Payroll_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("Payroll registry downloaded");
-    } catch (error) {
+    } catch {
       toast.error("Export failed");
     }
   };
@@ -137,7 +137,7 @@ export default function FinancePayrollPage() {
               ))}
               {filteredStaff.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No staff members found matching "{searchQuery}"</td>
+                  <td colSpan={4} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No staff members found matching &quot;{searchQuery}&quot;</td>
                 </tr>
               )}
             </tbody>

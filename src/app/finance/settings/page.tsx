@@ -22,7 +22,7 @@ export default function FinanceSettingsPage() {
       exportToCSV(configData, `ESMS_Finance_Config_${new Date().toISOString().split('T')[0]}`);
       toast.dismiss();
       toast.success("System configuration exported");
-    } catch (error) {
+    } catch {
       toast.error("Export failed");
     }
   };
