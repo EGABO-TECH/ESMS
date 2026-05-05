@@ -1,7 +1,8 @@
 "use client";
 
-import { PieChart, BarChart2, TrendingUp, AlertCircle } from "lucide-react";
+import { PieChart, BarChart2, TrendingUp, AlertCircle, Download } from "lucide-react";
 import { toast } from "sonner";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceBudgetPage() {
   const budgets = [
@@ -11,6 +12,17 @@ export default function FinanceBudgetPage() {
     { name: "Research & Innovation", allocated: 100000000, spent: 45000000, color: "bg-purple-500" },
   ];
 
+  const handleExport = () => {
+    try {
+      toast.loading("Exporting budget analysis...");
+      exportToCSV(budgets, `ESMS_Budget_Status_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("Budget report downloaded");
+    } catch (error) {
+      toast.error("Export failed");
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -18,18 +30,22 @@ export default function FinanceBudgetPage() {
           <h1 className="text-3xl font-black text-slate-900">Budget Oversight</h1>
           <p className="text-slate-500 mt-1">Departmental allocations, expenditure tracking, and fiscal planning.</p>
         </div>
-        <button 
-          onClick={() => {
-            toast.promise(new Promise(res => setTimeout(res, 1000)), {
-              loading: 'Initializing budget planner...',
-              success: 'Ready for new allocation entries',
-              error: 'Planner failed to load'
-            });
-          }} 
-          className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
-        >
-          <PieChart size={18} /> New Budget Allocation
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={handleExport} 
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2"
+          >
+            <Download size={18} /> Export Data
+          </button>
+          <button 
+            onClick={() => {
+              toast.info('Opening budget planner... (Module active)');
+            }} 
+            className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+          >
+            <PieChart size={18} /> New Budget Allocation
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { 
   Search, 
@@ -15,11 +15,34 @@ import {
 } from "lucide-react";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinancePaymentsPage() {
   const [filterStatus, setFilterStatus] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { transactions: payments, verifyTransaction } = useGlobalContext();
+
+  const filteredPayments = useMemo(() => {
+    return payments.filter(p => {
+      const matchesStatus = filterStatus === "All" || p.status === filterStatus;
+      const matchesSearch = p.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           p.student.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           p.reference.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesStatus && matchesSearch;
+    });
+  }, [payments, filterStatus, searchQuery]);
+
+  const handleExport = () => {
+    try {
+      toast.loading("Exporting payment batch...");
+      exportToCSV(filteredPayments, `ESMS_Payments_${filterStatus}_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("Payment registry exported");
+    } catch (error) {
+      toast.error("Failed to export registry");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -35,13 +58,7 @@ export default function FinancePaymentsPage() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => {
-              toast.promise(new Promise(res => setTimeout(res, 1200)), {
-                loading: 'Preparing payment batch...',
-                success: 'Payment_Registry_2025.csv exported',
-                error: 'Export failed'
-              });
-            }} 
+            onClick={handleExport} 
             className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all shadow-sm flex items-center gap-2"
           >
             <Download size={18} /> Export Batch
@@ -106,6 +123,8 @@ export default function FinancePaymentsPage() {
             <input 
               type="text" 
               placeholder="Search by student name or Transaction ID..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-600 outline-none transition-all focus:bg-white"
             />
           </div>
@@ -130,7 +149,7 @@ export default function FinancePaymentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {payments.filter(p => filterStatus === "All" || p.status === filterStatus).map((p, i) => (
+              {filteredPayments.map((p, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -175,6 +194,11 @@ export default function FinancePaymentsPage() {
                   </td>
                 </tr>
               ))}
+              {filteredPayments.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No transactions found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

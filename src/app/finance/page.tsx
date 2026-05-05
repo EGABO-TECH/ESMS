@@ -1,13 +1,15 @@
 "use client";
 
-import { Banknote, TrendingUp, DollarSign, Wallet, ArrowUpRight, ArrowDownRight, Search, Filter, Download } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Banknote, TrendingUp, DollarSign, Wallet, ArrowUpRight, ArrowDownRight, Search, Filter, Download, Plus } from "lucide-react";
 import { toast } from "sonner";
-
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceDashboard() {
   const { stats, transactions } = useGlobalContext();
   const { totalCollected, collectionRate, availableFunds, outstandingFees } = stats;
+  const [searchQuery, setSearchQuery] = useState("");
 
   const summaryStats = [
     { title: "Total Revenue", value: `UGX ${(totalCollected / 1_000_000_000).toFixed(1)}B`, icon: Banknote, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+15% vs last sem" },
@@ -16,8 +18,24 @@ export default function FinanceDashboard() {
     { title: "Available Funds", value: `UGX ${(availableFunds / 1_000_000_000).toFixed(1)}B`, icon: Wallet, color: "text-indigo-600", bg: "bg-indigo-50", trend: "Operating Capital" },
   ];
 
-  const recentTransactions = transactions.slice(0, 4);
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter(t => 
+      t.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.student.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.method.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 5);
+  }, [transactions, searchQuery]);
 
+  const handleExport = () => {
+    try {
+      toast.loading("Preparing ledger export...");
+      exportToCSV(transactions, `ESMS_Finance_Ledgers_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("Ledger export downloaded");
+    } catch (error) {
+      toast.error("Failed to export ledgers");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -28,22 +46,16 @@ export default function FinanceDashboard() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => {
-              toast.promise(new Promise(res => setTimeout(res, 1500)), {
-                loading: 'Generating ledger export...',
-                success: 'Finance_Ledgers_2025.csv downloaded successfully',
-                error: 'Export failed'
-              });
-            }} 
+            onClick={handleExport} 
             className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all shadow-sm flex items-center gap-2"
           >
             <Download size={16} /> Export Ledgers
           </button>
           <button 
-            onClick={() => toast.info('Payment recording system is currently in read-only mode for this session.')} 
-            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg"
+            onClick={() => toast.info('Opening payment recording form... (Coming soon)')} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg flex items-center gap-2"
           >
-            Record New Payment
+            <Plus size={16} /> Record New Payment
           </button>
         </div>
       </div>
@@ -80,7 +92,12 @@ export default function FinanceDashboard() {
             <div className="flex gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                <input className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 w-48" placeholder="Search Txn ID..." />
+                <input 
+                  className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 w-48" 
+                  placeholder="Search by name, ID..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               <button 
                 onClick={() => toast('Filter options: All, Verified, Pending')}  
@@ -102,7 +119,7 @@ export default function FinanceDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {recentTransactions.map((t, i) => (
+                {filteredTransactions.map((t, i) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors cursor-pointer group">
                     <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400 group-hover:text-emerald-600 transition-colors">{t.id}</td>
                     <td className="px-6 py-4">
@@ -120,6 +137,11 @@ export default function FinanceDashboard() {
                     </td>
                   </tr>
                 ))}
+                {filteredTransactions.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No transactions found matching "{searchQuery}"</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

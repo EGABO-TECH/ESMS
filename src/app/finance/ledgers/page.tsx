@@ -1,11 +1,32 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { CreditCard, ArrowUpRight, ArrowDownLeft, Search, Filter, Download, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceLedgersPage() {
   const { transactions } = useGlobalContext();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter(tx => 
+      tx.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.student.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [transactions, searchQuery]);
+
+  const handleExport = () => {
+    try {
+      toast.loading("Exporting transaction history...");
+      exportToCSV(transactions, `ESMS_General_Ledger_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("General Ledger Archive downloaded");
+    } catch (error) {
+      toast.error("Export failed");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -16,13 +37,7 @@ export default function FinanceLedgersPage() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => {
-              toast.promise(new Promise(res => setTimeout(res, 1200)), {
-                loading: 'Compiling transaction history...',
-                success: 'General_Ledger_Archive.csv downloaded',
-                error: 'Export failed'
-              });
-            }} 
+            onClick={handleExport} 
             className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
           >
             <Download size={18} /> Download CSV
@@ -38,7 +53,13 @@ export default function FinanceLedgersPage() {
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                  <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Reference ID..." />
+                  <input 
+                    type="text" 
+                    className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                    placeholder="Reference ID..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
                 <button 
                   onClick={() => toast('Filter by: Account Type, Amount Range, Date')}
@@ -60,7 +81,7 @@ export default function FinanceLedgersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {transactions.map((tx, i) => (
+                  {filteredTransactions.map((tx, i) => (
                     <tr key={tx.id} className="hover:bg-slate-50 transition-colors group cursor-pointer">
                       <td className="px-6 py-4">
                         <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{new Date(tx.date).toLocaleDateString()}</p>
@@ -79,6 +100,11 @@ export default function FinanceLedgersPage() {
                       </td>
                     </tr>
                   ))}
+                  {filteredTransactions.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No records found matching "{searchQuery}"</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

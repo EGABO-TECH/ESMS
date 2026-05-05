@@ -1,15 +1,39 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { BarChart, FileText, Download, Search, TrendingUp, Banknote, CreditCard, PieChart } from "lucide-react";
 import { toast } from "sonner";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceReportsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const reports = [
-    { id: 1, title: "Monthly Revenue Forecast", category: "Revenue", date: "Oct 27, 2025", type: "PDF" },
-    { id: 2, title: "Expenditure Audit Q3", category: "Expenses", date: "Oct 25, 2025", type: "XLSX" },
-    { id: 3, title: "Fee Collection Efficiency", category: "Collection", date: "Oct 20, 2025", type: "PDF" },
+    { id: 1, title: "Monthly Revenue Forecast", category: "Revenue", date: "Oct 27, 2025", type: "CSV" },
+    { id: 2, title: "Expenditure Audit Q3", category: "Expenses", date: "Oct 25, 2025", type: "CSV" },
+    { id: 3, title: "Fee Collection Efficiency", category: "Collection", date: "Oct 20, 2025", type: "CSV" },
     { id: 4, title: "Outstanding Debtors List", category: "Receivables", date: "Oct 18, 2025", type: "CSV" },
   ];
+
+  const filteredReports = useMemo(() => {
+    return reports.filter(r => 
+      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
+  const handleDownload = (report: any) => {
+    try {
+      toast.loading(`Preparing ${report.title}...`);
+      // Mocking report data based on title
+      const mockData = [{ title: report.title, category: report.category, date: report.date, type: report.type, status: 'Audited' }];
+      exportToCSV(mockData, report.title.replace(/\s+/g, '_'));
+      toast.dismiss();
+      toast.success(`${report.title} downloaded`);
+    } catch (error) {
+      toast.error("Download failed");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -56,11 +80,17 @@ export default function FinanceReportsPage() {
             <h2 className="text-lg font-bold text-slate-900">Generated Audits</h2>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search reports..." />
+              <input 
+                type="text" 
+                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                placeholder="Search reports..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
           <div className="divide-y divide-slate-100">
-            {reports.map((report) => (
+            {filteredReports.map((report) => (
               <div key={report.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-all group cursor-pointer">
                 <div className="flex gap-4 items-center">
                   <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
@@ -76,11 +106,7 @@ export default function FinanceReportsPage() {
                   <button 
                     onClick={(e) => { 
                       e.stopPropagation(); 
-                      toast.promise(new Promise(res => setTimeout(res, 800)), {
-                        loading: 'Preparing download...',
-                        success: `${report.title}.${report.type.toLowerCase()} downloaded`,
-                        error: 'Download failed'
-                      });
+                      handleDownload(report);
                     }} 
                     className="p-2 text-slate-300 hover:text-emerald-600 active:scale-90 transition-all"
                   >
@@ -89,6 +115,9 @@ export default function FinanceReportsPage() {
                 </div>
               </div>
             ))}
+            {filteredReports.length === 0 && (
+              <div className="p-10 text-center text-slate-400 text-sm font-medium">No reports found matching "{searchQuery}"</div>
+            )}
           </div>
         </div>
 

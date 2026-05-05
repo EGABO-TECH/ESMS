@@ -1,8 +1,9 @@
 "use client";
 
-import { Settings, Bell, DollarSign, Wallet, Save, Lock } from "lucide-react";
+import { Settings, Bell, DollarSign, Wallet, Save, Lock, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceSettingsPage() {
   const [activeTab, setActiveTab] = useState("accounts");
@@ -14,11 +15,31 @@ export default function FinanceSettingsPage() {
     { id: "security", title: "Auth & Access", icon: Lock, desc: "Financial portal access controls and audit logging." },
   ];
 
+  const handleExportConfig = () => {
+    try {
+      toast.loading("Exporting system configuration...");
+      const configData = sections.map(s => ({ section: s.title, status: 'Active', lastModified: new Date().toISOString() }));
+      exportToCSV(configData, `ESMS_Finance_Config_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("System configuration exported");
+    } catch (error) {
+      toast.error("Export failed");
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div>
-        <h1 className="text-3xl font-black text-slate-900">Finance Configuration</h1>
-        <p className="text-slate-500 mt-1">Configure payment gateways, fee structures, and financial compliance rules.</p>
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900">Finance Configuration</h1>
+          <p className="text-slate-500 mt-1">Configure payment gateways, fee structures, and financial compliance rules.</p>
+        </div>
+        <button 
+          onClick={handleExportConfig}
+          className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2"
+        >
+          <Download size={18} /> Export Config
+        </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -52,11 +73,7 @@ export default function FinanceSettingsPage() {
               <h2 className="text-xl font-bold text-slate-900 capitalize">{activeTab} Configuration</h2>
               <button 
                 onClick={() => {
-                  toast.promise(new Promise(res => setTimeout(res, 1000)), {
-                    loading: 'Saving configuration...',
-                    success: 'Finance settings updated successfully',
-                    error: 'Failed to save changes'
-                  });
+                  toast.success(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} settings updated successfully`);
                 }} 
                 className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
               >
@@ -68,9 +85,8 @@ export default function FinanceSettingsPage() {
               <div className="space-y-6">
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between group hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm group-hover:scale-105 transition-transform">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MTN_Logo.svg" alt="MTN" className="w-full h-full object-contain" />
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm group-hover:scale-105 transition-transform text-[8px] font-black">
+                      MTN MoMo
                     </div>
                     <div>
                       <p className="font-bold text-slate-900">MTN Mobile Money Gateway</p>
@@ -86,7 +102,7 @@ export default function FinanceSettingsPage() {
                 </div>
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between group hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm text-blue-600 font-black italic group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm text-blue-600 font-black italic group-hover:scale-105 transition-transform text-[8px]">
                       STANBIC
                     </div>
                     <div>

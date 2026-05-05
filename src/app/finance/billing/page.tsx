@@ -1,19 +1,42 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { FileText, Plus, Search, Filter, Download, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinanceBillingPage() {
   const { students } = useGlobalContext();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const invoices = students.slice(0, 8).map((s, i) => ({
-    id: `INV-2025-${1000 + i}`,
-    student: s.name,
-    amount: 1250000 + (i * 50000),
-    due_date: "2025-11-30",
-    status: i % 3 === 0 ? 'Paid' : (i % 2 === 0 ? 'Overdue' : 'Pending')
-  }));
+  const invoices = useMemo(() => {
+    return students.slice(0, 15).map((s, i) => ({
+      id: `INV-2025-${1000 + i}`,
+      student: s.name,
+      amount: 1250000 + (i * 50000),
+      due_date: "2025-11-30",
+      status: i % 3 === 0 ? 'Paid' : (i % 2 === 0 ? 'Overdue' : 'Pending')
+    }));
+  }, [students]);
+
+  const filteredInvoices = useMemo(() => {
+    return invoices.filter(inv => 
+      inv.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inv.student.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [invoices, searchQuery]);
+
+  const handleExport = () => {
+    try {
+      toast.loading("Exporting billing records...");
+      exportToCSV(invoices, `ESMS_Billing_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("Billing report downloaded");
+    } catch (error) {
+      toast.error("Export failed");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -24,14 +47,8 @@ export default function FinanceBillingPage() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => {
-              toast.promise(new Promise(res => setTimeout(res, 1000)), {
-                loading: 'Compiling billing data...',
-                success: 'Student_Billing_Report.csv ready',
-                error: 'Export failed'
-              });
-            }} 
-            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2"
+            onClick={handleExport} 
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all shadow-sm flex items-center gap-2"
           >
             <Download size={18} /> Export Billing
           </button>
@@ -51,7 +68,7 @@ export default function FinanceBillingPage() {
         {[
           { label: "Total Invoiced", val: "UGX 4.2B", icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
           { label: "Pending Collection", val: "UGX 840M", icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-          { label: "Overdue Amount", val: "UGX 124M", icon: AlertCircle, color: "text-error", bg: "bg-error/5" },
+          { label: "Overdue Amount", val: "UGX 124M", icon: AlertCircle, color: "text-red-600", bg: "bg-red-50" },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group cursor-default">
             <div className="flex justify-between items-start mb-4">
@@ -72,7 +89,13 @@ export default function FinanceBillingPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search by invoice or student..." />
+              <input 
+                type="text" 
+                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                placeholder="Search by invoice or student..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <button 
               onClick={() => toast('Filter invoices by: Status, Academic Year, Semester')}
@@ -94,7 +117,7 @@ export default function FinanceBillingPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {invoices.map((inv) => (
+              {filteredInvoices.map((inv) => (
                 <tr key={inv.id} className="hover:bg-slate-50 transition-colors cursor-pointer group">
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{inv.id}</p>
@@ -113,16 +136,13 @@ export default function FinanceBillingPage() {
                   </td>
                 </tr>
               ))}
+              {filteredInvoices.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No invoices found matching "{searchQuery}"</td>
+                </tr>
+              )}
             </tbody>
           </table>
-        </div>
-        <div className="p-4 border-t border-slate-100 flex justify-center">
-          <button 
-            onClick={() => toast.info('Loading full invoice archive...')}
-            className="text-xs font-bold text-emerald-600 hover:underline active:opacity-70 transition-all"
-          >
-            View All Invoices
-          </button>
         </div>
       </div>
     </div>

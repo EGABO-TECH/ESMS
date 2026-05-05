@@ -1,15 +1,38 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { Users, Banknote, Clock, Download, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
+import { exportToCSV } from "@/lib/exportUtils";
 
 export default function FinancePayrollPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const staff = [
     { name: "Dr. James Okello", role: "Professor", dept: "Science", basic: 4500000, allowances: 500000, status: "Paid" },
     { name: "Sarah Nakato", role: "Lecturer", dept: "Arts", basic: 3200000, allowances: 300000, status: "Paid" },
     { name: "Moses Musoke", role: "Admin", dept: "Registry", basic: 2800000, allowances: 200000, status: "Pending" },
     { name: "Dr. Alice Nabirye", role: "Asst. Professor", dept: "Law", basic: 3800000, allowances: 400000, status: "Paid" },
   ];
+
+  const filteredStaff = useMemo(() => {
+    return staff.filter(s => 
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.dept.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
+  const handleExport = () => {
+    try {
+      toast.loading("Exporting staff payroll registry...");
+      exportToCSV(staff, `ESMS_Payroll_${new Date().toISOString().split('T')[0]}`);
+      toast.dismiss();
+      toast.success("Payroll registry downloaded");
+    } catch (error) {
+      toast.error("Export failed");
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -58,7 +81,13 @@ export default function FinancePayrollPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search staff..." />
+              <input 
+                type="text" 
+                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                placeholder="Search staff..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <button 
               onClick={() => toast('Filter by: Department, Contract Type, Salary Grade')}
@@ -67,13 +96,7 @@ export default function FinancePayrollPage() {
               <Filter size={16} />
             </button>
             <button 
-              onClick={() => {
-                toast.promise(new Promise(res => setTimeout(res, 1000)), {
-                  loading: 'Generating payslips...',
-                  success: 'Staff_Payslips_May2025.zip downloaded',
-                  error: 'Generation failed'
-                });
-              }} 
+              onClick={handleExport} 
               className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
             >
               <Download size={16} />
@@ -91,7 +114,7 @@ export default function FinancePayrollPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {staff.map((s, i) => (
+              {filteredStaff.map((s, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group cursor-pointer">
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{s.name}</p>
@@ -112,6 +135,11 @@ export default function FinancePayrollPage() {
                   </td>
                 </tr>
               ))}
+              {filteredStaff.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-10 text-center text-slate-400 text-sm font-medium">No staff members found matching "{searchQuery}"</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
