@@ -139,6 +139,8 @@ export const MOCK_MATERIALS = [
   { id: 2, title: "Lecture 1: Introduction", type: "PPTX", size: "5.1 MB", uploaded: "Oct 25, 2025", course: "SWE311" },
 ];
 
-export const MOCK_LESSON_PLANS: Record<string, string> = {
-  "SWE311": "Week 1: Introduction to Lifecycle Models\n- Waterfall vs Agile\n- Required reading: Chapter 1-3",
+export const MOCK_LESSON_PLANS: Record<string, Record<string, string>> = {
+  "SWE311": {
+    "Week 1": "Introduction to Lifecycle Models\n- Waterfall vs Agile\n- Required reading: Chapter 1-3"
+  }
 };
