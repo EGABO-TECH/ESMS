@@ -20,7 +20,7 @@ function formatBytes(bytes: number) {
 }
 
 export default function LecturerCoursesPage() {
-  const { courses: allCourses, students } = useGlobalContext();
+  const { courses: allCourses, students, lessonPlans, setLessonPlans, materials, setMaterials } = useGlobalContext();
   const [searchTerm, setSearchTerm] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -29,18 +29,7 @@ export default function LecturerCoursesPage() {
   const [materialCourse, setMaterialCourse] = useState<string | null>(null);
   const [studentListCourse, setStudentListCourse] = useState<string | null>(null);
 
-  // Lesson plans per course — persist in localStorage
-  const [lessonPlans, setLessonPlans] = useState<Record<string, LessonPlan>>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("esms-lesson-plans");
-      return saved ? JSON.parse(saved) : {};
-    }
-    return {};
-  });
   const [planDraft, setPlanDraft] = useState<LessonPlan>({});
-
-  // Uploaded materials per course
-  const [materials, setMaterials] = useState<Record<string, UploadedFile[]>>({});
 
   const courses = allCourses.filter(c =>
     searchTerm === "" ||
@@ -57,7 +46,6 @@ export default function LecturerCoursesPage() {
     if (!plannerCourse) return;
     const updated = { ...lessonPlans, [plannerCourse]: planDraft };
     setLessonPlans(updated);
-    localStorage.setItem("esms-lesson-plans", JSON.stringify(updated));
     toast.success(`Lesson plan for ${plannerCourse} saved!`);
     setPlannerCourse(null);
   };

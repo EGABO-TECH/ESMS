@@ -119,3 +119,26 @@ export const MOCK_STUDENT_RESULTS = [
   { studentId: "CUU-258-154", code: "SWE314", name: "System Architecture", credits: 4, cw: 18, exam: 26, score: 44, grade: "F", gp: 0.0 },
 ];
 
+export const MOCK_USERS = [
+  { id: "U-001", name: "Egabo Aaron", role: "Super Admin", department: "IT Center", status: "Active", email: "a.egabo@cuu.ac.ug", lastLogin: "10 mins ago", phone: "+256 700 000 001" },
+  { id: "U-002", name: "Faida Nancy", role: "Registrar", department: "Academic Registry", status: "Active", email: "n.faida@cuu.ac.ug", lastLogin: "1 hour ago", phone: "+256 700 000 002" },
+  { id: "U-003", name: "Ababiku Brenda", role: "Finance Officer", department: "Treasury", status: "Active", email: "b.ababiku@cuu.ac.ug", lastLogin: "Yesterday", phone: "+256 700 000 003" },
+  { id: "U-004", name: "Alimpa Anne", role: "Lecturer", department: "Science & Tech", status: "Active", email: "h.alimpa@cuu.ac.ug", lastLogin: "2 days ago", phone: "+256 700 000 004" },
+  { id: "U-005", name: "Kirabo Alice", role: "Admissions", department: "Admissions", status: "Inactive", email: "a.kirabo@cuu.ac.ug", lastLogin: "1 week ago", phone: "+256 700 000 005" },
+];
+
+export const MOCK_ASSIGNMENTS = [
+  { id: 1, title: "System Design Proposal", course: "SWE313", dueDate: "2025-11-05", maxMarks: 100, instructions: "Design a distributed system for a university portal. Include ER diagram and architecture overview.", submissions: 42, total: 45, status: "Active" },
+  { id: 2, title: "React Hooks Lab", course: "BIT201", dueDate: "2025-10-30", maxMarks: 40, instructions: "Build a to-do app using React hooks only. No class components.", submissions: 38, total: 40, status: "Closing Soon" },
+  { id: 3, title: "Mid-Sem Take Home", course: "BCS101", dueDate: "2025-10-25", maxMarks: 60, instructions: "Answer all 5 questions. Show working for all calculations.", submissions: 120, total: 120, status: "Grading" },
+  { id: 4, title: "Final Project Draft", course: "SWE422", dueDate: "2025-12-10", maxMarks: 100, instructions: "Submit your final project draft with technical documentation.", submissions: 5, total: 32, status: "Draft" },
+];
+
+export const MOCK_MATERIALS = [
+  { id: 1, title: "Course Outline & Syllabus", type: "PDF", size: "2.4 MB", uploaded: "Oct 24, 2025", course: "SWE311" },
+  { id: 2, title: "Lecture 1: Introduction", type: "PPTX", size: "5.1 MB", uploaded: "Oct 25, 2025", course: "SWE311" },
+];
+
+export const MOCK_LESSON_PLANS: Record<string, string> = {
+  "SWE311": "Week 1: Introduction to Lifecycle Models\n- Waterfall vs Agile\n- Required reading: Chapter 1-3",
+};

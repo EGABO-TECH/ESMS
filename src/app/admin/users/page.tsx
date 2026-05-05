@@ -18,13 +18,7 @@ import {
 } from "lucide-react";
 import CreateUserModal from "@/components/CreateUserModal";
 
-const MOCK_USERS = [
-  { name: "Egabo Aaron", role: "Super Admin", department: "IT Center", status: "Active", email: "a.egabo@cuu.ac.ug", lastLogin: "10 mins ago" },
-  { name: "Faida Nancy", role: "Registrar", department: "Academic Registry", status: "Active", email: "n.faida@cuu.ac.ug", lastLogin: "1 hour ago" },
-  { name: "Ababiku Brenda", role: "Finance Officer", department: "Treasury", status: "Active", email: "b.ababiku@cuu.ac.ug", lastLogin: "Yesterday" },
-  { name: "Alimpa Anne", role: "Lecturer", department: "Science & Tech", status: "Active", email: "h.alimpa@cuu.ac.ug", lastLogin: "2 days ago" },
-  { name: "Kirabo Alice", role: "Admissions", department: "Admissions", status: "Inactive", email: "a.kirabo@cuu.ac.ug", lastLogin: "1 week ago" },
-];
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 const roleColors: Record<string, string> = {
   "Super Admin":     "bg-indigo-600 text-white",
@@ -39,8 +33,9 @@ const roleColors: Record<string, string> = {
 export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { users } = useGlobalContext();
 
-  const filtered = MOCK_USERS.filter(
+  const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

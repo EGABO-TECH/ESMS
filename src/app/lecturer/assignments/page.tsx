@@ -8,24 +8,7 @@ import {
 } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
-type Assignment = {
-  id: number;
-  title: string;
-  course: string;
-  dueDate: string;
-  maxMarks: number;
-  instructions: string;
-  submissions: number;
-  total: number;
-  status: "Active" | "Closing Soon" | "Grading" | "Draft" | "Closed";
-};
 
-const INITIAL: Assignment[] = [
-  { id: 1, title: "System Design Proposal", course: "SWE313", dueDate: "2025-11-05", maxMarks: 100, instructions: "Design a distributed system for a university portal. Include ER diagram and architecture overview.", submissions: 42, total: 45, status: "Active" },
-  { id: 2, title: "React Hooks Lab", course: "BIT201", dueDate: "2025-10-30", maxMarks: 40, instructions: "Build a to-do app using React hooks only. No class components.", submissions: 38, total: 40, status: "Closing Soon" },
-  { id: 3, title: "Mid-Sem Take Home", course: "BCS101", dueDate: "2025-10-25", maxMarks: 60, instructions: "Answer all 5 questions. Show working for all calculations.", submissions: 120, total: 120, status: "Grading" },
-  { id: 4, title: "Final Project Draft", course: "SWE422", dueDate: "2025-12-10", maxMarks: 100, instructions: "Submit your final project draft with technical documentation.", submissions: 5, total: 32, status: "Draft" },
-];
 
 const STATUS_STYLES: Record<string, string> = {
   Active: "bg-emerald-100 text-emerald-700",
@@ -36,17 +19,16 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function LecturerAssignmentsPage() {
-  const { courses, students } = useGlobalContext();
-  const [assignments, setAssignments] = useState<Assignment[]>(INITIAL);
+  const { courses, students, assignments, setAssignments } = useGlobalContext();
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
-  const [viewAssignment, setViewAssignment] = useState<Assignment | null>(null);
-  const nextId = useRef(INITIAL.length + 1);
+  const [viewAssignment, setViewAssignment] = useState<typeof assignments[0] | null>(null);
+  const nextId = useRef(assignments.length > 0 ? Math.max(...assignments.map(a => a.id)) + 1 : 1);
 
   // Form state
   const [form, setForm] = useState({
     title: "", course: courses[0]?.code ?? "", dueDate: "", maxMarks: "100",
-    instructions: "", status: "Active" as Assignment["status"],
+    instructions: "", status: "Active" as typeof assignments[0]["status"],
   });
 
   const filtered = useMemo(() =>
@@ -66,7 +48,7 @@ export default function LecturerAssignmentsPage() {
       toast.error("Please fill in the title and due date."); return;
     }
     const course = courses.find(c => c.code === form.course);
-    const newA: Assignment = {
+    const newA = {
       id: nextId.current++,
       title: form.title.trim(),
       course: form.course,
@@ -98,7 +80,7 @@ export default function LecturerAssignmentsPage() {
     toast.success("Assignments exported to CSV.");
   };
 
-  const downloadSubmissionReport = (a: Assignment) => {
+  const downloadSubmissionReport = (a: typeof assignments[0]) => {
     const header = ["Student ID", "Student Name", "Assignment", "Course", "Due Date", "Status"];
     const rows = students.slice(0, a.submissions).map((s, i) => [
       s.id, `"${s.name}"`, `"${a.title}"`, a.course, a.dueDate,
@@ -267,7 +249,7 @@ export default function LecturerAssignmentsPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</label>
-                  <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as Assignment["status"] }))}
+                  <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as typeof assignments[0]["status"] }))}
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 font-semibold">
                     <option value="Draft">Draft</option>
                     <option value="Active">Active</option>

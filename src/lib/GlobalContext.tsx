@@ -7,7 +7,11 @@ import {
   MOCK_STATS, 
   MOCK_TRANSACTIONS, 
   MOCK_GRADING, 
-  MOCK_STUDENT_RESULTS 
+  MOCK_STUDENT_RESULTS,
+  MOCK_USERS,
+  MOCK_ASSIGNMENTS,
+  MOCK_MATERIALS,
+  MOCK_LESSON_PLANS
 } from "./mockData";
 
 type GlobalContextType = {
@@ -24,6 +28,15 @@ type GlobalContextType = {
   studentResults: typeof MOCK_STUDENT_RESULTS;
   setStudentResults: React.Dispatch<React.SetStateAction<typeof MOCK_STUDENT_RESULTS>>;
   
+  users: typeof MOCK_USERS;
+  setUsers: React.Dispatch<React.SetStateAction<typeof MOCK_USERS>>;
+  assignments: typeof MOCK_ASSIGNMENTS;
+  setAssignments: React.Dispatch<React.SetStateAction<typeof MOCK_ASSIGNMENTS>>;
+  materials: typeof MOCK_MATERIALS;
+  setMaterials: React.Dispatch<React.SetStateAction<typeof MOCK_MATERIALS>>;
+  lessonPlans: typeof MOCK_LESSON_PLANS;
+  setLessonPlans: React.Dispatch<React.SetStateAction<typeof MOCK_LESSON_PLANS>>;
+
   // High-level Actions
   enrollStudent: (studentId: string) => void;
   verifyTransaction: (transactionId: string) => void;
@@ -45,13 +58,44 @@ type GlobalContextType = {
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
-  const [students, setStudents] = useState(MOCK_STUDENTS);
-  const [courses, setCourses] = useState(MOCK_COURSES);
-  const [stats, setStats] = useState(MOCK_STATS);
-  const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
-  const [grading, setGrading] = useState(MOCK_GRADING);
-  const [studentResults, setStudentResults] = useState(MOCK_STUDENT_RESULTS);
+  // Utility to initialize state from localStorage
+  const getInitialState = <T,>(key: string, fallback: T): T => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        try {
+          return JSON.parse(saved) as T;
+        } catch (e) {
+          console.error(`Error parsing ${key} from localStorage`, e);
+        }
+      }
+    }
+    return fallback;
+  };
+
+  const [students, setStudents] = useState(() => getInitialState("esms-students", MOCK_STUDENTS));
+  const [courses, setCourses] = useState(() => getInitialState("esms-courses", MOCK_COURSES));
+  const [stats, setStats] = useState(() => getInitialState("esms-stats", MOCK_STATS));
+  const [transactions, setTransactions] = useState(() => getInitialState("esms-transactions", MOCK_TRANSACTIONS));
+  const [grading, setGrading] = useState(() => getInitialState("esms-grading", MOCK_GRADING));
+  const [studentResults, setStudentResults] = useState(() => getInitialState("esms-results", MOCK_STUDENT_RESULTS));
+  const [users, setUsers] = useState(() => getInitialState("esms-users", MOCK_USERS));
+  const [assignments, setAssignments] = useState(() => getInitialState("esms-assignments", MOCK_ASSIGNMENTS));
+  const [materials, setMaterials] = useState(() => getInitialState("esms-materials", MOCK_MATERIALS));
+  const [lessonPlans, setLessonPlans] = useState(() => getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
   const [hasBalance, setHasBalance] = useState(true);
+
+  // Persist state changes to localStorage
+  useEffect(() => { localStorage.setItem("esms-students", JSON.stringify(students)); }, [students]);
+  useEffect(() => { localStorage.setItem("esms-courses", JSON.stringify(courses)); }, [courses]);
+  useEffect(() => { localStorage.setItem("esms-stats", JSON.stringify(stats)); }, [stats]);
+  useEffect(() => { localStorage.setItem("esms-transactions", JSON.stringify(transactions)); }, [transactions]);
+  useEffect(() => { localStorage.setItem("esms-grading", JSON.stringify(grading)); }, [grading]);
+  useEffect(() => { localStorage.setItem("esms-results", JSON.stringify(studentResults)); }, [studentResults]);
+  useEffect(() => { localStorage.setItem("esms-users", JSON.stringify(users)); }, [users]);
+  useEffect(() => { localStorage.setItem("esms-assignments", JSON.stringify(assignments)); }, [assignments]);
+  useEffect(() => { localStorage.setItem("esms-materials", JSON.stringify(materials)); }, [materials]);
+  useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
 
   // Initialise from localStorage or system preference
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -113,6 +157,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       transactions, setTransactions,
       grading, setGrading,
       studentResults, setStudentResults,
+      users, setUsers,
+      assignments, setAssignments,
+      materials, setMaterials,
+      lessonPlans, setLessonPlans,
       enrollStudent,
       verifyTransaction,
       updateCourseProgress,

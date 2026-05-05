@@ -44,11 +44,11 @@ const historicalEnrollments: Record<string, { id: number; grade: string; courses
 
 const semesterKeys = Object.keys(historicalEnrollments).sort().reverse();
 
-type TabId = "enrollment" | "history" | "timetable";
+type TabId = "enrollment" | "history" | "timetable" | "materials";
 
 export default function StudentAcademics() {
   const router = useRouter();
-  const { students, courses, hasBalance } = useGlobalContext();
+  const { students, courses, hasBalance, materials, assignments } = useGlobalContext();
   const rawStudent = students[0];
   const { user, isLoaded } = useUser();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
@@ -226,8 +226,8 @@ export default function StudentAcademics() {
       </section>
 
       {/* ── Tabs ── */}
-      <div className="flex gap-1 bg-surface-container-low rounded-xl p-1 w-fit mb-8">
-        {(["enrollment", "history", "timetable"] as TabId[]).map(tab => (
+      <div className="flex flex-wrap gap-1 bg-surface-container-low rounded-xl p-1 w-fit mb-8">
+        {(["enrollment", "history", "timetable", "materials"] as TabId[]).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -235,7 +235,7 @@ export default function StudentAcademics() {
               activeTab === tab ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
-            {tab === "enrollment" ? "Current Enrollment" : tab === "history" ? "Grade History" : "Weekly Timetable"}
+            {tab === "enrollment" ? "Current Enrollment" : tab === "history" ? "Grade History" : tab === "timetable" ? "Weekly Timetable" : "Course Materials"}
           </button>
         ))}
       </div>
@@ -411,6 +411,98 @@ export default function StudentAcademics() {
             filterType="program" 
             filterValue={student.programme.split('(').pop()?.replace(')', '') || 'BSE'} 
           />
+        </div>
+      )}
+
+      {/* ── Course Materials & Assignments Tab ── */}
+      {activeTab === "materials" && (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Assignments */}
+            <div className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
+              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                  <FileText size={18} className="text-indigo-600" /> My Assignments
+                </h3>
+              </div>
+              <div className="divide-y divide-border-subtle max-h-[500px] overflow-y-auto">
+                {assignments.filter(a => myModules.some(m => m.code === a.course)).length === 0 ? (
+                  <p className="p-6 text-center text-slate-500 text-sm">No assignments posted for your courses yet.</p>
+                ) : (
+                  assignments.filter(a => myModules.some(m => m.code === a.course)).map(a => (
+                    <div key={a.id} className="p-5 hover:bg-slate-50 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-bold text-slate-900">{a.title}</h4>
+                          <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">{a.course}</span>
+                        </div>
+                        <span className={`text-[10px] font-black px-2 py-1 rounded uppercase ${a.status === "Closing Soon" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
+                          {a.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mb-3">{a.instructions}</p>
+                      <div className="flex items-center justify-between mt-4 text-[10px] font-bold text-slate-500">
+                        <div className="flex items-center gap-1"><Clock size={12} /> Due: {new Date(a.dueDate).toLocaleDateString()}</div>
+                        <button className="text-indigo-600 hover:text-indigo-700 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                          Submit Work
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Course Materials */}
+            <div className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
+              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                  <BookOpen size={18} className="text-emerald-600" /> Study Materials
+                </h3>
+              </div>
+              <div className="divide-y divide-border-subtle max-h-[500px] overflow-y-auto p-4 space-y-4">
+                {myModules.length > 0 && myModules.map(m => {
+                  const courseMats = materials[m.code] || [];
+                  const globalMats = materials["global"]?.filter(gm => gm.type === m.code) || []; // Fallback for old global mock if needed
+                  const allCourseMats = [...courseMats, ...globalMats, ...Object.values(materials).flat().filter(mat => (mat as any).course === m.code)];
+                  
+                  // Filter out duplicates by name
+                  const uniqueMats = Array.from(new Map(allCourseMats.map(item => [item.name || (item as any).title, item])).values());
+
+                  if (uniqueMats.length === 0) return null;
+
+                  return (
+                    <div key={m.code} className="space-y-2">
+                      <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">{m.code} - {m.name}</h4>
+                      {uniqueMats.map((mat: any, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-[8px] font-black">
+                              {mat.type || "DOC"}
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-800">{mat.name || mat.title}</p>
+                              <p className="text-[10px] text-slate-400">{mat.size} · {mat.date || mat.uploaded}</p>
+                            </div>
+                          </div>
+                          <button onClick={() => toast.success(`Downloading ${mat.name || mat.title}...`)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Download">
+                            <Download size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+                {myModules.every(m => {
+                  const courseMats = materials[m.code] || [];
+                  const allCourseMats = [...courseMats, ...Object.values(materials).flat().filter(mat => (mat as any).course === m.code)];
+                  return allCourseMats.length === 0;
+                }) && (
+                  <p className="p-6 text-center text-slate-500 text-sm">No materials uploaded for your courses yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

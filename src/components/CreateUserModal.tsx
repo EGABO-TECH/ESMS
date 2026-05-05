@@ -19,6 +19,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { createUser, UserRole } from "@/app/actions/createUser";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -130,6 +131,7 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: CreateUs
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<typeof INITIAL_FORM>>({});
   const backdropRef = useRef<HTMLDivElement>(null);
+  const { setUsers, setStudents } = useGlobalContext();
 
   // Lock body scroll when open
   useEffect(() => {
@@ -186,6 +188,35 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: CreateUs
 
       if (result.success) {
         const roleDef = ROLES.find((r) => r.value === form.role);
+        
+        // Push to GlobalContext based on role
+        if (form.role === "student") {
+          setStudents(prev => [{
+            id: result.userId || `CUU-${Math.floor(Math.random() * 1000)}-${Math.floor(Math.random() * 1000)}`,
+            name: `${form.firstName} ${form.lastName}`,
+            program: form.department || "General",
+            year: "1",
+            sem: "1",
+            status: "Pending",
+            email: form.email,
+            phoneNumber: form.phone || "N/A",
+            nationality: "Unknown",
+            applied_at: new Date().toISOString(),
+            intake: "Current"
+          }, ...prev]);
+        } else {
+          setUsers(prev => [{
+            id: result.userId || `U-${Math.floor(Math.random() * 1000)}`,
+            name: `${form.firstName} ${form.lastName}`,
+            role: roleDef?.label ?? form.role,
+            department: form.department || "General",
+            status: "Active",
+            email: form.email,
+            lastLogin: "Just now",
+            phone: form.phone || "N/A"
+          }, ...prev]);
+        }
+
         toast.success(`Account created for ${form.firstName} ${form.lastName} as ${roleDef?.label ?? form.role}`);
         onSuccess?.();
         onClose();
