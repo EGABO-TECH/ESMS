@@ -18,7 +18,16 @@ export default function FinanceBudgetPage() {
           <h1 className="text-3xl font-black text-slate-900">Budget Oversight</h1>
           <p className="text-slate-500 mt-1">Departmental allocations, expenditure tracking, and fiscal planning.</p>
         </div>
-        <button onClick={() => toast.info('Opening budget planner...')} className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+        <button 
+          onClick={() => {
+            toast.promise(new Promise(res => setTimeout(res, 1000)), {
+              loading: 'Initializing budget planner...',
+              success: 'Ready for new allocation entries',
+              error: 'Planner failed to load'
+            });
+          }} 
+          className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+        >
           <PieChart size={18} /> New Budget Allocation
         </button>
       </div>
@@ -29,9 +38,9 @@ export default function FinanceBudgetPage() {
           { label: "Total Expenditure", val: "UGX 3.1B", icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
           { label: "Remaining Balance", val: "UGX 1.7B", icon: PieChart, color: "text-indigo-600", bg: "bg-indigo-50" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-default group">
             <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
+              <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon size={20} />
               </div>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</span>
@@ -47,10 +56,10 @@ export default function FinanceBudgetPage() {
         </h2>
         <div className="space-y-8">
           {budgets.map((b, i) => (
-            <div key={i} className="space-y-2">
+            <div key={i} className="space-y-2 group cursor-help">
               <div className="flex justify-between items-end">
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{b.name}</p>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{b.name}</p>
                   <p className="text-[11px] text-slate-500">Allocation: UGX {(b.allocated / 1_000_000).toFixed(1)}M</p>
                 </div>
                 <div className="text-right">
@@ -59,7 +68,7 @@ export default function FinanceBudgetPage() {
                 </div>
               </div>
               <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                <div className={`${b.color} h-full rounded-full transition-all duration-1000`} style={{ width: `${(b.spent / b.allocated) * 100}%` }} />
+                <div className={`${b.color} h-full rounded-full transition-all duration-1000 group-hover:brightness-110`} style={{ width: `${(b.spent / b.allocated) * 100}%` }} />
               </div>
             </div>
           ))}

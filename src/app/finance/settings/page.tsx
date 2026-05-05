@@ -50,16 +50,25 @@ export default function FinanceSettingsPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-8">
             <div className="flex items-center justify-between pb-6 border-b border-slate-100">
               <h2 className="text-xl font-bold text-slate-900 capitalize">{activeTab} Configuration</h2>
-              <button onClick={() => toast.success('Finance settings updated')} className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-all flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  toast.promise(new Promise(res => setTimeout(res, 1000)), {
+                    loading: 'Saving configuration...',
+                    success: 'Finance settings updated successfully',
+                    error: 'Failed to save changes'
+                  });
+                }} 
+                className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+              >
                 <Save size={18} /> Save Changes
               </button>
             </div>
 
             {activeTab === 'accounts' && (
               <div className="space-y-6">
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between group hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm group-hover:scale-105 transition-transform">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MTN_Logo.svg" alt="MTN" className="w-full h-full object-contain" />
                     </div>
@@ -68,11 +77,16 @@ export default function FinanceSettingsPage() {
                       <p className="text-xs text-emerald-600 font-bold uppercase tracking-widest">Connected & Active</p>
                     </div>
                   </div>
-                  <button className="text-xs font-bold text-slate-400 hover:text-error transition-colors uppercase tracking-widest">Disconnect</button>
+                  <button 
+                    onClick={() => toast.error('Gateway disconnection requires administrator approval.')}
+                    className="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest active:scale-90"
+                  >
+                    Disconnect
+                  </button>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between group hover:border-emerald-200 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm text-blue-600 font-black italic">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm text-blue-600 font-black italic group-hover:scale-105 transition-transform">
                       STANBIC
                     </div>
                     <div>
@@ -80,7 +94,12 @@ export default function FinanceSettingsPage() {
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Last Sync: 1 hour ago</p>
                     </div>
                   </div>
-                  <button className="text-xs font-bold text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">Re-Auth</button>
+                  <button 
+                    onClick={() => toast.info('Redirecting to Stanbic OAuth portal...')}
+                    className="text-xs font-bold text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest active:scale-90"
+                  >
+                    Re-Auth
+                  </button>
                 </div>
               </div>
             )}

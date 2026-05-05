@@ -144,15 +144,30 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="mt-auto px-2 space-y-1 pt-4">
-          <div onClick={() => toast.info('Opening support widget...')} className="text-blue-200 hover:bg-white/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
-            <HelpCircle size={20} />
-            <span className="font-medium">Support</span>
+          <div 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 800)), {
+                loading: 'Connecting to support...',
+                success: 'Live chat initiated with Treasury Support',
+                error: 'Support offline'
+              });
+            }} 
+            className="text-blue-200 hover:bg-white/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 active:scale-95 group"
+          >
+            <HelpCircle size={20} className="group-hover:text-white transition-colors" />
+            <span className="font-medium group-hover:text-white">Support</span>
           </div>
-          <div onClick={() => signOut({ redirectUrl: '/login' })} className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200">
-            <LogOut size={20} />
-            <span className="font-medium">Logout</span>
+          <div 
+            onClick={() => {
+              toast.info('Logging out of Finance Secure Session...');
+              setTimeout(() => signOut({ redirectUrl: '/login' }), 1000);
+            }} 
+            className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 active:scale-95 group"
+          >
+            <LogOut size={20} className="group-hover:text-red-300 transition-colors" />
+            <span className="font-medium group-hover:text-red-300">Logout</span>
           </div>
-          <SidebarDeleteAccountButton className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200" textClassName="font-medium" />
+          <SidebarDeleteAccountButton className="text-red-400 hover:bg-red-500/10 flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all duration-200 active:scale-95" textClassName="font-medium" />
         </div>
       </aside>
 
@@ -162,7 +177,7 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
         <header className="flex justify-between items-center h-16 px-4 md:px-6 w-full sticky top-0 z-30 bg-white border-b border-slate-200">
           <div className="flex items-center gap-4">
             <button 
-              className="lg:hidden p-2 text-slate-600 hover:bg-slate-50 rounded-md"
+              className="lg:hidden p-2 text-slate-600 hover:bg-slate-50 rounded-md active:scale-90 transition-transform"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu size={24} />
@@ -187,7 +202,7 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
               <DarkModeToggle />
               <button 
                 onClick={() => setIsCalendarOpen(true)}
-                className="p-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full transition-colors relative"
+                className="p-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full transition-all active:scale-90 relative"
               >
                 <CalendarDays size={20} />
               </button>
@@ -195,35 +210,47 @@ export default function FinanceLayout({ children }: { children: ReactNode }) {
               <div className="relative" ref={notifRef}>
                 <button
                   onClick={() => setIsNotifOpen(v => !v)}
-                  className="relative p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors"
+                  className={`relative p-2 rounded-full transition-all active:scale-90 ${isNotifOpen ? 'bg-emerald-50 text-emerald-600' : 'text-slate-600 hover:bg-slate-50'}`}
                 >
                   <Bell size={20} />
                   <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
                 </button>
 
                 {isNotifOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50">
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                     <div className="p-4 bg-[#00174b] text-white flex justify-between items-center">
                       <h4 className="font-bold text-sm">Finance Alerts</h4>
                       <span className="text-[10px] bg-emerald-500 px-2 py-0.5 rounded-full font-bold">3 NEW</span>
                     </div>
                     <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                      <div className="p-4 hover:bg-slate-50 transition-all flex gap-3">
-                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg h-fit">
+                      <div 
+                        onClick={() => {
+                          toast.info('Opening reconciliation module...');
+                          setIsNotifOpen(false);
+                        }} 
+                        className="p-4 hover:bg-slate-50 transition-all flex gap-3 cursor-pointer group"
+                      >
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg h-fit group-hover:scale-110 transition-transform">
                           <Banknote size={16} />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-slate-900">MTN Batch Reconciliation</p>
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">MTN Batch Reconciliation</p>
                           <p className="text-[11px] text-slate-500 mt-1">MTN Mobile Money batch for yesterday needs verification.</p>
                         </div>
+                      </div>
+                      <div className="p-4 text-center">
+                        <button className="text-[10px] font-bold text-emerald-600 hover:underline">Clear all notifications</button>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
               <div className="hidden sm:block h-8 w-[1px] bg-slate-200"></div>
-              <div className="flex items-center gap-3 cursor-pointer p-1 hover:bg-slate-50 rounded-lg transition-colors">
-                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">F</div>
+              <div 
+                onClick={() => toast.info('Redirecting to Profile Settings...')} 
+                className="flex items-center gap-3 cursor-pointer p-1 hover:bg-slate-50 rounded-lg transition-all active:scale-95"
+              >
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">F</div>
                 <div className="hidden xl:block text-left">
                   <p className="text-xs font-bold text-slate-900">Finance Manager</p>
                   <p className="text-[10px] text-slate-500">Main Campus Treasury</p>

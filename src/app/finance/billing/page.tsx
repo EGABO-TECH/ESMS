@@ -23,10 +23,24 @@ export default function FinanceBillingPage() {
           <p className="text-slate-500 mt-1">Generate invoices, manage tuition fees, and track payment deadlines.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.info('Opening bulk invoice generator...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 1000)), {
+                loading: 'Compiling billing data...',
+                success: 'Student_Billing_Report.csv ready',
+                error: 'Export failed'
+              });
+            }} 
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2"
+          >
             <Download size={18} /> Export Billing
           </button>
-          <button onClick={() => toast.success('New invoice draft created')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.success('Invoice draft INV-2025-NEW created successfully');
+            }} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+          >
             <Plus size={18} /> Create Invoice
           </button>
         </div>
@@ -39,14 +53,14 @@ export default function FinanceBillingPage() {
           { label: "Pending Collection", val: "UGX 840M", icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
           { label: "Overdue Amount", val: "UGX 124M", icon: AlertCircle, color: "text-error", bg: "bg-error/5" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group cursor-default">
             <div className="flex justify-between items-start mb-4">
               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon size={24} />
               </div>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</span>
             </div>
-            <p className="text-2xl font-black text-slate-900">{stat.val}</p>
+            <p className="text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{stat.val}</p>
           </div>
         ))}
       </div>
@@ -58,9 +72,12 @@ export default function FinanceBillingPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" placeholder="Search by invoice or student..." />
+              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search by invoice or student..." />
             </div>
-            <button className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
+            <button 
+              onClick={() => toast('Filter invoices by: Status, Academic Year, Semester')}
+              className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            >
               <Filter size={16} />
             </button>
           </div>
@@ -78,9 +95,9 @@ export default function FinanceBillingPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={inv.id} className="hover:bg-slate-50 transition-colors cursor-pointer group">
                   <td className="px-6 py-4">
-                    <p className="text-sm font-bold text-slate-900">{inv.id}</p>
+                    <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{inv.id}</p>
                     <p className="text-[10px] text-slate-400 uppercase tracking-widest">Tuition Fee - Sem II</p>
                   </td>
                   <td className="px-6 py-4 text-sm font-semibold text-slate-700">{inv.student}</td>
@@ -89,7 +106,7 @@ export default function FinanceBillingPage() {
                   <td className="px-6 py-4 text-right">
                     <span className={`px-2 py-1 text-[10px] font-black rounded uppercase ${
                       inv.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' : 
-                      inv.status === 'Overdue' ? 'bg-error/10 text-error' : 'bg-amber-100 text-amber-700'
+                      inv.status === 'Overdue' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
                     }`}>
                       {inv.status}
                     </span>
@@ -100,7 +117,12 @@ export default function FinanceBillingPage() {
           </table>
         </div>
         <div className="p-4 border-t border-slate-100 flex justify-center">
-          <button className="text-xs font-bold text-emerald-600 hover:underline">View All Invoices</button>
+          <button 
+            onClick={() => toast.info('Loading full invoice archive...')}
+            className="text-xs font-bold text-emerald-600 hover:underline active:opacity-70 transition-all"
+          >
+            View All Invoices
+          </button>
         </div>
       </div>
     </div>

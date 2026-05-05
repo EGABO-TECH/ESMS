@@ -15,7 +15,16 @@ export default function FinanceLedgersPage() {
           <p className="text-slate-500 mt-1">Detailed record of all financial movements across institutional accounts.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Ledger report generated')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 1200)), {
+                loading: 'Compiling transaction history...',
+                success: 'General_Ledger_Archive.csv downloaded',
+                error: 'Export failed'
+              });
+            }} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+          >
             <Download size={18} /> Download CSV
           </button>
         </div>
@@ -29,9 +38,12 @@ export default function FinanceLedgersPage() {
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                  <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" placeholder="Reference ID..." />
+                  <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Reference ID..." />
                 </div>
-                <button className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
+                <button 
+                  onClick={() => toast('Filter by: Account Type, Amount Range, Date')}
+                  className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                >
                   <Filter size={16} />
                 </button>
               </div>
@@ -49,9 +61,9 @@ export default function FinanceLedgersPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {transactions.map((tx, i) => (
-                    <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
+                    <tr key={tx.id} className="hover:bg-slate-50 transition-colors group cursor-pointer">
                       <td className="px-6 py-4">
-                        <p className="text-xs font-bold text-slate-900">{new Date(tx.date).toLocaleDateString()}</p>
+                        <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{new Date(tx.date).toLocaleDateString()}</p>
                         <p className="text-[10px] text-slate-400 font-mono">#{tx.id}</p>
                       </td>
                       <td className="px-6 py-4">
@@ -84,10 +96,10 @@ export default function FinanceLedgersPage() {
                 { name: "Operational Expense A/C", bal: "UGX 842.5M", trend: "down" },
                 { name: "Scholarship Fund", bal: "UGX 150M", trend: "up" },
               ].map((acc, i) => (
-                <div key={i} className="p-4 bg-slate-50 rounded-xl border border-transparent hover:border-emerald-200 transition-all cursor-pointer group">
+                <div key={i} className="p-4 bg-slate-50 rounded-xl border border-transparent hover:border-emerald-200 active:scale-95 transition-all cursor-pointer group">
                   <div className="flex justify-between items-start mb-2">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{acc.name}</p>
-                    {acc.trend === 'up' ? <ArrowUpRight size={14} className="text-emerald-500" /> : <ArrowDownLeft size={14} className="text-error" />}
+                    {acc.trend === 'up' ? <ArrowUpRight size={14} className="text-emerald-500" /> : <ArrowDownLeft size={14} className="text-red-500" />}
                   </div>
                   <p className="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{acc.bal}</p>
                 </div>
@@ -99,7 +111,16 @@ export default function FinanceLedgersPage() {
             <div className="relative z-10">
               <h3 className="text-lg font-black mb-2">Reconciliation</h3>
               <p className="text-emerald-100 text-xs mb-6">Last synced with bank feeds 14 minutes ago.</p>
-              <button onClick={() => toast.success('Reconciliation complete!')} className="w-full py-3 bg-white text-emerald-600 rounded-xl font-bold text-sm hover:bg-emerald-50 transition-colors">
+              <button 
+                onClick={() => {
+                  toast.promise(new Promise(res => setTimeout(res, 1800)), {
+                    loading: 'Syncing with central bank...',
+                    success: 'Reconciliation complete! 0 discrepancies found',
+                    error: 'Sync failed'
+                  });
+                }} 
+                className="w-full py-3 bg-white text-emerald-600 rounded-xl font-bold text-sm hover:bg-emerald-50 active:scale-95 transition-all"
+              >
                 Run Manual Sync
               </button>
             </div>

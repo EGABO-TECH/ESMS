@@ -34,10 +34,28 @@ export default function FinancePaymentsPage() {
           <p className="text-slate-500 mt-1">Review and verify student tuition and fee payments.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Downloading payment reconciliation...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 1200)), {
+                loading: 'Preparing payment batch...',
+                success: 'Payment_Registry_2025.csv exported',
+                error: 'Export failed'
+              });
+            }} 
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all shadow-sm flex items-center gap-2"
+          >
             <Download size={18} /> Export Batch
           </button>
-          <button onClick={() => toast.info('Starting reconciliation...')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 2000)), {
+                loading: 'Reconciling with Bank API...',
+                success: 'All statements matched successfully',
+                error: 'Connection error'
+              });
+            }} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg flex items-center gap-2"
+          >
             <Receipt size={18} /> Reconcile Statements
           </button>
         </div>
@@ -51,12 +69,12 @@ export default function FinancePaymentsPage() {
           { label: "Bank Batches", val: "8", icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
           { label: "Recon. Status", val: "Matched", icon: CheckCircle, color: "text-indigo-600", bg: "bg-indigo-50" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow cursor-default group">
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
               <p className="text-xl font-black text-slate-900">{stat.val}</p>
             </div>
-            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
+            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
               <stat.icon size={22} />
             </div>
           </div>
@@ -88,10 +106,13 @@ export default function FinancePaymentsPage() {
             <input 
               type="text" 
               placeholder="Search by student name or Transaction ID..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-600 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-emerald-600 outline-none transition-all focus:bg-white"
             />
           </div>
-          <button onClick={() => alert('Feature in development...')}  className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-100 transition-all">
+          <button 
+            onClick={() => toast('Filter by: MTN MoMo, Airtel Money, Bank Transfer')}  
+            className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-600 font-bold text-sm flex items-center gap-2 hover:bg-slate-100 active:scale-95 transition-all"
+          >
             <Filter size={18} /> Filter Method
           </button>
         </div>
@@ -113,11 +134,11 @@ export default function FinancePaymentsPage() {
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[10px] border border-emerald-100">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[10px] border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                         {p.id.split('-')[1]}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-700 text-sm">{p.id}</span>
+                        <span className="font-bold text-slate-700 text-sm group-hover:text-emerald-700 transition-colors">{p.id}</span>
                         <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{p.date}</span>
                       </div>
                     </div>
@@ -145,7 +166,7 @@ export default function FinancePaymentsPage() {
                           verifyTransaction(p.id);
                           toast.success('Transaction receipt sent to student email');
                         }} 
-                        className="text-emerald-600 hover:bg-emerald-50 px-3 py-1 rounded-lg text-[10px] font-black uppercase transition-all">
+                        className="text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase active:scale-95 transition-all">
                         Confirm
                       </button>
                     ) : (

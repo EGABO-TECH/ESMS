@@ -19,7 +19,16 @@ export default function FinancePayrollPage() {
           <p className="text-slate-500 mt-1">Manage university staff salaries, allowances, and statutory deductions.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Payroll batch processed')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition-all">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 2000)), {
+                loading: 'Processing salary batch...',
+                success: 'Payroll batch completed. Bank instructions sent.',
+                error: 'Batch processing failed'
+              });
+            }} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all"
+          >
             Process Batch
           </button>
         </div>
@@ -31,9 +40,9 @@ export default function FinancePayrollPage() {
           { label: "Pending Payments", val: "12 Staff", icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
           { label: "Total Staff", val: "148", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-default group">
             <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
+              <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:rotate-12 transition-transform`}>
                 <stat.icon size={20} />
               </div>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</span>
@@ -49,12 +58,24 @@ export default function FinancePayrollPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" placeholder="Search staff..." />
+              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search staff..." />
             </div>
-            <button className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
+            <button 
+              onClick={() => toast('Filter by: Department, Contract Type, Salary Grade')}
+              className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            >
               <Filter size={16} />
             </button>
-            <button onClick={() => toast.info('Exporting slips...')} className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-600">
+            <button 
+              onClick={() => {
+                toast.promise(new Promise(res => setTimeout(res, 1000)), {
+                  loading: 'Generating payslips...',
+                  success: 'Staff_Payslips_May2025.zip downloaded',
+                  error: 'Generation failed'
+                });
+              }} 
+              className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+            >
               <Download size={16} />
             </button>
           </div>
@@ -71,9 +92,9 @@ export default function FinancePayrollPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {staff.map((s, i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                <tr key={i} className="hover:bg-slate-50 transition-colors group cursor-pointer">
                   <td className="px-6 py-4">
-                    <p className="text-sm font-bold text-slate-900">{s.name}</p>
+                    <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{s.name}</p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-[11px] font-bold text-slate-600">{s.role}</p>

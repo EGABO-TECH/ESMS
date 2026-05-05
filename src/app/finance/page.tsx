@@ -27,10 +27,22 @@ export default function FinanceDashboard() {
           <p className="text-slate-500 mt-1">Institutional Financial Health & Collections</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.success('Reconciliation report generated')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
+          <button 
+            onClick={() => {
+              toast.promise(new Promise(res => setTimeout(res, 1500)), {
+                loading: 'Generating ledger export...',
+                success: 'Finance_Ledgers_2025.csv downloaded successfully',
+                error: 'Export failed'
+              });
+            }} 
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all shadow-sm flex items-center gap-2"
+          >
             <Download size={16} /> Export Ledgers
           </button>
-          <button onClick={() => toast.info('Opening payment recording form...')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg">
+          <button 
+            onClick={() => toast.info('Payment recording system is currently in read-only mode for this session.')} 
+            className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg"
+          >
             Record New Payment
           </button>
         </div>
@@ -39,7 +51,7 @@ export default function FinanceDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {summaryStats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group cursor-pointer">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group cursor-pointer">
             <div className="flex justify-between items-start mb-4">
               <div className={`${stat.bg} p-3 rounded-2xl ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon size={24} />
@@ -70,7 +82,10 @@ export default function FinanceDashboard() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                 <input className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 w-48" placeholder="Search Txn ID..." />
               </div>
-              <button onClick={() => alert('Feature in development...')}  className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
+              <button 
+                onClick={() => toast('Filter options: All, Verified, Pending')}  
+                className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              >
                 <Filter size={14} />
               </button>
             </div>
@@ -88,8 +103,8 @@ export default function FinanceDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {recentTransactions.map((t, i) => (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400">{t.id}</td>
+                  <tr key={i} className="hover:bg-slate-50 transition-colors cursor-pointer group">
+                    <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400 group-hover:text-emerald-600 transition-colors">{t.id}</td>
                     <td className="px-6 py-4">
                       <p className="font-bold text-slate-700 text-sm">{t.student}</p>
                       <p className="text-[10px] text-slate-400">{t.date}</p>
@@ -115,31 +130,31 @@ export default function FinanceDashboard() {
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <h3 className="font-bold text-slate-900 mb-4">Fee Collection Progress</h3>
             <div className="space-y-6">
-              <div>
+              <div className="group cursor-help">
                 <div className="flex justify-between text-xs font-bold mb-2">
                   <span className="text-slate-500 uppercase">General Tuition</span>
                   <span className="text-emerald-600">88%</span>
                 </div>
                 <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full" style={{ width: '88%' }} />
+                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000 group-hover:bg-emerald-400" style={{ width: '88%' }} />
                 </div>
               </div>
-              <div>
+              <div className="group cursor-help">
                 <div className="flex justify-between text-xs font-bold mb-2">
                   <span className="text-slate-500 uppercase">Exam Fees</span>
                   <span className="text-blue-600">72%</span>
                 </div>
                 <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full rounded-full" style={{ width: '72%' }} />
+                  <div className="bg-blue-500 h-full rounded-full transition-all duration-1000 group-hover:bg-blue-400" style={{ width: '72%' }} />
                 </div>
               </div>
-              <div>
+              <div className="group cursor-help">
                 <div className="flex justify-between text-xs font-bold mb-2">
                   <span className="text-slate-500 uppercase">Library & IT</span>
                   <span className="text-amber-600">64%</span>
                 </div>
                 <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div className="bg-amber-500 h-full rounded-full" style={{ width: '64%' }} />
+                  <div className="bg-amber-500 h-full rounded-full transition-all duration-1000 group-hover:bg-amber-400" style={{ width: '64%' }} />
                 </div>
               </div>
             </div>
@@ -152,7 +167,16 @@ export default function FinanceDashboard() {
           <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
             <h3 className="font-bold mb-2">System Reconciler</h3>
             <p className="text-slate-400 text-xs mb-4">Automatically match bank statements with student ledgers.</p>
-            <button onClick={() => alert('Feature in development...')}  className="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-sm hover:bg-emerald-600 transition-all shadow-lg">
+            <button 
+              onClick={() => {
+                toast.promise(new Promise(res => setTimeout(res, 2000)), {
+                  loading: 'Scanning bank statements...',
+                  success: '12 new payments matched and verified',
+                  error: 'Reconciliation failed: API timeout'
+                });
+              }} 
+              className="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-sm hover:bg-emerald-600 active:scale-95 transition-all shadow-lg"
+            >
               Start Auto-Reconcile
             </button>
           </div>

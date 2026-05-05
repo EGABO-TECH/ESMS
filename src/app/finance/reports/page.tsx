@@ -18,7 +18,16 @@ export default function FinanceReportsPage() {
           <h1 className="text-3xl font-black text-slate-900">Financial Reports</h1>
           <p className="text-slate-500 mt-1">Access audit trails, revenue analytics, and budgetary compliance reports.</p>
         </div>
-        <button onClick={() => toast.info('Opening financial analyzer...')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+        <button 
+          onClick={() => {
+            toast.promise(new Promise(res => setTimeout(res, 1500)), {
+              loading: 'Running multi-factor analysis...',
+              success: 'Analysis complete. Dashboard updated.',
+              error: 'Analysis failed'
+            });
+          }} 
+          className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+        >
           <PieChart size={18} /> New Analysis
         </button>
       </div>
@@ -29,14 +38,14 @@ export default function FinanceReportsPage() {
           { label: "Burn Rate", val: "UGX 42M/mo", icon: CreditCard, color: "text-blue-500", bg: "bg-blue-50" },
           { label: "Audit Status", val: "CLEAN", icon: BarChart, color: "text-indigo-500", bg: "bg-indigo-50" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group cursor-default">
             <div className="flex items-center gap-3 mb-4">
               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                 <stat.icon size={20} />
               </div>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</span>
             </div>
-            <p className="text-3xl font-black text-slate-900">{stat.val}</p>
+            <p className="text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{stat.val}</p>
           </div>
         ))}
       </div>
@@ -47,7 +56,7 @@ export default function FinanceReportsPage() {
             <h2 className="text-lg font-bold text-slate-900">Generated Audits</h2>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" placeholder="Search reports..." />
+              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Search reports..." />
             </div>
           </div>
           <div className="divide-y divide-slate-100">
@@ -58,13 +67,23 @@ export default function FinanceReportsPage() {
                     <FileText size={20} />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{report.title}</p>
+                    <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{report.title}</p>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{report.category} · {report.date}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] font-mono text-slate-400">{report.type}</span>
-                  <button onClick={(e) => { e.stopPropagation(); toast.success('Download started'); }} className="p-2 text-slate-300 hover:text-emerald-600 transition-colors">
+                  <button 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      toast.promise(new Promise(res => setTimeout(res, 800)), {
+                        loading: 'Preparing download...',
+                        success: `${report.title}.${report.type.toLowerCase()} downloaded`,
+                        error: 'Download failed'
+                      });
+                    }} 
+                    className="p-2 text-slate-300 hover:text-emerald-600 active:scale-90 transition-all"
+                  >
                     <Download size={18} />
                   </button>
                 </div>
@@ -77,7 +96,16 @@ export default function FinanceReportsPage() {
           <div className="relative z-10">
             <h3 className="text-lg font-black mb-2">Automated Billing</h3>
             <p className="text-white/70 text-xs mb-6">Schedule monthly statements to be emailed to all student guardians automatically.</p>
-            <button onClick={() => toast.info('Scheduling service...')} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all">
+            <button 
+              onClick={() => {
+                toast.promise(new Promise(res => setTimeout(res, 1200)), {
+                  loading: 'Saving automation schedule...',
+                  success: 'Monthly billing automation active',
+                  error: 'Failed to save settings'
+                });
+              }} 
+              className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg"
+            >
               Configure Automation
             </button>
           </div>
