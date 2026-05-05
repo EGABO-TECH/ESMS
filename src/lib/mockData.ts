@@ -144,3 +144,10 @@ export const MOCK_LESSON_PLANS: Record<string, Record<string, string>> = {
     "Week 1": "Introduction to Lifecycle Models\n- Waterfall vs Agile\n- Required reading: Chapter 1-3"
   }
 };
+
+export const MOCK_TRANSCRIPT_REQUESTS = [
+  { id: "TR-9012", name: "Sande Sula", type: "Official", status: "In Progress", date: "2025-10-25" },
+  { id: "TR-9013", name: "Sarah Nakato", type: "Unofficial", status: "Ready", date: "2025-10-26" },
+  { id: "TR-9014", name: "James Okello", type: "Official", status: "Verified", date: "2025-10-27" },
+  { id: "TR-9015", name: "Alice Nabirye", type: "Official", status: "Pending Payment", date: "2025-10-27" },
+];

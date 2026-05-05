@@ -43,10 +43,11 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState("");
   const { signOut } = useClerk();
   const notifRef = useRef<HTMLDivElement>(null);
   
-  const { profileImage } = useGlobalContext();
+  const { profileImage, students, courses } = useGlobalContext();
   const { user, isLoaded } = useUser();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
   const avatarUrl = user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || "registrar"}`;
@@ -186,7 +187,50 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
                 className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm w-64 focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all outline-none"
                 placeholder="Search students, courses..."
                 type="text"
+                value={globalSearch}
+                onChange={(e) => setGlobalSearch(e.target.value)}
+                onBlur={() => setTimeout(() => setGlobalSearch(""), 200)}
               />
+              {globalSearch.trim().length > 0 && (
+                <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden z-50 divide-y divide-slate-100">
+                  {(() => {
+                    const q = globalSearch.toLowerCase();
+                    const s = students.filter(x => x.name.toLowerCase().includes(q) || x.id.toLowerCase().includes(q)).slice(0, 3);
+                    const c = courses.filter(x => x.name.toLowerCase().includes(q) || x.code.toLowerCase().includes(q)).slice(0, 3);
+                    
+                    if (s.length === 0 && c.length === 0) {
+                      return <div className="p-4 text-sm text-slate-500 text-center">No results found</div>;
+                    }
+
+                    return (
+                      <>
+                        {s.length > 0 && (
+                          <div className="p-2">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-1">Students</p>
+                            {s.map((student, i) => (
+                              <Link key={i} href="/registrar/students" className="block p-2 hover:bg-slate-50 rounded-lg transition-colors">
+                                <p className="text-sm font-bold text-slate-800">{student.name}</p>
+                                <p className="text-xs text-slate-500 font-mono">{student.id}</p>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                        {c.length > 0 && (
+                          <div className="p-2">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-1">Courses</p>
+                            {c.map((course, i) => (
+                              <Link key={i} href="/registrar/courses" className="block p-2 hover:bg-slate-50 rounded-lg transition-colors">
+                                <p className="text-sm font-bold text-slate-800">{course.name}</p>
+                                <p className="text-xs text-slate-500">{course.code}</p>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
             
             <div className="flex items-center gap-2 md:gap-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { 
   BookOpen, 
@@ -24,6 +24,14 @@ export default function AdminCoursesPage() {
 
   const { courses } = useGlobalContext();
 
+  const filteredCourses = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return courses;
+    return courses.filter((course) => 
+      course.name.toLowerCase().includes(query) || 
+      course.code.toLowerCase().includes(query)
+    );
+  }, [courses, searchTerm]);
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
@@ -83,7 +91,11 @@ export default function AdminCoursesPage() {
 
       {/* Course Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {courses.map((course, i) => (
+        {filteredCourses.length === 0 ? (
+          <div className="col-span-full text-center py-12 text-slate-500">
+            No courses found matching &quot;{searchTerm}&quot;
+          </div>
+        ) : filteredCourses.map((course, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all group relative overflow-hidden">
             <div className="flex justify-between items-start mb-6">
               <div className="px-3 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase rounded-lg border border-primary/10">

@@ -11,7 +11,8 @@ import {
   MOCK_USERS,
   MOCK_ASSIGNMENTS,
   MOCK_MATERIALS,
-  MOCK_LESSON_PLANS
+  MOCK_LESSON_PLANS,
+  MOCK_TRANSCRIPT_REQUESTS
 } from "./mockData";
 
 type GlobalContextType = {
@@ -36,6 +37,8 @@ type GlobalContextType = {
   setMaterials: React.Dispatch<React.SetStateAction<typeof MOCK_MATERIALS>>;
   lessonPlans: typeof MOCK_LESSON_PLANS;
   setLessonPlans: React.Dispatch<React.SetStateAction<typeof MOCK_LESSON_PLANS>>;
+  transcriptRequests: typeof MOCK_TRANSCRIPT_REQUESTS;
+  setTranscriptRequests: React.Dispatch<React.SetStateAction<typeof MOCK_TRANSCRIPT_REQUESTS>>;
 
   // High-level Actions
   enrollStudent: (studentId: string) => void;
@@ -43,6 +46,9 @@ type GlobalContextType = {
   updateCourseProgress: (courseCode: string, newProgress: number) => void;
   deleteStudent: (studentId: string) => void;
   deleteCourse: (courseCode: string) => void;
+  addTranscriptRequest: (request: typeof MOCK_TRANSCRIPT_REQUESTS[0]) => void;
+  updateTranscriptRequestStatus: (id: string, newStatus: string) => void;
+  deleteTranscriptRequest: (id: string) => void;
 
   // Dark Mode
   darkMode: boolean;
@@ -85,6 +91,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [assignments, setAssignments] = useState(() => getInitialState("esms-assignments", MOCK_ASSIGNMENTS));
   const [materials, setMaterials] = useState(() => getInitialState("esms-materials", MOCK_MATERIALS));
   const [lessonPlans, setLessonPlans] = useState(() => getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
+  const [transcriptRequests, setTranscriptRequests] = useState(() => getInitialState("esms-transcript-requests", MOCK_TRANSCRIPT_REQUESTS));
   const [hasBalance, setHasBalance] = useState(true);
 
   // Persist state changes to localStorage
@@ -98,6 +105,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("esms-assignments", JSON.stringify(assignments)); }, [assignments]);
   useEffect(() => { localStorage.setItem("esms-materials", JSON.stringify(materials)); }, [materials]);
   useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
+  useEffect(() => { localStorage.setItem("esms-transcript-requests", JSON.stringify(transcriptRequests)); }, [transcriptRequests]);
 
   // Initialise from localStorage or system preference
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -159,6 +167,18 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     setCourses(prev => prev.filter(c => c.code !== courseCode));
   };
 
+  const addTranscriptRequest = (request: typeof MOCK_TRANSCRIPT_REQUESTS[0]) => {
+    setTranscriptRequests(prev => [request, ...prev]);
+  };
+
+  const updateTranscriptRequestStatus = (id: string, newStatus: string) => {
+    setTranscriptRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+  };
+
+  const deleteTranscriptRequest = (id: string) => {
+    setTranscriptRequests(prev => prev.filter(r => r.id !== id));
+  };
+
   return (
     <GlobalContext.Provider value={{
       students, setStudents,
@@ -171,11 +191,15 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       assignments, setAssignments,
       materials, setMaterials,
       lessonPlans, setLessonPlans,
+      transcriptRequests, setTranscriptRequests,
       enrollStudent,
       verifyTransaction,
       updateCourseProgress,
       deleteStudent,
       deleteCourse,
+      addTranscriptRequest,
+      updateTranscriptRequestStatus,
+      deleteTranscriptRequest,
       darkMode,
       toggleDarkMode,
       profileImage,

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
-  const { stats, students, courses, deleteStudent, deleteCourse } = useGlobalContext();
+  const { stats, students, courses, studentResults, deleteStudent, deleteCourse } = useGlobalContext();
   const { totalStudents } = stats;
 
   const activeCourses = courses.filter(c => c.status === "Active").length;
@@ -31,6 +31,48 @@ export default function RegistrarDashboard() {
   // Show the 3 most recently added courses (first in array = newest because we prepend on add)
   const recentCourses = courses.slice(0, 4);
 
+  const downloadEnrolledStudents = () => {
+    const enrolled = students.filter(s => s.status === "Enrolled");
+    const headers = ["Student ID", "Name", "Program", "Year", "Email"];
+    const rows = enrolled.map((s) => [s.id, s.name, s.program, s.year, s.email]);
+
+    const escapeValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => escapeValue(String(value))).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `enrolled-students-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Enrolled students report downloaded.");
+  };
+
+  const downloadStudentTranscript = (studentName: string) => {
+    // We mock the student's results here, but we can just use the global studentResults
+    const headers = ["Course Code", "Course Name", "Credits", "Coursework", "Exam", "Total Score", "Grade", "Points"];
+    const rows = studentResults.map(r => [
+      r.code, r.name, r.credits, r.cw, r.exam, r.score, r.grade, r.gp
+    ]);
+
+    const escapeValue = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => escapeValue(value)).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `transcript-${studentName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Transcript for ${studentName} downloaded.`);
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
@@ -40,7 +82,7 @@ export default function RegistrarDashboard() {
           <p className="text-slate-500 mt-1">Academic Records &amp; Student Lifecycle Overview</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => toast.info('Loading report generator...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
+          <button onClick={downloadEnrolledStudents} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
             Generate Report
           </button>
           <Link href="/registrar/students">
@@ -164,10 +206,18 @@ export default function RegistrarDashboard() {
               <CheckCircle size={18} className="text-emerald-500" /> Pending Approvals
             </h3>
             <div className="space-y-4">
-              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl cursor-pointer hover:bg-blue-100 transition-colors">
-                <p className="text-xs font-black text-blue-800 uppercase tracking-widest">Transcript Request</p>
-                <p className="text-sm font-bold text-slate-900 mt-1">Sande Sula (BSIT)</p>
-                <p className="text-[11px] text-slate-500 mt-1">Payment verified. Ready for seal.</p>
+              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl cursor-pointer hover:bg-blue-100 transition-colors flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-blue-800 uppercase tracking-widest">Transcript Request</p>
+                  <p className="text-sm font-bold text-slate-900 mt-1">Sande Sula (BSIT)</p>
+                  <p className="text-[11px] text-slate-500 mt-1">Payment verified. Ready for seal.</p>
+                </div>
+                <button 
+                  onClick={() => downloadStudentTranscript("Sande Sula")}
+                  className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors"
+                >
+                  Download Script
+                </button>
               </div>
               <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl cursor-pointer hover:bg-amber-100 transition-colors">
                 <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Result Modification</p>

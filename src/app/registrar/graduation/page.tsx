@@ -1,15 +1,48 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { GraduationCap, CheckCircle, Clock, Search, Filter, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function RegistrarGraduationPage() {
-  const finalists = [
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const rawFinalists = [
     { name: "Egabo Aaron", program: "Software Engineering", gpa: 4.8, clearance: "Cleared", status: "Ready" },
     { name: "Alimpa Anne", program: "Laws (LLB)", gpa: 4.2, clearance: "Cleared", status: "Ready" },
     { name: "Sande Sula", program: "Data Science", gpa: 3.9, clearance: "Pending Finance", status: "Hold" },
     { name: "Sarah Nakato", program: "Business Admin", gpa: 4.5, clearance: "Cleared", status: "Ready" },
   ];
+
+  const finalists = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return rawFinalists;
+    return rawFinalists.filter(f => 
+      f.name.toLowerCase().includes(query) || 
+      f.program.toLowerCase().includes(query)
+    );
+  }, [searchTerm, rawFinalists]);
+
+  const downloadCsv = () => {
+    const headers = ["Student Name", "Program", "GPA", "Clearance", "Status"];
+    const rows = finalists.map((f) => [
+      f.name, f.program, f.gpa, f.clearance, f.status
+    ]);
+
+    const escapeValue = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows]
+      .map((row) => row.map(escapeValue).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `graduation-list-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Graduation list downloaded.");
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -49,12 +82,18 @@ export default function RegistrarGraduationPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input type="text" className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" placeholder="Search finalists..." />
+              <input 
+                type="text" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none" 
+                placeholder="Search finalists..." 
+              />
             </div>
             <button className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600">
               <Filter size={16} />
             </button>
-            <button onClick={() => toast.info('Exporting graduation booklets...')} className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-blue-600">
+            <button onClick={downloadCsv} className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-blue-600">
               <Download size={16} />
             </button>
           </div>
@@ -70,7 +109,13 @@ export default function RegistrarGraduationPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {finalists.map((f, i) => (
+              {finalists.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-slate-400 text-sm">
+                    No finalists found matching &quot;{searchTerm}&quot;
+                  </td>
+                </tr>
+              ) : finalists.map((f, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold text-slate-900">{f.name}</p>
