@@ -23,8 +23,9 @@ import {
 } from "lucide-react";
 import GlobalCalendarWidget from "@/components/GlobalCalendarWidget";
 import DarkModeToggle from "@/components/DarkModeToggle";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import SidebarDeleteAccountButton from "@/components/SidebarDeleteAccountButton";
+import { useGlobalContext } from "@/lib/GlobalContext";
 
 const navItems = [
   { href: "/registrar", icon: LayoutDashboard, label: "Dashboard", mobileLabel: "Dashboard" },
@@ -44,6 +45,11 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const { signOut } = useClerk();
   const notifRef = useRef<HTMLDivElement>(null);
+  
+  const { profileImage } = useGlobalContext();
+  const { user, isLoaded } = useUser();
+  const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
+  const avatarUrl = user?.imageUrl || profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkName || "registrar"}`;
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -224,9 +230,12 @@ export default function RegistrarLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="hidden sm:block h-8 w-[1px] bg-slate-200"></div>
               <div className="flex items-center gap-3 cursor-pointer p-1 hover:bg-slate-50 rounded-lg transition-colors">
-                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">R</div>
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 bg-blue-50 flex items-center justify-center shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={avatarUrl} alt="User Profile" className="w-full h-full object-cover" />
+                </div>
                 <div className="hidden xl:block text-left">
-                  <p className="text-xs font-bold text-slate-900">Registrar Office</p>
+                  <p className="text-xs font-bold text-slate-900">{clerkName || "Registrar Office"}</p>
                   <p className="text-[10px] text-slate-500">Academic Affairs</p>
                 </div>
               </div>
