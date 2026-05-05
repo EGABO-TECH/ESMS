@@ -182,7 +182,7 @@ export default function RegistrarDashboard() {
           <div className="py-16 text-center text-slate-400">
             <BookOpen size={36} className="mx-auto mb-3 opacity-30" />
             <p className="font-bold text-sm">No courses registered yet.</p>
-            <p className="text-xs mt-1">Click "Add Course" to get started.</p>
+            <p className="text-xs mt-1">Click &quot;Add Course&quot; to get started.</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-50">
