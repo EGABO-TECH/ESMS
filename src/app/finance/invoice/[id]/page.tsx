@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Printer, ChevronLeft, Download, Building2, User, Calendar, Hash, CreditCard } from "lucide-react";
+import { Printer, ChevronLeft, Download, User, Calendar, CreditCard } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 import { toast } from "sonner";
 

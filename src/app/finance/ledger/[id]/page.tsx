@@ -1,9 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Printer, ChevronLeft, Download, ShieldCheck, Activity, CreditCard, ArrowUpRight, Hash } from "lucide-react";
+import { Printer, ChevronLeft, ShieldCheck, Activity, CreditCard, ArrowUpRight, Hash } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
-import { toast } from "sonner";
+
 
 export default function LedgerDetailPage() {
   const { id } = useParams();
