@@ -55,7 +55,7 @@ export default function LecturerDashboard() {
             Teaching Materials
           </button>
           <Link href="/lecturer/grades">
-            <button onClick={() => alert('Feature in development...')}  className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+            <button className="px-4 py-2 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
               Open Grading Center <ArrowRight size={16} />
             </button>
           </Link>
@@ -136,9 +136,11 @@ export default function LecturerDashboard() {
                   <p className="text-sm font-bold">Submit by May 12</p>
                 </div>
               </div>
-              <button onClick={() => toast.info('Opening marksheet...')} className="w-full py-3 bg-white text-indigo-600 font-black rounded-xl text-sm hover:bg-indigo-50 transition-all">
-                Enter Grades Now
-              </button>
+              <Link href="/lecturer/grades" className="block w-full">
+                <button className="w-full py-3 bg-white text-indigo-600 font-black rounded-xl text-sm hover:bg-indigo-50 transition-all">
+                  Enter Grades Now
+                </button>
+              </Link>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-10">
               <ClipboardList size={140} />
