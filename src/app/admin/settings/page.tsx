@@ -4,6 +4,7 @@ import { Settings, Shield, Bell, Globe, Lock, Database, Save, ChevronRight, User
 import { toast } from "sonner";
 import { useState } from "react";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
+import ProfileSettingsForm from "@/components/ProfileSettingsForm";
 
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
@@ -14,7 +15,7 @@ export default function AdminSettingsPage() {
     { id: "notifications", title: "System Alerts", icon: Bell, desc: "Configure broadcast rules and automated notifications." },
     { id: "regional", title: "Regional & Localization", icon: Globe, desc: "Currency (UGX), timezone, and language settings." },
     { id: "database", title: "Data Management", icon: Database, desc: "Backup protocols, audit logs, and system maintenance." },
-    { id: "account", title: "Personal Account", icon: User, desc: "Manage your personal profile and account data." },
+    { id: "account", title: "Personal Account", icon: User, desc: "Update your name, photo and personal info." },
   ];
 
   return (
@@ -32,21 +33,34 @@ export default function AdminSettingsPage() {
               key={section.id}
               onClick={() => setActiveTab(section.id)}
               className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all text-left group border ${
-                activeTab === section.id 
-                  ? 'bg-primary text-white border-primary shadow-lg scale-[1.02]' 
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-primary/50'
+                activeTab === section.id
+                  ? "bg-primary text-white border-primary shadow-lg scale-[1.02]"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-primary/50"
               }`}
             >
-              <div className={`p-2 rounded-lg ${activeTab === section.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary'} transition-colors`}>
+              <div
+                className={`p-2 rounded-lg ${
+                  activeTab === section.id
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-100 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary"
+                } transition-colors`}
+              >
                 <section.icon size={20} />
               </div>
               <div className="flex-1 overflow-hidden">
                 <p className="font-bold text-sm truncate">{section.title}</p>
-                <p className={`text-[10px] truncate mt-0.5 ${activeTab === section.id ? 'text-white/70' : 'text-slate-400'}`}>
+                <p
+                  className={`text-[10px] truncate mt-0.5 ${
+                    activeTab === section.id ? "text-white/70" : "text-slate-400"
+                  }`}
+                >
                   {section.desc}
                 </p>
               </div>
-              <ChevronRight size={16} className={`${activeTab === section.id ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
+              <ChevronRight
+                size={16}
+                className={`${activeTab === section.id ? "opacity-100" : "opacity-0"} transition-opacity`}
+              />
             </button>
           ))}
         </div>
@@ -56,30 +70,45 @@ export default function AdminSettingsPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900 capitalize">{activeTab} Settings</h2>
-              <button 
-                onClick={() => toast.success('Settings updated successfully')}
-                className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-all flex items-center gap-2"
-              >
-                <Save size={18} /> Save Changes
-              </button>
+              {activeTab !== "account" && (
+                <button
+                  onClick={() => toast.success("Settings updated successfully")}
+                  className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-all flex items-center gap-2"
+                >
+                  <Save size={18} /> Save Changes
+                </button>
+              )}
             </div>
 
             <div className="p-8 space-y-8 max-w-2xl">
-              {activeTab === 'general' && (
+              {activeTab === "general" && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Institution Name</label>
-                      <input type="text" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm font-semibold" defaultValue="Cavendish University Uganda" />
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm font-semibold"
+                        defaultValue="Cavendish University Uganda"
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Portal Version</label>
-                      <input type="text" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-sm" defaultValue="v2.4.0-Enterprise" disabled />
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-sm"
+                        defaultValue="v2.4.0-Enterprise"
+                        disabled
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Institution Email</label>
-                    <input type="email" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary transition-all text-sm" defaultValue="admin@cavendish.ac.ug" />
+                    <input
+                      type="email"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary transition-all text-sm"
+                      defaultValue="admin@cavendish.ac.ug"
+                    />
                   </div>
                   <div className="pt-4 border-t border-slate-100">
                     <h3 className="font-bold text-slate-800 text-sm mb-4">Academic Periods</h3>
@@ -97,7 +126,7 @@ export default function AdminSettingsPage() {
                 </>
               )}
 
-              {activeTab === 'security' && (
+              {activeTab === "security" && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl group hover:border-primary/30 transition-all cursor-pointer">
                     <div className="flex gap-4 items-center">
@@ -129,23 +158,23 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
               )}
-              
-              {activeTab === 'account' && (
+
+              {activeTab === "account" && (
                 <div className="space-y-6">
-                  <div className="mb-6">
+                  <div className="mb-2">
                     <h3 className="font-bold text-slate-900">Personal Information</h3>
-                    <p className="text-sm text-slate-500">Update your profile information and manage your account.</p>
+                    <p className="text-sm text-slate-500">Update your profile photo and display name across all portals.</p>
                   </div>
-                  
-                  {/* We can add profile form fields here later */}
-                  
+
+                  <ProfileSettingsForm accentColor="primary" />
+
                   <div className="pt-6 border-t border-slate-100">
                     <DeleteAccountButton />
                   </div>
                 </div>
               )}
 
-              {activeTab !== 'general' && activeTab !== 'security' && activeTab !== 'account' && (
+              {activeTab !== "general" && activeTab !== "security" && activeTab !== "account" && (
                 <div className="py-12 text-center">
                   <Settings size={48} className="mx-auto text-slate-200 mb-4 animate-spin-slow" />
                   <p className="text-slate-500 font-bold">Module {activeTab} is ready for configuration.</p>
