@@ -89,23 +89,45 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     return fallback;
   };
 
-  const [students, setStudents] = useState(() => getInitialState("esms-students", MOCK_STUDENTS));
-  const [courses, setCourses] = useState(() => getInitialState("esms-courses", MOCK_COURSES));
-  const [stats, setStats] = useState(() => getInitialState("esms-stats", MOCK_STATS));
-  const [transactions, setTransactions] = useState(() => getInitialState("esms-transactions", MOCK_TRANSACTIONS));
-  const [grading, setGrading] = useState(() => getInitialState("esms-grading", MOCK_GRADING));
-  const [studentResults, setStudentResults] = useState(() => getInitialState("esms-results", MOCK_STUDENT_RESULTS));
-  const [users, setUsers] = useState(() => getInitialState("esms-users", MOCK_USERS));
-  const [assignments, setAssignments] = useState(() => getInitialState("esms-assignments", MOCK_ASSIGNMENTS));
-  // Validate materials is a plain object (Record), NOT an array (old format)
-  const [materials, setMaterials] = useState(() => getInitialState(
-    "esms-materials-v2",
-    MOCK_MATERIALS,
-    (v) => typeof v === "object" && v !== null && !Array.isArray(v)
-  ));
-  const [lessonPlans, setLessonPlans] = useState(() => getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
-  const [transcriptRequests, setTranscriptRequests] = useState(() => getInitialState("esms-transcript-requests", MOCK_TRANSCRIPT_REQUESTS));
+  const [students, setStudents] = useState(MOCK_STUDENTS);
+  const [courses, setCourses] = useState(MOCK_COURSES);
+  const [stats, setStats] = useState(MOCK_STATS);
+  const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
+  const [grading, setGrading] = useState(MOCK_GRADING);
+  const [studentResults, setStudentResults] = useState(MOCK_STUDENT_RESULTS);
+  const [users, setUsers] = useState(MOCK_USERS);
+  const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
+  const [materials, setMaterials] = useState(MOCK_MATERIALS);
+  const [lessonPlans, setLessonPlans] = useState(MOCK_LESSON_PLANS);
+  const [transcriptRequests, setTranscriptRequests] = useState(MOCK_TRANSCRIPT_REQUESTS);
   const [hasBalance, setHasBalance] = useState(true);
+
+  // Load state from localStorage after mount to avoid hydration mismatch
+  useEffect(() => {
+    setStudents(getInitialState("esms-students", MOCK_STUDENTS));
+    setCourses(getInitialState("esms-courses", MOCK_COURSES));
+    setStats(getInitialState("esms-stats", MOCK_STATS));
+    setTransactions(getInitialState("esms-transactions", MOCK_TRANSACTIONS));
+    setGrading(getInitialState("esms-grading", MOCK_GRADING));
+    setStudentResults(getInitialState("esms-results", MOCK_STUDENT_RESULTS));
+    setUsers(getInitialState("esms-users", MOCK_USERS));
+    setAssignments(getInitialState("esms-assignments", MOCK_ASSIGNMENTS));
+    setMaterials(getInitialState(
+      "esms-materials-v2",
+      MOCK_MATERIALS,
+      (v) => typeof v === "object" && v !== null && !Array.isArray(v)
+    ));
+    setLessonPlans(getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
+    setTranscriptRequests(getInitialState("esms-transcript-requests", MOCK_TRANSCRIPT_REQUESTS));
+    
+    // Theme
+    const savedDark = localStorage.getItem("esms-dark-mode");
+    if (savedDark !== null) setDarkMode(savedDark === "true");
+    
+    // Profile
+    const savedProfile = localStorage.getItem("esms-profile-image");
+    if (savedProfile) setProfileImageState(savedProfile);
+  }, []);
 
   // Persist state changes to localStorage
   useEffect(() => { localStorage.setItem("esms-students", JSON.stringify(students)); }, [students]);
@@ -148,14 +170,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Initialise from localStorage or system preference
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("esms-dark-mode");
-      if (saved !== null) return saved === "true";
-      return false; // Default to light mode
-    }
-    return false;
-  });
+  const [darkMode, setDarkMode] = useState<boolean>(false);
 
   // Apply / remove the `dark` class on <html> whenever darkMode changes
   useEffect(() => {
@@ -171,12 +186,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const toggleDarkMode = () => setDarkMode(prev => !prev);
 
   // Profile Image
-  const [profileImage, setProfileImageState] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("esms-profile-image");
-    }
-    return null;
-  });
+  const [profileImage, setProfileImageState] = useState<string | null>(null);
 
   const setProfileImage = (image: string | null) => {
     setProfileImageState(image);

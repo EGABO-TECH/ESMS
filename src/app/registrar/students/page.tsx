@@ -18,10 +18,23 @@ import {
 } from "lucide-react";
 
 import { useGlobalContext } from "@/lib/GlobalContext";
+import { downloadAdmissionPDF } from "@/lib/pdfUtils";
 
 export default function RegistrarStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { students: rawStudents, deleteStudent } = useGlobalContext();
+  const { students: rawStudents, deleteStudent, studentResults } = useGlobalContext();
+
+  const handleDownloadPDF = (student: typeof rawStudents[0]) => {
+    try {
+      console.log("Generating PDF for:", student.name);
+      const subjects = studentResults.filter(r => r.studentId === student.id);
+      downloadAdmissionPDF(student, subjects);
+      toast.success(`Admission record for ${student.name} is downloading...`);
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      toast.error("Failed to generate PDF. Please check the console.");
+    }
+  };
 
   const students = useMemo(
     () =>
@@ -34,6 +47,7 @@ export default function RegistrarStudentsPage() {
         status: s.status === "Enrolled" ? "Active" : s.status,
         intake: s.intake,
         email: s.email,
+        original: s
       })),
     [rawStudents]
   );
@@ -157,7 +171,13 @@ export default function RegistrarStudentsPage() {
                       <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black text-xs">
                         {s.name.charAt(0)}
                       </div>
-                      <span className="font-bold text-slate-700 text-sm">{s.name}</span>
+                      <div 
+                        className="cursor-pointer hover:opacity-70 transition-opacity"
+                        onClick={() => handleDownloadPDF(s.original)}
+                        title="Download Admission PDF"
+                      >
+                        <span className="font-bold text-slate-700 text-sm border-b border-transparent hover:border-blue-600">{s.name}</span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm font-mono text-slate-500">{s.id}</td>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useGlobalContext } from "@/lib/GlobalContext";
-import { UserPlus, Search, Filter, CheckCircle, Clock, X, BookOpen } from "lucide-react";
+import { UserPlus, Search, Filter, CheckCircle, Clock, X, BookOpen, Check } from "lucide-react";
+import { downloadAdmissionPDF } from "@/lib/pdfUtils";
 import { toast } from "sonner";
 
 export default function RegistrarEnrollmentsPage() {
@@ -10,22 +11,46 @@ export default function RegistrarEnrollmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<typeof students[0] | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
 
-  // Only consider students who are "Enrolled" as admitted
-  const admittedStudents = students.filter(s => s.status === "Enrolled" || s.status === "Admitted");
+  // Reflect students added in registrar section (Pending) as well as Enrolled/Admitted
+  const admittedStudents = students.filter(s => s.status === "Enrolled" || s.status === "Admitted" || s.status === "Pending");
   const filteredStudents = admittedStudents.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleOpenModal = (student: typeof students[0]) => {
     setSelectedStudent(student);
-    setSelectedCourse("");
+    setSelectedCourses([]);
     setIsModalOpen(true);
   };
 
+  const handleDownloadPDF = (student: typeof students[0]) => {
+    try {
+      console.log("Generating PDF for:", student.name);
+      const subjects = studentResults.filter(r => r.studentId === student.id);
+      downloadAdmissionPDF(student, subjects);
+      toast.success(`Admission record for ${student.name} is downloading...`);
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      toast.error("Failed to generate PDF. Please check the console.");
+    }
+  };
+
+  const toggleCourse = (courseCode: string) => {
+    setSelectedCourses(prev => 
+      prev.includes(courseCode) 
+        ? prev.filter(c => c !== courseCode) 
+        : [...prev, courseCode]
+    );
+  };
+
   const handleEnroll = () => {
-    if (!selectedStudent || !selectedCourse) return;
-    enrollStudentInCourse(selectedStudent.id, selectedCourse);
-    toast.success(`${selectedStudent.name} enrolled successfully!`);
+    if (!selectedStudent || selectedCourses.length === 0) return;
+    
+    selectedCourses.forEach(courseCode => {
+      enrollStudentInCourse(selectedStudent.id, courseCode);
+    });
+    
+    toast.success(`${selectedStudent.name} enrolled in ${selectedCourses.length} subjects successfully!`);
     setIsModalOpen(false);
   };
 
@@ -33,7 +58,7 @@ export default function RegistrarEnrollmentsPage() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div>
         <h1 className="text-3xl font-black text-slate-900">Enrollment Hub</h1>
-        <p className="text-slate-500 mt-1">Enroll admitted students into new subjects.</p>
+        <p className="text-slate-500 mt-1">Enroll admitted and newly added students into subjects.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -56,7 +81,7 @@ export default function RegistrarEnrollmentsPage() {
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-wrap gap-4">
-          <h2 className="text-lg font-bold text-slate-900">Admitted Students</h2>
+          <h2 className="text-lg font-bold text-slate-900">Eligible Students</h2>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
@@ -79,7 +104,7 @@ export default function RegistrarEnrollmentsPage() {
               <tr>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Program</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Type</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Subjects</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
@@ -94,15 +119,25 @@ export default function RegistrarEnrollmentsPage() {
                         <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">
                           {s.name.charAt(0)}
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900">{s.name}</p>
+                        <div 
+                          className="cursor-pointer hover:opacity-70 transition-opacity"
+                          onClick={() => handleDownloadPDF(s)}
+                          title="Download Admission PDF"
+                        >
+                          <p className="text-sm font-bold text-slate-900 border-b border-transparent hover:border-blue-600">{s.name}</p>
                           <p className="text-[10px] text-slate-400">{s.id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm font-semibold text-slate-600">{s.program}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[10px] font-bold rounded uppercase tracking-wider">Admitted</span>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${
+                        s.status === 'Enrolled' || s.status === 'Admitted' 
+                          ? 'bg-emerald-100 text-emerald-600' 
+                          : 'bg-amber-100 text-amber-600'
+                      }`}>
+                        {s.status === 'Pending' ? 'New Admission' : 'Admitted'}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
@@ -115,7 +150,7 @@ export default function RegistrarEnrollmentsPage() {
                         className="text-[11px] font-bold text-blue-600 hover:underline flex items-center justify-end gap-1 ml-auto"
                       >
                         <BookOpen size={14} />
-                        Enroll Subjects
+                        Assign Subjects
                       </button>
                     </td>
                   </tr>
@@ -123,8 +158,8 @@ export default function RegistrarEnrollmentsPage() {
               })}
               {filteredStudents.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-slate-500 text-sm">
-                    No admitted students found.
+                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500 text-sm">
+                    No eligible students found.
                   </td>
                 </tr>
               )}
@@ -135,60 +170,82 @@ export default function RegistrarEnrollmentsPage() {
 
       {isModalOpen && selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center p-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Enroll Subject</h3>
+              <h3 className="text-lg font-bold text-slate-900">Assign Subjects</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                 <X size={20} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Student</label>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">
-                    {selectedStudent.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{selectedStudent.name}</p>
-                    <p className="text-[10px] text-slate-500">{selectedStudent.id}</p>
-                  </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg uppercase">
+                  {selectedStudent.name.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-base font-bold text-slate-900">{selectedStudent.name}</p>
+                  <p className="text-xs text-slate-500">{selectedStudent.id} • {selectedStudent.program}</p>
                 </div>
               </div>
               
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Select Course</label>
-                <select 
-                  className="w-full p-3 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                >
-                  <option value="">-- Choose a Course --</option>
+              <div className="space-y-3">
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">Select Subjects to Assign</label>
+                <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                   {courses.map(course => {
                     const isEnrolled = studentResults.some(r => r.studentId === selectedStudent.id && r.code === course.code);
+                    const isSelected = selectedCourses.includes(course.code);
+                    
                     return (
-                      <option key={course.code} value={course.code} disabled={isEnrolled}>
-                        {course.code} - {course.name} {isEnrolled ? "(Already Enrolled)" : ""}
-                      </option>
+                      <div 
+                        key={course.code}
+                        onClick={() => !isEnrolled && toggleCourse(course.code)}
+                        className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                          isEnrolled 
+                            ? 'bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed' 
+                            : isSelected 
+                              ? 'bg-blue-50 border-blue-200 shadow-sm' 
+                              : 'bg-white border-slate-200 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                            isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-300'
+                          }`}>
+                            {isSelected && <Check size={12} strokeWidth={4} />}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-800">{course.code}: {course.name}</p>
+                            <p className="text-[10px] text-slate-500">{course.faculty} • {course.credits} Credits</p>
+                          </div>
+                        </div>
+                        {isEnrolled && (
+                          <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded uppercase">Already Enrolled</span>
+                        )}
+                      </div>
                     );
                   })}
-                </select>
+                </div>
               </div>
             </div>
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleEnroll}
-                disabled={!selectedCourse}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Enroll Student
-              </button>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-between items-center">
+              <p className="text-xs font-bold text-slate-500">
+                {selectedCourses.length} {selectedCourses.length === 1 ? 'subject' : 'subjects'} selected
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleEnroll}
+                  disabled={selectedCourses.length === 0}
+                  className="px-6 py-2 bg-blue-600 text-white text-sm font-black rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-blue-200 active:scale-95"
+                >
+                  Assign Selected Subjects
+                </button>
+              </div>
             </div>
           </div>
         </div>
