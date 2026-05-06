@@ -526,7 +526,15 @@ export default function StudentAcademics() {
                               const colorClass = typeColorMap[ext] ?? "bg-slate-100 text-slate-600";
 
                               const handleDownload = () => {
-                                // Create a placeholder download since we are frontend-only
+                                if (file.dataUrl) {
+                                  const a = document.createElement("a");
+                                  a.href = file.dataUrl;
+                                  a.download = file.name;
+                                  a.click();
+                                  toast.success(`Downloading "${file.name}"`);
+                                  return;
+                                }
+                                // Fallback for old/mock data without real file contents
                                 const content = `File: ${file.name}\nCourse: ${m.code} — ${m.name}\nUploaded: ${file.date}\nSize: ${file.size}\n\nThis is a placeholder. Connect a backend to serve real file content.`;
                                 const blob = new Blob([content], { type: "text/plain" });
                                 const url = URL.createObjectURL(blob);
