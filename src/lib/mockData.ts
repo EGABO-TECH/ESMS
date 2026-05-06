@@ -1,66 +1,66 @@
 export const MOCK_STUDENTS = [
-  { 
-    id: "CUU-258-154", 
-    name: "Egabo Aaron", 
-    program: "Bachelor of Science in Software Engineering (BSE)", 
-    year: "4", 
-    sem: "1", 
-    status: "Enrolled", 
-    email: "a.egabo@students.cavendish.ac.ug", 
+  {
+    id: "CUU-258-154",
+    name: "Muawia Aaron",
+    program: "Bachelor of Science in Software Engineering (BSE)",
+    year: "4",
+    sem: "1",
+    status: "Enrolled",
+    email: "a.egabo@students.cavendish.ac.ug",
     phoneNumber: "+256 700 111 111",
-    nationality: "Ugandan", 
+    nationality: "Ugandan",
     applied_at: "2023-10-23T09:15:00Z",
     intake: "Aug 2022"
   },
-  { 
-    id: "CUU-230-500", 
-    name: "Faida Nancy", 
-    program: "Bachelor of Science in Data Science and Analytics (BDSA)", 
-    year: "1", 
-    sem: "1", 
-    status: "Pending", 
-    email: "n.faida@students.cavendish.ac.ug", 
+  {
+    id: "CUU-230-500",
+    name: "Faida Nancy",
+    program: "Bachelor of Science in Data Science and Analytics (BDSA)",
+    year: "1",
+    sem: "1",
+    status: "Pending",
+    email: "n.faida@students.cavendish.ac.ug",
     phoneNumber: "+256 700 222 222",
-    nationality: "Ugandan", 
+    nationality: "Ugandan",
     applied_at: "2024-01-10T11:00:00Z",
     intake: "Aug 2025"
   },
-  { 
-    id: "CUU-273-318", 
-    name: "Ababiku Brenda", 
-    program: "Bachelor of Business Administration (BBA)", 
-    year: "3", 
-    sem: "2", 
-    status: "Enrolled", 
-    email: "b.ababiku@students.cavendish.ac.ug", 
+  {
+    id: "CUU-273-318",
+    name: "Ababiku Brenda",
+    program: "Bachelor of Business Administration (BBA)",
+    year: "3",
+    sem: "2",
+    status: "Enrolled",
+    email: "b.ababiku@students.cavendish.ac.ug",
     phoneNumber: "+256 700 333 333",
-    nationality: "Ugandan", 
+    nationality: "Ugandan",
     applied_at: "2023-10-24T10:00:00Z",
     intake: "Aug 2023"
   },
-  { 
-    id: "CUU-269-896", 
-    name: "Alimpa Anne Hillary", 
-    program: "Bachelor of Science in Information Technology (BIT)", 
-    year: "2", 
-    sem: "1", 
-    status: "Enrolled", 
-    email: "h.alimpa@students.cavendish.ac.ug", 
+  {
+    id: "CUU-269-896",
+    name: "Alimpa Anne Hillary",
+    program: "Bachelor of Science in Information Technology (BIT)",
+    year: "2",
+    sem: "1",
+    status: "Enrolled",
+    email: "h.alimpa@students.cavendish.ac.ug",
     phoneNumber: "+256 700 444 444",
-    nationality: "Kenyan", 
+    nationality: "Kenyan",
     applied_at: "2023-10-23T14:30:00Z",
     intake: "Jan 2024"
   },
-  { 
-    id: "CUU-274-961", 
-    name: "Kirabo Alice", 
-    program: "Bachelor of Laws (LLB)", 
-    year: "1", 
-    sem: "2", 
-    status: "Inactive", 
-    email: "a.kirabo@students.cavendish.ac.ug", 
+  {
+    id: "CUU-274-961",
+    name: "Kirabo Alice",
+    program: "Bachelor of Laws (LLB)",
+    year: "1",
+    sem: "2",
+    status: "Inactive",
+    email: "a.kirabo@students.cavendish.ac.ug",
     phoneNumber: "+256 700 555 555",
-    nationality: "Ugandan", 
+    nationality: "Ugandan",
     applied_at: "2023-09-15T08:00:00Z",
     intake: "Aug 2024"
   },
@@ -103,13 +103,13 @@ export const MOCK_GRADING = [
 ];
 
 export const GRADING_SCALE = [
-  { grade: "A",  range: "80–100", gp: "5.0", color: "text-finance-success" },
-  { grade: "B+", range: "75–79",  gp: "4.5", color: "text-primary" },
-  { grade: "B",  range: "70–74",  gp: "4.0", color: "text-primary" },
-  { grade: "C+", range: "65–69",  gp: "3.5", color: "text-exam-warning" },
-  { grade: "C",  range: "60–64",  gp: "3.0", color: "text-exam-warning" },
-  { grade: "D",  range: "50–59",  gp: "2.0", color: "text-orange-500" },
-  { grade: "F",  range: "0–49",   gp: "0.0", color: "text-error" },
+  { grade: "A", range: "80–100", gp: "5.0", color: "text-finance-success" },
+  { grade: "B+", range: "75–79", gp: "4.5", color: "text-primary" },
+  { grade: "B", range: "70–74", gp: "4.0", color: "text-primary" },
+  { grade: "C+", range: "65–69", gp: "3.5", color: "text-exam-warning" },
+  { grade: "C", range: "60–64", gp: "3.0", color: "text-exam-warning" },
+  { grade: "D", range: "50–59", gp: "2.0", color: "text-orange-500" },
+  { grade: "F", range: "0–49", gp: "0.0", color: "text-error" },
 ];
 
 export const MOCK_STUDENT_RESULTS = [
@@ -134,16 +134,10 @@ export const MOCK_ASSIGNMENTS = [
   { id: 4, title: "Final Project Draft", course: "SWE422", dueDate: "2025-12-10", maxMarks: 100, instructions: "Submit your final project draft with technical documentation.", submissions: 5, total: 32, status: "Draft" },
 ];
 
-// Materials are stored as Record<courseCode, UploadedFile[]> to match the lecturer upload format
-export const MOCK_MATERIALS: Record<string, { name: string; size: string; date: string; type: string }[]> = {
-  SWE311: [
-    { name: "Course Outline & Syllabus.pdf", type: "PDF", size: "2.4 MB", date: "Oct 24, 2025" },
-    { name: "Lecture 1: Introduction.pptx", type: "PPTX", size: "5.1 MB", date: "Oct 25, 2025" },
-  ],
-  SWE313: [
-    { name: "Cloud Computing Overview.pdf", type: "PDF", size: "3.1 MB", date: "Oct 26, 2025" },
-  ],
-};
+export const MOCK_MATERIALS = [
+  { id: 1, title: "Course Outline & Syllabus", type: "PDF", size: "2.4 MB", uploaded: "Oct 24, 2025", course: "SWE311" },
+  { id: 2, title: "Lecture 1: Introduction", type: "PPTX", size: "5.1 MB", uploaded: "Oct 25, 2025", course: "SWE311" },
+];
 
 export const MOCK_LESSON_PLANS: Record<string, Record<string, string>> = {
   "SWE311": {

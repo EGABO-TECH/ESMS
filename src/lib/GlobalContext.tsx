@@ -49,6 +49,7 @@ type GlobalContextType = {
   addTranscriptRequest: (request: typeof MOCK_TRANSCRIPT_REQUESTS[0]) => void;
   updateTranscriptRequestStatus: (id: string, newStatus: string) => void;
   deleteTranscriptRequest: (id: string) => void;
+  enrollStudentInCourse: (studentId: string, courseCode: string) => void;
 
   // Dark Mode
   darkMode: boolean;
@@ -218,6 +219,29 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     setTranscriptRequests(prev => prev.filter(r => r.id !== id));
   };
 
+  const enrollStudentInCourse = (studentId: string, courseCode: string) => {
+    const course = courses.find(c => c.code === courseCode);
+    if (!course) return;
+    
+    const alreadyEnrolled = studentResults.some(r => r.studentId === studentId && r.code === courseCode);
+    if (alreadyEnrolled) return;
+
+    const newResult = {
+      studentId,
+      code: course.code,
+      name: course.name,
+      credits: course.credits,
+      cw: 0,
+      exam: 0,
+      score: 0,
+      grade: "N/A",
+      gp: 0.0,
+    };
+    
+    setStudentResults(prev => [...prev, newResult]);
+    setCourses(prev => prev.map(c => c.code === courseCode ? { ...c, students: c.students + 1 } : c));
+  };
+
   return (
     <GlobalContext.Provider value={{
       students, setStudents,
@@ -239,6 +263,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       addTranscriptRequest,
       updateTranscriptRequestStatus,
       deleteTranscriptRequest,
+      enrollStudentInCourse,
       darkMode,
       toggleDarkMode,
       profileImage,

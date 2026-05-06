@@ -9,7 +9,7 @@ import { useGlobalContext } from "@/lib/GlobalContext";
 export default function AdmissionsDashboard() {
   const [programFilter, setProgramFilter] = useState("All Programs");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const { students } = useGlobalContext();
+  const { students, enrollStudent } = useGlobalContext();
 
   const applicants = useMemo(
     () =>
@@ -252,9 +252,26 @@ export default function AdmissionsDashboard() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <button onClick={() => toast.info("Loading application review...")} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                      Review
-                    </button>
+                    <div className="flex gap-2">
+                      {applicant.status !== "Enrolled" && applicant.status !== "Completed" ? (
+                        <button 
+                          onClick={() => {
+                            const student = students.find(s => s.email === applicant.email);
+                            if (student) {
+                              enrollStudent(student.id);
+                              toast.success(`${applicant.name} has been admitted!`);
+                            }
+                          }}
+                          className="text-emerald-600 hover:text-emerald-800 text-sm font-semibold"
+                        >
+                          Admit
+                        </button>
+                      ) : (
+                        <button onClick={() => toast.info("Loading application review...")} className="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                          Review
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
