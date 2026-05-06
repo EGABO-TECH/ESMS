@@ -17,7 +17,7 @@ interface EnrolledSubject {
 }
 
 export const downloadAdmissionPDF = (student: Student, subjects: EnrolledSubject[]) => {
-  const doc = jsPDF() as any;
+  const doc = new jsPDF() as any;
 
   // Header - Logo Placeholder
   doc.setFillColor(0, 51, 102);
