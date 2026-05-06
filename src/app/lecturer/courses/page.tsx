@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
-type UploadedFile = { name: string; size: string; date: string; type: string };
+type UploadedFile = { name: string; size: string; date: string; type: string; dataUrl?: string };
 type LessonPlan = Record<string, string>; // weekKey -> topic
 
 const WEEKS = Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`);
@@ -67,21 +67,44 @@ export default function LecturerCoursesPage() {
     toast.success("Lesson plan downloaded.");
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!materialCourse) return;
     const files = Array.from(e.target.files ?? []);
     if (files.length === 0) return;
-    const newFiles: UploadedFile[] = files.map(f => ({
-      name: f.name,
-      size: formatBytes(f.size),
-      date: new Date().toLocaleDateString("en-GB"),
-      type: f.name.split(".").pop()?.toUpperCase() ?? "FILE",
+
+    // We limit file sizes to 1.5MB to avoid busting localStorage quota
+    const MAX_SIZE = 1.5 * 1024 * 1024;
+    const validFiles = files.filter(f => {
+      if (f.size > MAX_SIZE) {
+        toast.error(`File ${f.name} is too large. Max size is 1.5MB for this demo.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    const newFiles: UploadedFile[] = await Promise.all(validFiles.map(f => {
+      return new Promise<UploadedFile>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          resolve({
+            name: f.name,
+            size: formatBytes(f.size),
+            date: new Date().toLocaleDateString("en-GB"),
+            type: f.name.split(".").pop()?.toUpperCase() ?? "FILE",
+            dataUrl: event.target?.result as string,
+          });
+        };
+        reader.readAsDataURL(f);
+      });
     }));
+
     setMaterials(prev => ({
       ...prev,
       [materialCourse]: [...(prev[materialCourse] ?? []), ...newFiles],
     }));
-    toast.success(`${files.length} file${files.length > 1 ? "s" : ""} uploaded for ${materialCourse}`);
+    toast.success(`${validFiles.length} file${validFiles.length > 1 ? "s" : ""} uploaded for ${materialCourse}`);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -94,6 +117,14 @@ export default function LecturerCoursesPage() {
   };
 
   const simulateDownload = (file: UploadedFile) => {
+    if (file.dataUrl) {
+      const a = document.createElement("a");
+      a.href = file.dataUrl;
+      a.download = file.name;
+      a.click();
+      toast.success(`Downloading ${file.name}...`);
+      return;
+    }
     const blob = new Blob([`Simulated content for ${file.name}`], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = file.name; a.click();
