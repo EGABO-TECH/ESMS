@@ -134,10 +134,16 @@ export const MOCK_ASSIGNMENTS = [
   { id: 4, title: "Final Project Draft", course: "SWE422", dueDate: "2025-12-10", maxMarks: 100, instructions: "Submit your final project draft with technical documentation.", submissions: 5, total: 32, status: "Draft" },
 ];
 
-export const MOCK_MATERIALS = [
-  { id: 1, title: "Course Outline & Syllabus", type: "PDF", size: "2.4 MB", uploaded: "Oct 24, 2025", course: "SWE311" },
-  { id: 2, title: "Lecture 1: Introduction", type: "PPTX", size: "5.1 MB", uploaded: "Oct 25, 2025", course: "SWE311" },
-];
+// Materials are stored as Record<courseCode, UploadedFile[]> to match the lecturer upload format
+export const MOCK_MATERIALS: Record<string, { name: string; size: string; date: string; type: string }[]> = {
+  SWE311: [
+    { name: "Course Outline & Syllabus.pdf", type: "PDF", size: "2.4 MB", date: "Oct 24, 2025" },
+    { name: "Lecture 1: Introduction.pptx", type: "PPTX", size: "5.1 MB", date: "Oct 25, 2025" },
+  ],
+  SWE313: [
+    { name: "Cloud Computing Overview.pdf", type: "PDF", size: "3.1 MB", date: "Oct 26, 2025" },
+  ],
+};
 
 export const MOCK_LESSON_PLANS: Record<string, Record<string, string>> = {
   "SWE311": {

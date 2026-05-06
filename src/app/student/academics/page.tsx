@@ -418,90 +418,156 @@ export default function StudentAcademics() {
       {activeTab === "materials" && (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Assignments */}
+
+            {/* ── Assignments Panel ── */}
             <div className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
-              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle">
+              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
                   <FileText size={18} className="text-indigo-600" /> My Assignments
                 </h3>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  {assignments.filter(a => myModules.some(m => m.code === a.course)).length} posted
+                </span>
               </div>
-              <div className="divide-y divide-border-subtle max-h-[500px] overflow-y-auto">
+              <div className="divide-y divide-border-subtle max-h-[520px] overflow-y-auto">
                 {assignments.filter(a => myModules.some(m => m.code === a.course)).length === 0 ? (
-                  <p className="p-6 text-center text-slate-500 text-sm">No assignments posted for your courses yet.</p>
+                  <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                    <FileText size={32} className="mb-3 opacity-20" />
+                    <p className="text-sm font-bold">No assignments posted yet</p>
+                    <p className="text-xs mt-1">Your lecturers haven&apos;t posted any assignments yet.</p>
+                  </div>
                 ) : (
-                  assignments.filter(a => myModules.some(m => m.code === a.course)).map(a => (
-                    <div key={a.id} className="p-5 hover:bg-slate-50 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 className="font-bold text-slate-900">{a.title}</h4>
-                          <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">{a.course}</span>
+                  assignments.filter(a => myModules.some(m => m.code === a.course)).map(a => {
+                    const isPastDue = new Date(a.dueDate) < new Date();
+                    const statusStyle = {
+                      "Active": "bg-emerald-100 text-emerald-700",
+                      "Closing Soon": "bg-amber-100 text-amber-700",
+                      "Grading": "bg-blue-100 text-blue-700",
+                      "Draft": "bg-slate-100 text-slate-500",
+                      "Closed": "bg-red-100 text-red-600",
+                    }[a.status] ?? "bg-slate-100 text-slate-500";
+
+                    return (
+                      <div key={a.id} className="p-5 hover:bg-slate-50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1 pr-2">
+                            <h4 className="font-bold text-slate-900 leading-snug">{a.title}</h4>
+                            <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg mt-1 inline-block">{a.course}</span>
+                          </div>
+                          <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase shrink-0 ${statusStyle}`}>
+                            {a.status}
+                          </span>
                         </div>
-                        <span className={`text-[10px] font-black px-2 py-1 rounded uppercase ${a.status === "Closing Soon" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
-                          {a.status}
-                        </span>
+                        <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-2">{a.instructions}</p>
+                        <div className="flex items-center justify-between">
+                          <div className={`flex items-center gap-1 text-[11px] font-bold ${isPastDue ? "text-red-500" : "text-slate-400"}`}>
+                            <Clock size={11} />
+                            Due: {new Date(a.dueDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            {isPastDue && <span className="ml-1 text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-black uppercase">Overdue</span>}
+                          </div>
+                          <button
+                            onClick={() => toast.success(`Submission portal for "${a.title}" will be available soon.`)}
+                            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+                          >
+                            Submit Work
+                          </button>
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-600 mb-3">{a.instructions}</p>
-                      <div className="flex items-center justify-between mt-4 text-[10px] font-bold text-slate-500">
-                        <div className="flex items-center gap-1"><Clock size={12} /> Due: {new Date(a.dueDate).toLocaleDateString()}</div>
-                        <button className="text-indigo-600 hover:text-indigo-700 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
-                          Submit Work
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
 
-            {/* Course Materials */}
+            {/* ── Study Materials Panel ── */}
             <div className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
-              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle">
+              <div className="bg-surface-container-low px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
                   <BookOpen size={18} className="text-emerald-600" /> Study Materials
                 </h3>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  {myModules.reduce((sum, m) => sum + (materials[m.code]?.length ?? 0), 0)} files
+                </span>
               </div>
-              <div className="divide-y divide-border-subtle max-h-[500px] overflow-y-auto p-4 space-y-4">
-                {myModules.length > 0 && myModules.map(m => {
-                  const courseMats = materials[m.code] || [];
-                  const globalMats = materials["global"]?.filter(gm => gm.type === m.code) || []; // Fallback for old global mock if needed
-                  const allCourseMats = [...courseMats, ...globalMats, ...Object.values(materials).flat().filter(mat => (mat as any).course === m.code)];
-                  
-                  // Filter out duplicates by name
-                  const uniqueMats = Array.from(new Map(allCourseMats.map(item => [item.name || (item as any).title, item])).values());
+              <div className="max-h-[520px] overflow-y-auto">
+                {myModules.every(m => !materials[m.code]?.length) ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                    <BookOpen size={32} className="mb-3 opacity-20" />
+                    <p className="text-sm font-bold">No materials uploaded yet</p>
+                    <p className="text-xs mt-1">Your lecturers haven&apos;t uploaded any files yet.</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border-subtle">
+                    {myModules.map(m => {
+                      const files = materials[m.code] ?? [];
+                      if (files.length === 0) return null;
 
-                  if (uniqueMats.length === 0) return null;
+                      const typeColorMap: Record<string, string> = {
+                        PDF:  "bg-red-100 text-red-700",
+                        PPTX: "bg-orange-100 text-orange-700",
+                        PPT:  "bg-orange-100 text-orange-700",
+                        DOCX: "bg-blue-100 text-blue-700",
+                        DOC:  "bg-blue-100 text-blue-700",
+                        XLSX: "bg-emerald-100 text-emerald-700",
+                        XLS:  "bg-emerald-100 text-emerald-700",
+                        ZIP:  "bg-purple-100 text-purple-700",
+                        TXT:  "bg-slate-100 text-slate-600",
+                      };
 
-                  return (
-                    <div key={m.code} className="space-y-2">
-                      <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">{m.code} - {m.name}</h4>
-                      {uniqueMats.map((mat: any, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-[8px] font-black">
-                              {mat.type || "DOC"}
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-slate-800">{mat.name || mat.title}</p>
-                              <p className="text-[10px] text-slate-400">{mat.size} · {mat.date || mat.uploaded}</p>
-                            </div>
+                      return (
+                        <div key={m.code} className="p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg uppercase">{m.code}</span>
+                            <span className="text-[10px] font-semibold text-slate-400">{m.name}</span>
                           </div>
-                          <button onClick={() => toast.success(`Downloading ${mat.name || mat.title}...`)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Download">
-                            <Download size={14} />
-                          </button>
+                          <div className="space-y-2">
+                            {files.map((file, i) => {
+                              const ext = file.type?.toUpperCase() ?? file.name.split(".").pop()?.toUpperCase() ?? "FILE";
+                              const colorClass = typeColorMap[ext] ?? "bg-slate-100 text-slate-600";
+
+                              const handleDownload = () => {
+                                // Create a placeholder download since we are frontend-only
+                                const content = `File: ${file.name}\nCourse: ${m.code} — ${m.name}\nUploaded: ${file.date}\nSize: ${file.size}\n\nThis is a placeholder. Connect a backend to serve real file content.`;
+                                const blob = new Blob([content], { type: "text/plain" });
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = url;
+                                link.download = file.name;
+                                link.click();
+                                URL.revokeObjectURL(url);
+                                toast.success(`Downloading "${file.name}"`);
+                              };
+
+                              return (
+                                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-[9px] font-black shrink-0 ${colorClass}`}>
+                                      {ext}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className="text-sm font-bold text-slate-800 truncate">{file.name}</p>
+                                      <p className="text-[10px] text-slate-400">{file.size} &middot; {file.date}</p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={handleDownload}
+                                    className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all shrink-0 ml-2 group-hover:text-indigo-500"
+                                    title={`Download ${file.name}`}
+                                  >
+                                    <Download size={15} />
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  );
-                })}
-                {myModules.every(m => {
-                  const courseMats = materials[m.code] || [];
-                  const allCourseMats = [...courseMats, ...Object.values(materials).flat().filter(mat => (mat as any).course === m.code)];
-                  return allCourseMats.length === 0;
-                }) && (
-                  <p className="p-6 text-center text-slate-500 text-sm">No materials uploaded for your courses yet.</p>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </div>
+
           </div>
         </div>
       )}
