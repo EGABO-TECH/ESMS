@@ -4,24 +4,24 @@ import { useState, useMemo } from "react";
 import { GraduationCap, CheckCircle, Clock, Search, Filter, Download } from "lucide-react";
 import { toast } from "sonner";
 
+const RAW_FINALISTS = [
+  { name: "Egabo Aaron", program: "Software Engineering", gpa: 4.8, clearance: "Cleared", status: "Ready" },
+  { name: "Alimpa Anne", program: "Laws (LLB)", gpa: 4.2, clearance: "Cleared", status: "Ready" },
+  { name: "Sande Sula", program: "Data Science", gpa: 3.9, clearance: "Pending Finance", status: "Hold" },
+  { name: "Sarah Nakato", program: "Business Admin", gpa: 4.5, clearance: "Cleared", status: "Ready" },
+];
+
 export default function RegistrarGraduationPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const rawFinalists = [
-    { name: "Egabo Aaron", program: "Software Engineering", gpa: 4.8, clearance: "Cleared", status: "Ready" },
-    { name: "Alimpa Anne", program: "Laws (LLB)", gpa: 4.2, clearance: "Cleared", status: "Ready" },
-    { name: "Sande Sula", program: "Data Science", gpa: 3.9, clearance: "Pending Finance", status: "Hold" },
-    { name: "Sarah Nakato", program: "Business Admin", gpa: 4.5, clearance: "Cleared", status: "Ready" },
-  ];
-
   const finalists = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return rawFinalists;
-    return rawFinalists.filter(f => 
+    if (!query) return RAW_FINALISTS;
+    return RAW_FINALISTS.filter(f => 
       f.name.toLowerCase().includes(query) || 
       f.program.toLowerCase().includes(query)
     );
-  }, [searchTerm, rawFinalists]);
+  }, [searchTerm]);
 
   const downloadCsv = () => {
     const headers = ["Student Name", "Program", "GPA", "Clearance", "Status"];

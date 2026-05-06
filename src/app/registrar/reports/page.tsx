@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarReportsPage() {
-  const { students, courses, studentResults, transcriptRequests, stats } = useGlobalContext();
+  const { students, courses, studentResults, transcriptRequests } = useGlobalContext();
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,8 +61,8 @@ export default function RegistrarReportsPage() {
       category: "Services", 
       date: new Date().toLocaleDateString(), 
       type: "CSV",
-      action: () => downloadCSV("transcript-requests", ["ID", "Student", "Program", "Service", "Status", "Date"], 
-        transcriptRequests.map(r => [r.id, r.studentName, r.program, r.serviceType, r.status, r.date]))
+      action: () => downloadCSV("transcript-requests", ["ID", "Student", "Service", "Status", "Date"], 
+        transcriptRequests.map(r => [r.id, r.name, r.type, r.status, r.date]))
     },
   ];
 
@@ -169,7 +169,7 @@ function ReportBuilderModal({ onClose, dataSources, onDownload }: any) {
     { id: "students", label: "Student Records", icon: Users, fields: ["id", "name", "program", "year", "status", "email"] },
     { id: "courses", label: "Course Catalog", icon: GraduationCap, fields: ["code", "name", "faculty", "lecturer", "credits", "status"] },
     { id: "results", label: "Academic Results", icon: FileText, fields: ["studentId", "name", "credits", "cw", "exam", "score", "grade"] },
-    { id: "requests", label: "Transcript Requests", icon: Map, fields: ["id", "studentName", "program", "serviceType", "status", "date"] },
+    { id: "requests", label: "Transcript Requests", icon: Map, fields: ["id", "name", "type", "status", "date"] },
   ];
 
   const [selectedSource, setSelectedSource] = useState(sources[0]);
