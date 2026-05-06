@@ -1,3 +1,4 @@
+// Registrar Reports and Custom Report Builder
 "use client";
 
 import { useState } from "react";
