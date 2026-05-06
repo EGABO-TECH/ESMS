@@ -19,7 +19,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function LecturerAssignmentsPage() {
-  const { courses, students, assignments, setAssignments } = useGlobalContext();
+  const { courses, students, assignments, setAssignments, studentSubmissions } = useGlobalContext();
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [viewAssignment, setViewAssignment] = useState<typeof assignments[0] | null>(null);
@@ -31,17 +31,22 @@ export default function LecturerAssignmentsPage() {
     instructions: "", status: "Active" as typeof assignments[0]["status"],
   });
 
+  const assignmentsWithSubs = useMemo(() => assignments.map(a => ({
+    ...a,
+    submissions: studentSubmissions[a.id]?.length || 0
+  })), [assignments, studentSubmissions]);
+
   const filtered = useMemo(() =>
-    assignments.filter(a =>
+    assignmentsWithSubs.filter(a =>
       a.title.toLowerCase().includes(search.toLowerCase()) ||
       a.course.toLowerCase().includes(search.toLowerCase())
-    ), [assignments, search]);
+    ), [assignmentsWithSubs, search]);
 
   const stats = useMemo(() => ({
-    pending: assignments.filter(a => a.status === "Grading").reduce((s, a) => s + (a.total - a.submissions), 0),
-    active: assignments.filter(a => a.status === "Active").reduce((s, a) => s + a.submissions, 0),
-    avg: Math.round(assignments.reduce((s, a) => s + (a.submissions / a.total) * 100, 0) / assignments.length),
-  }), [assignments]);
+    pending: assignmentsWithSubs.filter(a => a.status === "Grading").reduce((s, a) => s + (a.total - a.submissions), 0),
+    active: assignmentsWithSubs.filter(a => a.status === "Active").reduce((s, a) => s + a.submissions, 0),
+    avg: assignmentsWithSubs.length ? Math.round(assignmentsWithSubs.reduce((s, a) => s + (a.submissions / a.total) * 100, 0) / assignmentsWithSubs.length) : 0,
+  }), [assignmentsWithSubs]);
 
   const handleCreate = () => {
     if (!form.title.trim() || !form.dueDate) {
@@ -67,7 +72,7 @@ export default function LecturerAssignmentsPage() {
 
   const exportCSV = () => {
     const header = ["ID", "Title", "Course", "Due Date", "Max Marks", "Submissions", "Total Students", "Submission Rate", "Status"];
-    const rows = assignments.map(a => [
+    const rows = assignmentsWithSubs.map(a => [
       a.id, `"${a.title}"`, a.course, a.dueDate, a.maxMarks, a.submissions, a.total,
       `${((a.submissions / a.total) * 100).toFixed(1)}%`, a.status
     ]);
@@ -81,10 +86,13 @@ export default function LecturerAssignmentsPage() {
   };
 
   const downloadSubmissionReport = (a: typeof assignments[0]) => {
+    const subs = studentSubmissions[a.id] || [];
+    const submittedStudentIds = new Set(subs.map(s => s.studentId));
+    
     const header = ["Student ID", "Student Name", "Assignment", "Course", "Due Date", "Status"];
-    const rows = students.slice(0, a.submissions).map((s, i) => [
+    const rows = students.slice(0, a.total).map((s) => [
       s.id, `"${s.name}"`, `"${a.title}"`, a.course, a.dueDate,
-      i < a.submissions ? "Submitted" : "Pending"
+      submittedStudentIds.has(s.id) ? "Submitted" : "Pending"
     ]);
     const csv = [header, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -308,17 +316,27 @@ export default function LecturerAssignmentsPage() {
               <div className="space-y-2">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Submissions</p>
                 <div className="max-h-40 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl">
-                  {students.slice(0, viewAssignment.total).map((s, i) => (
+                  {students.slice(0, viewAssignment.total).map((s) => {
+                    const submission = (studentSubmissions[viewAssignment.id] || []).find(sub => sub.studentId === s.id);
+                    const isSubmitted = !!submission;
+                    return (
                     <div key={s.id} className="flex items-center justify-between px-4 py-2.5">
                       <div className="flex items-center gap-3">
                         <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black">{s.name.charAt(0)}</div>
                         <span className="text-xs font-bold text-slate-700">{s.name}</span>
                       </div>
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${i < viewAssignment.submissions ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
-                        {i < viewAssignment.submissions ? "Submitted" : "Pending"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {isSubmitted && submission.dataUrl && (
+                          <a href={submission.dataUrl} download={submission.fileName} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors px-2 py-0.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg">
+                            <Download size={10} /> {submission.fileName}
+                          </a>
+                        )}
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isSubmitted ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
+                          {isSubmitted ? "Submitted" : "Pending"}
+                        </span>
+                      </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>

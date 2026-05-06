@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, BookOpen, Clock, History, Search, PlusCircle, Download, AlertTriangle, CheckCircle, X, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
@@ -44,11 +44,17 @@ const historicalEnrollments: Record<string, { id: number; grade: string; courses
 
 const semesterKeys = Object.keys(historicalEnrollments).sort().reverse();
 
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 type TabId = "enrollment" | "history" | "timetable" | "materials";
 
 export default function StudentAcademics() {
   const router = useRouter();
-  const { students, courses, hasBalance, materials, assignments } = useGlobalContext();
+  const { students, courses, hasBalance, materials, assignments, studentSubmissions, setStudentSubmissions } = useGlobalContext();
   const rawStudent = students[0];
   const { user, isLoaded } = useUser();
   const clerkName = isLoaded && user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "";
@@ -72,6 +78,57 @@ export default function StudentAcademics() {
   const [activeTab, setActiveTab] = useState<TabId>("enrollment");
   const [search, setSearch] = useState("");
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadAssignmentId, setUploadAssignmentId] = useState<number | null>(null);
+
+  const handleAssignmentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!uploadAssignmentId) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Limit to 1.5MB
+    const MAX_SIZE = 1.5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error(`File is too large. Max size is 1.5MB for this demo.`);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      const newSubmission = {
+        studentId: rawStudent.id,
+        studentName: displayName,
+        fileName: file.name,
+        size: formatBytes(file.size),
+        date: new Date().toLocaleDateString("en-GB"),
+        dataUrl,
+      };
+
+      setStudentSubmissions(prev => {
+        // Replace existing submission for this student on this assignment, or add a new one
+        const currentAssignmentSubs = prev[uploadAssignmentId] ?? [];
+        const existingIdx = currentAssignmentSubs.findIndex(s => s.studentId === rawStudent.id);
+        
+        const updatedSubs = [...currentAssignmentSubs];
+        if (existingIdx >= 0) {
+          updatedSubs[existingIdx] = newSubmission;
+        } else {
+          updatedSubs.push(newSubmission);
+        }
+
+        return {
+          ...prev,
+          [uploadAssignmentId]: updatedSubs
+        };
+      });
+
+      toast.success(`Successfully submitted "${file.name}"`);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    reader.readAsDataURL(file);
+  };
 
   const filteredPrograms = allPrograms.filter(p =>
     p.toLowerCase().includes(search.toLowerCase())
@@ -160,6 +217,13 @@ export default function StudentAcademics() {
 
   return (
     <main className="w-full pb-12">
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleAssignmentUpload} 
+        accept=".pdf,.doc,.docx,.ppt,.pptx,.xlsx,.xls,.zip,.txt" 
+        className="hidden" 
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-black text-on-surface">Academic Performance</h1>
         <p className="text-sm text-on-surface-variant mt-1">{student.programme}</p>
@@ -446,6 +510,8 @@ export default function StudentAcademics() {
                       "Draft": "bg-slate-100 text-slate-500",
                       "Closed": "bg-red-100 text-red-600",
                     }[a.status] ?? "bg-slate-100 text-slate-500";
+                    const mySubmission = (studentSubmissions[a.id] ?? []).find(s => s.studentId === rawStudent.id);
+                    const hasSubmitted = !!mySubmission;
 
                     return (
                       <div key={a.id} className="p-5 hover:bg-slate-50 transition-colors">
@@ -465,13 +531,33 @@ export default function StudentAcademics() {
                             Due: {new Date(a.dueDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                             {isPastDue && <span className="ml-1 text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-black uppercase">Overdue</span>}
                           </div>
+                          {/* Hidden input attached to the page (only one needed) */}
                           <button
-                            onClick={() => toast.success(`Submission portal for "${a.title}" will be available soon.`)}
-                            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+                            onClick={() => {
+                              setUploadAssignmentId(a.id);
+                              // Small timeout to allow state to set before clicking
+                              setTimeout(() => fileInputRef.current?.click(), 10);
+                            }}
+                            className={`text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors ${
+                              hasSubmitted
+                                ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                                : "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+                            }`}
                           >
-                            Submit Work
+                            {hasSubmitted ? "Re-submit" : "Submit Work"}
                           </button>
                         </div>
+                        {hasSubmitted && (
+                          <div className="mt-3 p-2 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle size={14} className="text-emerald-500" />
+                              <span className="text-xs font-semibold text-emerald-800">
+                                Submitted: <span className="font-normal">{mySubmission?.fileName}</span>
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-emerald-600">{mySubmission?.date}</span>
+                          </div>
+                        )}
                       </div>
                     );
                   })

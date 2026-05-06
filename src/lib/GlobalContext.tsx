@@ -12,7 +12,8 @@ import {
   MOCK_ASSIGNMENTS,
   MOCK_MATERIALS,
   MOCK_LESSON_PLANS,
-  MOCK_TRANSCRIPT_REQUESTS
+  MOCK_TRANSCRIPT_REQUESTS,
+  MOCK_SUBMISSIONS
 } from "./mockData";
 
 type GlobalContextType = {
@@ -39,6 +40,8 @@ type GlobalContextType = {
   setLessonPlans: React.Dispatch<React.SetStateAction<typeof MOCK_LESSON_PLANS>>;
   transcriptRequests: typeof MOCK_TRANSCRIPT_REQUESTS;
   setTranscriptRequests: React.Dispatch<React.SetStateAction<typeof MOCK_TRANSCRIPT_REQUESTS>>;
+  studentSubmissions: typeof MOCK_SUBMISSIONS;
+  setStudentSubmissions: React.Dispatch<React.SetStateAction<typeof MOCK_SUBMISSIONS>>;
 
   // High-level Actions
   enrollStudent: (studentId: string) => void;
@@ -100,6 +103,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [materials, setMaterials] = useState(MOCK_MATERIALS);
   const [lessonPlans, setLessonPlans] = useState(MOCK_LESSON_PLANS);
   const [transcriptRequests, setTranscriptRequests] = useState(MOCK_TRANSCRIPT_REQUESTS);
+  const [studentSubmissions, setStudentSubmissions] = useState(MOCK_SUBMISSIONS);
   const [hasBalance, setHasBalance] = useState(true);
 
   // Load state from localStorage after mount to avoid hydration mismatch
@@ -119,6 +123,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     ));
     setLessonPlans(getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
     setTranscriptRequests(getInitialState("esms-transcript-requests", MOCK_TRANSCRIPT_REQUESTS));
+    setStudentSubmissions(getInitialState("esms-student-submissions", MOCK_SUBMISSIONS));
     
     // Theme
     const savedDark = localStorage.getItem("esms-dark-mode");
@@ -141,6 +146,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("esms-materials-v2", JSON.stringify(materials)); }, [materials]);
   useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
   useEffect(() => { localStorage.setItem("esms-transcript-requests", JSON.stringify(transcriptRequests)); }, [transcriptRequests]);
+  useEffect(() => { localStorage.setItem("esms-student-submissions", JSON.stringify(studentSubmissions)); }, [studentSubmissions]);
 
   // ── Cross-tab sync ────────────────────────────────────────────────────────
   // When the Lecturer uploads in one tab, this listener fires in ALL other
@@ -160,6 +166,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
           case "esms-transactions":    setTransactions(parsed);    break;
           case "esms-grading":         setGrading(parsed);         break;
           case "esms-results":         setStudentResults(parsed);  break;
+          case "esms-student-submissions": setStudentSubmissions(parsed); break;
         }
       } catch {
         // ignore malformed JSON
@@ -265,6 +272,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       materials, setMaterials,
       lessonPlans, setLessonPlans,
       transcriptRequests, setTranscriptRequests,
+      studentSubmissions, setStudentSubmissions,
       enrollStudent,
       verifyTransaction,
       updateCourseProgress,

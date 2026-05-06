@@ -151,6 +151,22 @@ export const MOCK_LESSON_PLANS: Record<string, Record<string, string>> = {
   }
 };
 
+export type StudentSubmission = {
+  studentId: string;
+  studentName: string;
+  fileName: string;
+  size: string;
+  date: string;
+  dataUrl?: string;
+};
+
+// assignmentId -> StudentSubmission[]
+export const MOCK_SUBMISSIONS: Record<number, StudentSubmission[]> = {
+  1: [
+    { studentId: "U-001", studentName: "Egabo Aaron", fileName: "proposal_final.pdf", size: "1.2 MB", date: "Oct 25, 2025" }
+  ]
+};
+
 export const MOCK_TRANSCRIPT_REQUESTS = [
   { id: "TR-9012", name: "Sande Sula", type: "Official", status: "In Progress", date: "2025-10-25" },
   { id: "TR-9013", name: "Sarah Nakato", type: "Unofficial", status: "Ready", date: "2025-10-26" },
