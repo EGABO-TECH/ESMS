@@ -107,6 +107,33 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
   useEffect(() => { localStorage.setItem("esms-transcript-requests", JSON.stringify(transcriptRequests)); }, [transcriptRequests]);
 
+  // ── Cross-tab sync ────────────────────────────────────────────────────────
+  // When the Lecturer uploads in one tab, this listener fires in ALL other
+  // tabs (e.g. the Student portal) and syncs React state automatically.
+  useEffect(() => {
+    const syncFromStorage = (e: StorageEvent) => {
+      if (!e.newValue) return;
+      try {
+        const parsed = JSON.parse(e.newValue);
+        switch (e.key) {
+          case "esms-materials":       setMaterials(parsed);       break;
+          case "esms-assignments":     setAssignments(parsed);     break;
+          case "esms-students":        setStudents(parsed);        break;
+          case "esms-users":           setUsers(parsed);           break;
+          case "esms-courses":         setCourses(parsed);         break;
+          case "esms-lesson-plans":    setLessonPlans(parsed);     break;
+          case "esms-transactions":    setTransactions(parsed);    break;
+          case "esms-grading":         setGrading(parsed);         break;
+          case "esms-results":         setStudentResults(parsed);  break;
+        }
+      } catch {
+        // ignore malformed JSON
+      }
+    };
+    window.addEventListener("storage", syncFromStorage);
+    return () => window.removeEventListener("storage", syncFromStorage);
+  }, []);
+
   // Initialise from localStorage or system preference
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
