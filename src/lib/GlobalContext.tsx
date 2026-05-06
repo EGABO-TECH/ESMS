@@ -66,15 +66,22 @@ type GlobalContextType = {
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
-  // Utility to initialize state from localStorage
-  const getInitialState = <T,>(key: string, fallback: T): T => {
+  // Utility to initialize state from localStorage with format validation
+  const getInitialState = <T,>(key: string, fallback: T, validator?: (v: unknown) => boolean): T => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(key);
       if (saved) {
         try {
-          return JSON.parse(saved) as T;
+          const parsed = JSON.parse(saved);
+          // If a validator is provided and it fails, the cached data is stale — clear it
+          if (validator && !validator(parsed)) {
+            localStorage.removeItem(key);
+            return fallback;
+          }
+          return parsed as T;
         } catch (e) {
           console.error(`Error parsing ${key} from localStorage`, e);
+          localStorage.removeItem(key);
         }
       }
     }
@@ -89,7 +96,12 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [studentResults, setStudentResults] = useState(() => getInitialState("esms-results", MOCK_STUDENT_RESULTS));
   const [users, setUsers] = useState(() => getInitialState("esms-users", MOCK_USERS));
   const [assignments, setAssignments] = useState(() => getInitialState("esms-assignments", MOCK_ASSIGNMENTS));
-  const [materials, setMaterials] = useState(() => getInitialState("esms-materials", MOCK_MATERIALS));
+  // Validate materials is a plain object (Record), NOT an array (old format)
+  const [materials, setMaterials] = useState(() => getInitialState(
+    "esms-materials-v2",
+    MOCK_MATERIALS,
+    (v) => typeof v === "object" && v !== null && !Array.isArray(v)
+  ));
   const [lessonPlans, setLessonPlans] = useState(() => getInitialState("esms-lesson-plans", MOCK_LESSON_PLANS));
   const [transcriptRequests, setTranscriptRequests] = useState(() => getInitialState("esms-transcript-requests", MOCK_TRANSCRIPT_REQUESTS));
   const [hasBalance, setHasBalance] = useState(true);
@@ -103,7 +115,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("esms-results", JSON.stringify(studentResults)); }, [studentResults]);
   useEffect(() => { localStorage.setItem("esms-users", JSON.stringify(users)); }, [users]);
   useEffect(() => { localStorage.setItem("esms-assignments", JSON.stringify(assignments)); }, [assignments]);
-  useEffect(() => { localStorage.setItem("esms-materials", JSON.stringify(materials)); }, [materials]);
+  useEffect(() => { localStorage.setItem("esms-materials-v2", JSON.stringify(materials)); }, [materials]);
   useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
   useEffect(() => { localStorage.setItem("esms-transcript-requests", JSON.stringify(transcriptRequests)); }, [transcriptRequests]);
 
@@ -116,7 +128,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       try {
         const parsed = JSON.parse(e.newValue);
         switch (e.key) {
-          case "esms-materials":       setMaterials(parsed);       break;
+          case "esms-materials-v2":    setMaterials(parsed);       break;
           case "esms-assignments":     setAssignments(parsed);     break;
           case "esms-students":        setStudents(parsed);        break;
           case "esms-users":           setUsers(parsed);           break;
