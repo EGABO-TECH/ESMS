@@ -65,6 +65,10 @@ type GlobalContextType = {
   // Financial State
   hasBalance: boolean;
   setHasBalance: (hasBalance: boolean) => void;
+
+  // Registry Policy
+  registryPolicy: { semester: string; deadline: string; enrollmentActive: boolean };
+  setRegistryPolicy: (policy: { semester: string; deadline: string; enrollmentActive: boolean }) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -105,6 +109,11 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [transcriptRequests, setTranscriptRequests] = useState(MOCK_TRANSCRIPT_REQUESTS);
   const [studentSubmissions, setStudentSubmissions] = useState(MOCK_SUBMISSIONS);
   const [hasBalance, setHasBalance] = useState(true);
+  const [registryPolicy, setRegistryPolicyState] = useState({ 
+    semester: "Semester II 2025", 
+    deadline: "2025-10-15", 
+    enrollmentActive: true 
+  });
 
   // Load state from localStorage after mount to avoid hydration mismatch
   useEffect(() => {
@@ -132,6 +141,13 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     // Profile
     const savedProfile = localStorage.getItem("esms-profile-image");
     if (savedProfile) setProfileImageState(savedProfile);
+
+    // Policy
+    setRegistryPolicyState(getInitialState("esms-registry-policy", { 
+      semester: "Semester II 2025", 
+      deadline: "2025-10-15", 
+      enrollmentActive: true 
+    }));
   }, []);
 
   // Persist state changes to localStorage
@@ -147,6 +163,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("esms-lesson-plans", JSON.stringify(lessonPlans)); }, [lessonPlans]);
   useEffect(() => { localStorage.setItem("esms-transcript-requests", JSON.stringify(transcriptRequests)); }, [transcriptRequests]);
   useEffect(() => { localStorage.setItem("esms-student-submissions", JSON.stringify(studentSubmissions)); }, [studentSubmissions]);
+  useEffect(() => { localStorage.setItem("esms-registry-policy", JSON.stringify(registryPolicy)); }, [registryPolicy]);
 
   // ── Cross-tab sync ────────────────────────────────────────────────────────
   // When the Lecturer uploads in one tab, this listener fires in ALL other
@@ -288,6 +305,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       setProfileImage,
       hasBalance,
       setHasBalance,
+      registryPolicy,
+      setRegistryPolicy: setRegistryPolicyState,
     }}>
       {children}
     </GlobalContext.Provider>

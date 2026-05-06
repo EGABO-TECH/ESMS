@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useGlobalContext } from "@/lib/GlobalContext";
 
 export default function RegistrarDashboard() {
-  const { stats, students, courses, studentResults, deleteStudent, deleteCourse } = useGlobalContext();
+  const { stats, students, courses, deleteStudent, deleteCourse, registryPolicy, setRegistryPolicy } = useGlobalContext();
+  const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
   const { totalStudents } = stats;
 
   const activeCourses = courses.filter(c => c.status === "Active").length;
@@ -51,27 +52,6 @@ export default function RegistrarDashboard() {
     toast.success("Enrolled students report downloaded.");
   };
 
-  const downloadStudentTranscript = (studentName: string) => {
-    // We mock the student's results here, but we can just use the global studentResults
-    const headers = ["Course Code", "Course Name", "Credits", "Coursework", "Exam", "Total Score", "Grade", "Points"];
-    const rows = studentResults.map(r => [
-      r.code, r.name, r.credits, r.cw, r.exam, r.score, r.grade, r.gp
-    ]);
-
-    const escapeValue = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
-    const csv = [headers, ...rows]
-      .map((row) => row.map((value) => escapeValue(value)).join(","))
-      .join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `transcript-${studentName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-    toast.success(`Transcript for ${studentName} downloaded.`);
-  };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -185,13 +165,20 @@ export default function RegistrarDashboard() {
               <p className="text-blue-200 text-sm mb-6">Semester II Enrollment is now active for all faculties.</p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 bg-white/10 p-3 rounded-xl border border-white/10">
+                  <CheckCircle2 size={18} className={registryPolicy.enrollmentActive ? "text-emerald-400" : "text-red-400"} />
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-blue-300 tracking-wider">Status</p>
+                    <p className="text-sm font-bold">{registryPolicy.enrollmentActive ? "Enrollment Active" : "Enrollment Closed"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white/10 p-3 rounded-xl border border-white/10">
                   <Clock size={18} className="text-blue-300" />
                   <div>
                     <p className="text-[10px] font-black uppercase text-blue-300 tracking-wider">Deadline</p>
-                    <p className="text-sm font-bold">October 15, 2025</p>
+                    <p className="text-sm font-bold">{new Date(registryPolicy.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                   </div>
                 </div>
-                <button onClick={() => alert('Feature in development...')} className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
+                <button onClick={() => setIsPolicyModalOpen(true)} className="w-full py-3 bg-white text-[#00174b] font-black rounded-xl text-sm hover:bg-blue-50 transition-all shadow-lg active:scale-95">
                   Update Registry Policy
                 </button>
               </div>
@@ -201,31 +188,6 @@ export default function RegistrarDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <CheckCircle size={18} className="text-emerald-500" /> Pending Approvals
-            </h3>
-            <div className="space-y-4">
-              <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl cursor-pointer hover:bg-blue-100 transition-colors flex justify-between items-center">
-                <div>
-                  <p className="text-xs font-black text-blue-800 uppercase tracking-widest">Transcript Request</p>
-                  <p className="text-sm font-bold text-slate-900 mt-1">Sande Sula (BSIT)</p>
-                  <p className="text-[11px] text-slate-500 mt-1">Payment verified. Ready for seal.</p>
-                </div>
-                <button 
-                  onClick={() => downloadStudentTranscript("Sande Sula")}
-                  className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors"
-                >
-                  Download Script
-                </button>
-              </div>
-              <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl cursor-pointer hover:bg-amber-100 transition-colors">
-                <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Result Modification</p>
-                <p className="text-sm font-bold text-slate-900 mt-1">Dr. Sarah Johnson (SWE312)</p>
-                <p className="text-[11px] text-slate-500 mt-1">Correction of exam marks for 3 students.</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -304,6 +266,85 @@ export default function RegistrarDashboard() {
             </Link>
           </div>
         )}
+      </div>
+      {isPolicyModalOpen && (
+        <RegistryPolicyModal 
+          onClose={() => setIsPolicyModalOpen(false)} 
+          policy={registryPolicy}
+          onSave={setRegistryPolicy}
+        />
+      )}
+    </div>
+  );
+}
+
+function RegistryPolicyModal({ onClose, policy, onSave }: any) {
+  const [formData, setFormData] = useState(policy);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+    toast.success("Registry policy updated successfully");
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <h3 className="text-xl font-black text-slate-900">Registry Policy</h3>
+          <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+            <XCircle size={20} className="text-slate-500" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Active Semester</label>
+              <input 
+                type="text" 
+                value={formData.semester}
+                onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                placeholder="e.g. Semester II 2025"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Enrollment Deadline</label>
+              <input 
+                type="date" 
+                value={formData.deadline}
+                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                required
+              />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div>
+                <p className="text-sm font-bold text-slate-900">Enrollment Status</p>
+                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Open for all students</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, enrollmentActive: !formData.enrollmentActive })}
+                className={`w-12 h-6 rounded-full transition-all relative ${formData.enrollmentActive ? 'bg-emerald-500' : 'bg-slate-300'}`}
+              >
+                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.enrollmentActive ? 'right-1' : 'left-1'}`} />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
+              Cancel
+            </button>
+            <button type="submit" className="flex-1 py-3 bg-[#00174b] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg">
+              Save Changes
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
