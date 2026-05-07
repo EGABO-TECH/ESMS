@@ -77,7 +77,7 @@ npm run dev
 
 ---
 <p align="center">
-  <em>© 2026 THE RULE OF 10. Built with precision for the future of education.</em>
+  <em>© 2026 THE RULE OF 10. Built with precision for the future of education and Transparency.</em>
 </p>
 
 
