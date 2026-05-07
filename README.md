@@ -54,7 +54,7 @@ The system is designed for maximum transparency and administrative ease. Authent
 - **Languages:** TypeScript, SQL (PL/pgSQL), JavaScript (ES6+)
 - **Frameworks:** Next.js 14+ (App Router), Tailwind CSS
 - **Database:** PostgreSQL (Supabase)
-- **Auth:** Supabase Auth (JWT + Multi-Factor Authentication)
+- **Auth:** Clerk Auth (JWT + Multi-Factor Authentication)
 - **Deployment:** Vercel, Docker
 
 ---
